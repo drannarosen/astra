@@ -17,7 +17,7 @@ struct GridConfig
 end
 
 """
-    SolverConfig(; max_newton_iterations = 8, damping = 1.0, minimum_damping = 1/64,
+    SolverConfig(; max_newton_iterations = 8, damping = 1.0, minimum_damping = 1/16384,
                    tolerance = 1e-10, finite_difference_step = 1e-6,
                    linear_regularization = 1e-8)
 
@@ -34,7 +34,7 @@ struct SolverConfig
     function SolverConfig(;
         max_newton_iterations::Int = 8,
         damping::Real = 1.0,
-        minimum_damping::Real = 1.0 / 64.0,
+        minimum_damping::Real = 1.0 / 16384.0,
         tolerance::Real = 1.0e-10,
         finite_difference_step::Real = 1.0e-6,
         linear_regularization::Real = 1.0e-8,

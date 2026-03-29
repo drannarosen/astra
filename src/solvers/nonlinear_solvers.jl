@@ -7,6 +7,17 @@ function _regularized_linear_update(
     return normal_matrix \ (-(jacobian' * residual))
 end
 
+function _regularization_ladder(problem::StructureProblem)
+    regularization = Float64(problem.solver.linear_regularization)
+    ladder = Float64[]
+    while true
+        push!(ladder, regularization)
+        regularization >= 1.0e16 && break
+        regularization *= 100.0
+    end
+    return ladder
+end
+
 function _accepted_trial_step(
     problem::StructureProblem,
     model::StellarModel,
@@ -87,62 +98,75 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
         end
 
         jacobian = structure_jacobian(problem, model)
-        update = try
-            solve_linear_system(jacobian, -residual)
+        update = nothing
+        try
+            update = solve_linear_system(jacobian, -residual)
         catch error
-            try
+            push!(
+                notes,
+                "Direct linear solve hit $(typeof(error)); retrying with regularized normal equations.",
+            )
+        end
+
+        accepted = false
+        if update !== nothing && all(isfinite, update)
+            trial_step = _accepted_trial_step(problem, model, residual, update)
+            append!(notes, trial_step.notes)
+            rejected_trial_count += trial_step.rejected_trials
+            if trial_step.accepted
+                accepted_step_count += 1
+                append!(damping_history, trial_step.damping_history)
+                model = trial_step.model
+                residual = trial_step.residual
+                push!(residual_history, residual_norm(residual))
+                accepted = true
+            end
+        elseif update !== nothing
+            push!(notes, "Linear solve produced a non-finite update vector.")
+        end
+
+        if accepted
+            continue
+        end
+
+        for regularization in _regularization_ladder(problem)
+            push!(
+                notes,
+                "Retrying with regularization λ=$(regularization) in the normal-equation solve.",
+            )
+            regularized_update = try
+                _regularized_linear_update(jacobian, residual, regularization)
+            catch fallback_error
                 push!(
                     notes,
-                    "Direct linear solve hit $(typeof(error)); retrying with regularized normal equations.",
+                    "Regularized fallback at λ=$(regularization) failed with $(typeof(fallback_error)).",
                 )
-                _regularized_linear_update(
-                    jacobian,
-                    residual,
-                    problem.solver.linear_regularization,
+                continue
+            end
+
+            if !all(isfinite, regularized_update)
+                push!(
+                    notes,
+                    "Regularized update at λ=$(regularization) produced a non-finite update vector.",
                 )
-            catch fallback_error
-                diagnostics = build_diagnostics(
-                    problem,
-                    model,
-                    residual,
-                    initial_residual_norm,
-                    residual_history,
-                    damping_history,
-                    accepted_step_count,
-                    rejected_trial_count,
-                    accepted_step_count,
-                    false,
-                    vcat(
-                        notes,
-                        ["Regularized fallback failed with $(typeof(fallback_error))."],
-                    ),
-                )
-                return SolveResult(model, diagnostics)
+                continue
+            end
+
+            trial_step = _accepted_trial_step(problem, model, residual, regularized_update)
+            append!(notes, trial_step.notes)
+            rejected_trial_count += trial_step.rejected_trials
+            if trial_step.accepted
+                accepted_step_count += 1
+                append!(damping_history, trial_step.damping_history)
+                model = trial_step.model
+                residual = trial_step.residual
+                push!(residual_history, residual_norm(residual))
+                accepted = true
+                break
             end
         end
 
-        if !all(isfinite, update)
-            diagnostics = build_diagnostics(
-                problem,
-                model,
-                residual,
-                initial_residual_norm,
-                residual_history,
-                damping_history,
-                accepted_step_count,
-                rejected_trial_count,
-                accepted_step_count,
-                false,
-                vcat(notes, ["Linear solve produced a non-finite update vector."]),
-            )
-            return SolveResult(model, diagnostics)
-        end
-
-        trial_step = _accepted_trial_step(problem, model, residual, update)
-        append!(notes, trial_step.notes)
-        rejected_trial_count += trial_step.rejected_trials
-        append!(damping_history, trial_step.damping_history)
-        if !trial_step.accepted
+        if !accepted
             diagnostics = build_diagnostics(
                 problem,
                 model,
@@ -158,11 +182,6 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
             )
             return SolveResult(model, diagnostics)
         end
-
-        accepted_step_count += 1
-        model = trial_step.model
-        residual = trial_step.residual
-        push!(residual_history, residual_norm(residual))
     end
 
     diagnostics = build_diagnostics(
