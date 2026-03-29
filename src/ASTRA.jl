@@ -74,6 +74,7 @@ using ..ASTRA: SolveResult,
     assemble_structure_residual,
     build_diagnostics,
     finite_difference_jacobian,
+    structure_jacobian,
     pack_state,
     residual_norm,
     unpack_state
@@ -133,8 +134,11 @@ Run ASTRA's bootstrap nonlinear solve for a structure problem.
 
 At bootstrap stage, the classical lane solves a toy reference-profile residual
 system that exercises the package architecture, state packing, Jacobian
-construction, and convergence bookkeeping. It is not yet a research-grade
-stellar structure solve.
+construction, and convergence bookkeeping. This public entry point is also
+ASTRA's current solve boundary for future sensitivity work: only
+`model.structure` is solve-owned, while composition and evolution remain
+attached to the returned `StellarModel`. It is not yet a research-grade stellar
+structure solve.
 """
 function solve_structure(
     problem::StructureProblem;

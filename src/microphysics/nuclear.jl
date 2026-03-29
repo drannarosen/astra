@@ -9,3 +9,13 @@ function (nuclear::ProtonProtonToyNuclear)(
     ε = 1.07e-7 * density_g_cm3 * composition.X^2 * scaled_temperature^4
     return (energy_rate_erg_g_s = clip_positive(ε), source = :pp_toy)
 end
+
+function nuclear_temperature_derivative(
+    nuclear::ProtonProtonToyNuclear,
+    density_g_cm3::Real,
+    temperature_k::Real,
+    composition::Composition,
+)
+    ε = nuclear(density_g_cm3, temperature_k, composition).energy_rate_erg_g_s
+    return 4.0 * ε / clip_positive(temperature_k)
+end

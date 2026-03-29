@@ -14,5 +14,9 @@ using ASTRA
     include("test_classical_residual_rows.jl")
     include("test_jacobian_scaffold.jl")
     include("test_solve_contract.jl")
+    include("test_convergence_basin.jl")
+    include("test_local_derivative_validation.jl")
+    include("test_block_jacobian.jl")
+    include("test_solver_boundary_api.jl")
     include("test_docs_structure.jl")
 end

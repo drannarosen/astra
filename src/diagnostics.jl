@@ -25,6 +25,8 @@ function build_diagnostics(
         "Residual now uses the first classical structure equations with simple placeholder closures.",
         "EOS, opacity, convection, and surface closure remain provisional at this milestone.",
         "Classical baseline is canonical; Entropy-DAE remains a documented stub.",
+        "Toy model caveat: initialization is architecture-first and numerically helpful, not a physically calibrated stellar seed.",
+        "Solve boundary: solve_structure(problem; state = guess) is the current public solve boundary for future sensitivities, with only model.structure treated as solve-owned.",
     ]
     append!(notes, String.(extra_notes))
 

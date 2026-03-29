@@ -1,3 +1,12 @@
+structure_center_row_range() = 1:2
+
+interior_structure_row_range(k::Int) = (3 + 4 * (k - 1)):(6 + 4 * (k - 1))
+
+function structure_surface_row_range(n_cells::Int)
+    start = 4 * n_cells - 1
+    return start:(start + 3)
+end
+
 function interior_structure_block(problem::StructureProblem, model::StellarModel, k::Int)
     state = model.structure
     r_left_cm = exp(state.log_radius_face_cm[k])
@@ -32,15 +41,16 @@ function assemble_structure_residual(problem::StructureProblem, model::StellarMo
     index = 1
 
     center = center_boundary_residual(problem, model)
-    residual[index:(index + 1)] = center
-    index += 2
+    residual[structure_center_row_range()] = center
+    index = last(structure_center_row_range()) + 1
 
     for k in 1:(n - 1)
-        residual[index:(index + 3)] = interior_structure_block(problem, model, k)
-        index += 4
+        row_range = interior_structure_row_range(k)
+        residual[row_range] = interior_structure_block(problem, model, k)
+        index = last(row_range) + 1
     end
 
     surface = surface_boundary_residual(problem, model)
-    residual[index:(index + 3)] = surface
+    residual[structure_surface_row_range(n)] = surface
     return residual
 end

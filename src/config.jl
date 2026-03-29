@@ -17,35 +17,49 @@ struct GridConfig
 end
 
 """
-    SolverConfig(; max_newton_iterations = 8, damping = 1.0, tolerance = 1e-10, finite_difference_step = 1e-6)
+    SolverConfig(; max_newton_iterations = 8, damping = 1.0, minimum_damping = 1/64,
+                   tolerance = 1e-10, finite_difference_step = 1e-6,
+                   linear_regularization = 1e-8)
 
 Control parameters for ASTRA's bootstrap nonlinear solve.
 """
 struct SolverConfig
     max_newton_iterations::Int
     damping::Float64
+    minimum_damping::Float64
     tolerance::Float64
     finite_difference_step::Float64
+    linear_regularization::Float64
 
     function SolverConfig(;
         max_newton_iterations::Int = 8,
         damping::Real = 1.0,
+        minimum_damping::Real = 1.0 / 64.0,
         tolerance::Real = 1.0e-10,
         finite_difference_step::Real = 1.0e-6,
+        linear_regularization::Real = 1.0e-8,
     )
         max_newton_iterations > 0 || throw(
             ArgumentError("max_newton_iterations must be positive."),
         )
         0.0 < damping <= 1.0 || throw(ArgumentError("damping must lie in (0, 1]."))
+        0.0 < minimum_damping <= damping || throw(
+            ArgumentError("minimum_damping must lie in (0, damping]."),
+        )
         tolerance > 0.0 || throw(ArgumentError("tolerance must be positive."))
         finite_difference_step > 0.0 || throw(
             ArgumentError("finite_difference_step must be positive."),
         )
+        linear_regularization > 0.0 || throw(
+            ArgumentError("linear_regularization must be positive."),
+        )
         return new(
             max_newton_iterations,
             Float64(damping),
+            Float64(minimum_damping),
             Float64(tolerance),
             Float64(finite_difference_step),
+            Float64(linear_regularization),
         )
     end
 end
