@@ -18,5 +18,6 @@ using ASTRA
     include("test_local_derivative_validation.jl")
     include("test_block_jacobian.jl")
     include("test_solver_boundary_api.jl")
+    include("test_solver_progress_diagnostics.jl")
     include("test_docs_structure.jl")
 end

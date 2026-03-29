@@ -16,6 +16,7 @@ function _accepted_trial_step(
     base_vector = pack_state(model.structure)
     base_norm = residual_norm(residual)
     damping = problem.solver.damping
+    rejected_trials = 0
 
     while damping >= problem.solver.minimum_damping
         next_vector = base_vector .+ damping .* update
@@ -28,9 +29,16 @@ function _accepted_trial_step(
             notes = damping < problem.solver.damping ? [
                 "Backtracking accepted damping factor $(damping) after rejecting a larger trial step.",
             ] : String[]
-            return (model = next_model, residual = next_residual, notes = notes)
+            return (
+                model = next_model,
+                residual = next_residual,
+                notes = notes,
+                rejected_trials = rejected_trials,
+                accepted_damping = damping,
+            )
         end
 
+        rejected_trials += 1
         damping *= 0.5
     end
 
@@ -40,6 +48,11 @@ end
 function solve_nonlinear_system(problem::StructureProblem, initial_model::StellarModel)
     model = initial_model
     residual = assemble_structure_residual(problem, model)
+    initial_residual_norm = residual_norm(residual)
+    residual_history = Float64[initial_residual_norm]
+    damping_history = Float64[]
+    accepted_step_count = 0
+    rejected_trial_count = 0
     notes = String[
         "Initial guess uses geometry-consistent density/radius seeding, source-matched toy luminosity, and surface-anchored temperature closure.",
         "Solve boundary note: diagnostics describe the structure solve boundary now so later sensitivity rules can target the public solve entry point rather than Newton transcript details.",
@@ -47,7 +60,19 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
 
     for iteration in 0:problem.solver.max_newton_iterations
         if converged_residual(problem, residual)
-            diagnostics = build_diagnostics(problem, model, residual, iteration, true, notes)
+            diagnostics = build_diagnostics(
+                problem,
+                model,
+                residual,
+                initial_residual_norm,
+                residual_history,
+                damping_history,
+                accepted_step_count,
+                rejected_trial_count,
+                iteration,
+                true,
+                notes,
+            )
             return SolveResult(model, diagnostics)
         end
 
@@ -70,6 +95,11 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                     problem,
                     model,
                     residual,
+                    initial_residual_norm,
+                    residual_history,
+                    damping_history,
+                    accepted_step_count,
+                    rejected_trial_count,
                     iteration,
                     false,
                     vcat(
@@ -86,6 +116,11 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 problem,
                 model,
                 residual,
+                initial_residual_norm,
+                residual_history,
+                damping_history,
+                accepted_step_count,
+                rejected_trial_count,
                 iteration,
                 false,
                 vcat(notes, ["Linear solve produced a non-finite update vector."]),
@@ -99,6 +134,11 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 problem,
                 model,
                 residual,
+                initial_residual_norm,
+                residual_history,
+                damping_history,
+                accepted_step_count,
+                rejected_trial_count,
                 iteration,
                 false,
                 vcat(
@@ -110,14 +150,23 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
         end
 
         append!(notes, trial_step.notes)
+        rejected_trial_count += trial_step.rejected_trials
+        accepted_step_count += 1
+        push!(damping_history, trial_step.accepted_damping)
         model = trial_step.model
         residual = trial_step.residual
+        push!(residual_history, residual_norm(residual))
     end
 
     diagnostics = build_diagnostics(
         problem,
         model,
         residual,
+        initial_residual_norm,
+        residual_history,
+        damping_history,
+        accepted_step_count,
+        rejected_trial_count,
         problem.solver.max_newton_iterations,
         false,
         notes,

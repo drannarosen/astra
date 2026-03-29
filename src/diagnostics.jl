@@ -13,6 +13,11 @@ function build_diagnostics(
     problem::StructureProblem,
     model::StellarModel,
     residual::AbstractVector{<:Real},
+    initial_residual_norm::Real,
+    residual_history::AbstractVector{<:Real},
+    damping_history::AbstractVector{<:Real},
+    accepted_step_count::Integer,
+    rejected_trial_count::Integer,
     iterations::Integer,
     converged::Bool,
     extra_notes::AbstractVector{<:AbstractString} = String[],
@@ -32,6 +37,11 @@ function build_diagnostics(
 
     return StructureDiagnostics(
         residual_norm(residual),
+        Float64(initial_residual_norm),
+        Float64.(residual_history),
+        Float64.(damping_history),
+        Int(accepted_step_count),
+        Int(rejected_trial_count),
         converged,
         Int(iterations),
         eos_state.pressure_dyn_cm2,

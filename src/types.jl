@@ -219,6 +219,11 @@ Summary diagnostics returned by ASTRA's bootstrap solve.
 """
 struct StructureDiagnostics
     residual_norm::Float64
+    initial_residual_norm::Float64
+    residual_history::Vector{Float64}
+    damping_history::Vector{Float64}
+    accepted_step_count::Int
+    rejected_trial_count::Int
     converged::Bool
     iterations::Int
     center_pressure_dyn_cm2::Float64
