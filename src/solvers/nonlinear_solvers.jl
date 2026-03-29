@@ -68,7 +68,7 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
         "Solve boundary note: diagnostics describe the structure solve boundary now so later sensitivity rules can target the public solve entry point rather than Newton transcript details.",
     ]
 
-    for iteration in 0:problem.solver.max_newton_iterations
+    for _ in 1:problem.solver.max_newton_iterations
         if converged_residual(problem, residual)
             diagnostics = build_diagnostics(
                 problem,
@@ -79,7 +79,7 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 damping_history,
                 accepted_step_count,
                 rejected_trial_count,
-                iteration,
+                accepted_step_count,
                 true,
                 notes,
             )
@@ -110,7 +110,7 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                     damping_history,
                     accepted_step_count,
                     rejected_trial_count,
-                    iteration,
+                    accepted_step_count,
                     false,
                     vcat(
                         notes,
@@ -131,7 +131,7 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 damping_history,
                 accepted_step_count,
                 rejected_trial_count,
-                iteration,
+                accepted_step_count,
                 false,
                 vcat(notes, ["Linear solve produced a non-finite update vector."]),
             )
@@ -152,7 +152,7 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 damping_history,
                 accepted_step_count,
                 rejected_trial_count,
-                iteration,
+                accepted_step_count,
                 false,
                 notes,
             )

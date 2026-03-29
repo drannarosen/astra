@@ -62,10 +62,12 @@ end
     capped_result = solve_structure(capped_problem; state = capped_state)
 
     @test !capped_result.diagnostics.converged
-    @test capped_result.diagnostics.accepted_step_count == 2
+    @test capped_result.diagnostics.accepted_step_count ==
+          capped_problem.solver.max_newton_iterations
+    @test capped_result.diagnostics.iterations == capped_problem.solver.max_newton_iterations
     @test capped_result.diagnostics.iterations == capped_result.diagnostics.accepted_step_count
     @test length(capped_result.diagnostics.residual_history) ==
-          capped_result.diagnostics.accepted_step_count + 1
+          capped_result.diagnostics.iterations + 1
     @test capped_result.diagnostics.initial_residual_norm ≈ capped_initial_residual
     @test first(capped_result.diagnostics.residual_history) ≈ capped_initial_residual
     @test last(capped_result.diagnostics.residual_history) ≈
