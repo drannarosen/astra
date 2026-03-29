@@ -72,6 +72,10 @@ Source: [ForwardDiff introduction](https://juliadiff.org/ForwardDiff.jl/stable/)
 FiniteDiff's docs emphasize numerical derivatives with multiple finite-difference schemes and cache support for repeated calculations. ASTRA should use finite differences for validation and debugging even if later Jacobian paths become analytic or AD-backed.  
 Source: [FiniteDiff derivative docs](https://docs.sciml.ai/FiniteDiff/dev/derivatives/).
 
+### ChainRulesCore.jl and ChainRulesTestUtils.jl
+
+ChainRulesCore is the standard Julia interface for defining custom `frule` and `rrule` methods, while ChainRulesTestUtils exists specifically to test those rules. For ASTRA, these packages are the right place to formalize a future derivative contract for wrapped structure solves and any awkward local kernels that should not be left to generic AD.
+
 ## Probably later
 
 These packages are strong fits for ASTRA, but they should land only after the classical solver interfaces are more mature than the current bootstrap.
@@ -98,8 +102,34 @@ Source: [OrdinaryDiffEq docs](https://docs.sciml.ai/OrdinaryDiffEq/dev/).
 
 ### SciMLSensitivity.jl
 
-SciMLSensitivity is SciML's sensitivity-analysis and adjoint package. Its docs now explicitly cover nonlinear problems as part of the SciML common interface, which makes it promising later for solver sensitivities, calibration, and ASTRA-Stellax comparison work.  
+SciMLSensitivity is SciML's sensitivity-analysis and adjoint package. Its docs explicitly cover nonlinear problems via implicit-function-theorem-based adjoints, and its differential-equation sensitivity docs support multiple VJP backends rather than requiring ASTRA to commit to one forever. That makes it promising later for solver sensitivities, calibration, and ASTRA-Stellax comparison work, once ASTRA's own residual and solve interfaces are more mature.  
 Source: [SciMLSensitivity stable docs](https://docs.sciml.ai/SciMLSensitivity/stable/).
+
+## Differentiability-specific guidance
+
+ASTRA's recommended differentiability order is:
+
+1. trustworthy classical residual and Newton baseline,
+2. AD-safe local kernels,
+3. explicit derivative boundary for the converged structure solve,
+4. trajectory-level sensitivities later,
+5. Entropy-DAE after the classical lane is trustworthy.
+
+That recommendation should change how ASTRA talks about dependencies.
+
+### Backend-agnostic derivative contracts
+
+ASTRA should not teach a permanent commitment to "Zygote everywhere." Zygote's documented mutation limitations are real, and the SciML sensitivity docs now expose several VJP choices for outer sensitivity work. The stronger design rule is:
+
+> ASTRA should own derivative boundaries through explicit contracts, while leaving the specific AD backend replaceable.
+
+Source: [SciMLSensitivity stable docs](https://docs.sciml.ai/SciMLSensitivity/stable/).
+
+### What that means in practice
+
+- use `ForwardDiff` and `FiniteDiff` early for local derivative work and derivative validation,
+- add `ChainRulesCore` and `ChainRulesTestUtils` when ASTRA formalizes custom derivative rules,
+- consider `NonlinearSolve`, `LinearSolve`, and `SciMLSensitivity` later when ASTRA's solver interfaces are mature enough to benefit from generic solver-aware infrastructure.
 
 ## Avoid for now
 
@@ -140,7 +170,9 @@ If we were ranking ASTRA's next package moves right now, the order would be:
 4. `BenchmarkTools`
 5. `ForwardDiff`
 6. `FiniteDiff`
-7. later, once the solver is real: `NonlinearSolve`, `LinearSolve`, `SparseDiffTools`
+7. `ChainRulesCore`
+8. `ChainRulesTestUtils`
+9. later, once the solver is real: `NonlinearSolve`, `LinearSolve`, `SparseDiffTools`, `SciMLSensitivity`
 
 That ranking is intentionally conservative. It buys quality-of-life and quality-assurance first, then derivative validation, and only later general solver infrastructure.
 

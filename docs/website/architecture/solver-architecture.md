@@ -1,21 +1,19 @@
 # Solver Architecture
 
-The bootstrap solver stack is intentionally honest:
+ASTRA's current classical solver stack is intentionally modest but now physically meaningful:
 
-- the residual is a toy analytic reference-profile system,
-- the Jacobian is finite-difference,
-- the nonlinear loop is a plain Newton-style iteration,
-- convergence is tracked explicitly in diagnostics.
+- the residual carries the first classical structure rows rather than an analytic reference-profile comparison,
+- the Jacobian is still finite-difference,
+- the nonlinear loop is still a plain Newton-style iteration,
+- and convergence is tracked explicitly in diagnostics rather than hidden behind optimistic success language.
 
-This is not yet a research-grade stellar-structure solver. It is the minimal truthful surface that lets ASTRA stabilize:
+This is still not a research-grade stellar-structure solver. It is the first truthful surface where ASTRA can stabilize:
 
 - state vector layout,
 - residual ownership,
 - Jacobian plumbing,
-- formulation dispatch,
+- nonlinear failure reporting,
 - and developer workflows.
-
-The first serious scientific upgrade is to replace the toy residual with a classical hydrostatic structure residual while keeping the same architectural boundaries.
 
 ## Approved direction for the classical lane
 
@@ -38,3 +36,19 @@ The intended state staggering is:
 - cell-centered `ln T` and `ln rho`.
 
 That staggering is not just a numerical detail. It is part of the canonical solver contract.
+
+## Solver architecture versus differentiability
+
+The next solver-architecture question is not "how do we backpropagate through every Newton iterate?" The better question is:
+
+> what derivative object should ASTRA associate with a converged classical solve?
+
+For ASTRA, the clean answer is the derivative of the **solution map** defined by the nonlinear system
+
+$$  
+R(U^\ast; p) = 0,
+$$  
+
+not the derivative of the full iteration history.
+
+That is why the classical baseline should become trustworthy before ASTRA tries to make time evolution end-to-end differentiable. The solver boundary is where ASTRA should eventually place an explicit derivative contract, whether that is provided by ASTRA-owned ChainRules methods or by later SciML nonlinear-sensitivity tooling.

@@ -1,6 +1,6 @@
 # Equation of State
 
-The bootstrap EOS is deliberately simple: ideal gas plus radiation pressure.
+ASTRA's current EOS closure is deliberately simple: ideal gas plus radiation pressure.
 
 ## Why start here
 
@@ -8,4 +8,4 @@ The bootstrap EOS is deliberately simple: ideal gas plus radiation pressure.
 - it keeps the thermodynamic closure explicit,
 - and it provides a clean teaching surface for later upgrades.
 
-Later ASTRA work can add richer EOS backends, but the initial rule is that the solver must depend on the EOS interface rather than on one hard-coded implementation.
+The important architectural change is that this placeholder closure is now exercised by the classical residual itself, not just by interface tests. Later ASTRA work can add richer EOS backends, but the rule remains the same: the solver depends on an EOS interface and helper layer rather than on one hard-coded implementation.

@@ -2,9 +2,13 @@
 
 Boundary conditions are not side details in a stellar code. They are part of the model definition.
 
-At bootstrap, ASTRA uses reference-profile boundary rows to make boundary ownership explicit:
+ASTRA's first classical residual now uses deliberately minimal physical closures:
 
-- center constraints on the innermost face variables,
-- surface constraints on the outermost face and cell variables.
+- a center shell-volume closure for the innermost cell,
+- a center luminosity closure with `L_face[1] = 0`,
+- a surface radius closure against the declared stellar-radius guess,
+- a surface luminosity closure against the declared luminosity guess,
+- a surface temperature closure against the declared effective-temperature guess,
+- and a surface density closure against a simple atmosphere-density guess.
 
-Later, these rows should be replaced by physically motivated center and surface closures for the classical baseline solve.
+The center treatment is physically motivated enough for the first residual slice. The surface closure is still provisional, because the current milestone is about replacing the toy interior rows with real equation semantics, not about pretending the atmosphere treatment is finished.

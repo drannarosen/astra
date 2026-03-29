@@ -25,6 +25,7 @@ project:
         - file: architecture/package-layout.md
         - file: architecture/data-model.md
         - file: architecture/solver-architecture.md
+        - file: architecture/differentiability-strategy.md
         - file: architecture/formulation-interface.md
       title: Architecture
     - children:
@@ -66,6 +67,7 @@ project:
         - file: planning/design-principles.md
         - file: planning/solar-first-strategy.md
         - file: planning/julia-dependency-strategy.md
+        - file: planning/differentiable-astra-roadmap.md
         - file: planning/migration-notes-from-stellax.md
       title: Planning
     - children:

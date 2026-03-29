@@ -33,3 +33,23 @@ Verification run:
 Next step:
 
 - implement the real classical baseline residual and closure contracts without expanding beyond the approved solar-first scope.
+
+### First classical residual minimal slice
+
+ASTRA now assembles a first classical residual on `StellarModel` rather than comparing against an analytic reference profile. The code now carries real center rows, real interior structure rows, and a minimal physical surface closure, while still using placeholder EOS, opacity, nuclear, and convection layers.
+
+Why this mattered:
+
+- it moves the solver and Jacobian onto the right equation semantics,
+- it proves the current ownership contract can support real residual assembly,
+- and it keeps the remaining scientific gaps explicit instead of hiding them behind a pedagogical scaffold.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. -e 'using Pkg; Pkg.test()'`
+- `~/.juliaup/bin/julia --project=. scripts/run_examples.jl`
+- `cd docs/website && myst build --site --html --strict`
+
+Next step:
+
+- tighten closure fidelity and initialization quality without pretending that the current placeholder microphysics or provisional surface closure are already solar-ready.

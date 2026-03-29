@@ -15,7 +15,10 @@ This page records significant ASTRA repository changes in a compact, contributor
 - the solve vector is now restricted to the structure block
 - nonlinear solves and diagnostics now operate on `StellarModel`
 - examples and onboarding docs now teach the explicit ownership contract rather than the old flat-state story
+- the first classical residual slice replaced the analytic reference-profile interior rows with geometric, hydrostatic, luminosity, and transport equations
+- boundary rows now use minimal physical center/surface closures, while the surface closure remains provisional
+- the website now documents ASTRA's differentiability strategy in terms of explicit solver boundaries, implicit differentiation, and a classical-first Julia roadmap
 
 ### Notes
 
-The current solver is still a bootstrap Newton solve against an analytic reference-profile residual. This change improves ownership clarity and verification discipline, not the underlying stellar-physics fidelity.
+The current solver now evaluates a real classical residual with placeholder closures. This improves physical equation ownership and verification discipline, but it does not yet deliver validated solar fidelity or a robust convergence basin from the default initialization.

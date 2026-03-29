@@ -38,8 +38,8 @@ This checklist tracks ASTRA's first serious science lane:
 
 ## Physics baseline
 
-- [ ] EOS contract upgraded from toy closure toward classical baseline use
-- [ ] Opacity contract upgraded from toy closure toward classical baseline use
+- [x] EOS contract upgraded from toy closure toward classical baseline use
+- [x] Opacity contract upgraded from toy closure toward classical baseline use
 - [ ] Source-decomposed energy equation implemented
 - [ ] Gravothermal bookkeeping implemented in evolution ownership layer
 - [ ] Real baseline MLT closure implemented
@@ -52,7 +52,7 @@ This checklist tracks ASTRA's first serious science lane:
 
 ## Validation
 
-- [ ] Tier 0 structural sanity checks implemented
+- [x] Tier 0 structural sanity checks implemented
 - [ ] Tier 1 relaxation acceptance checks implemented
 - [ ] Tier 2 PMS validation checks implemented
 - [ ] Tier 3 ZAMS validation checks implemented
