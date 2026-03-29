@@ -6,13 +6,21 @@ _temperature_cell_index(grid::StellarGrid, k::Int) = 2 * (grid.n_cells + 1) + k
 
 _density_cell_index(grid::StellarGrid, k::Int) = 2 * (grid.n_cells + 1) + grid.n_cells + k
 
+function jacobian_column_step(
+    values::AbstractVector{<:Real},
+    column::Int,
+    base_step::Real,
+)
+    return max(abs(Float64(values[column])), 1.0) * Float64(base_step)
+end
+
 function _perturbed_model(
     model::StellarModel,
     column::Int,
     step::Real,
 )
     trial_vector = pack_state(model.structure)
-    trial_vector[column] += Float64(step)
+    trial_vector[column] += jacobian_column_step(trial_vector, column, step)
     trial_structure = unpack_state(model.structure, trial_vector)
     return StellarModel(trial_structure, model.composition, model.evolution)
 end
@@ -27,10 +35,12 @@ function _fill_block_jacobian!(
     block_builder::Function;
     step::Real,
 )
+    base_vector = pack_state(model.structure)
     for column in columns
+        column_step = jacobian_column_step(base_vector, column, step)
         trial_model = _perturbed_model(model, column, step)
         trial_block = block_builder(problem, trial_model)
-        jacobian[row_range, column] = (trial_block .- base_block) ./ Float64(step)
+        jacobian[row_range, column] = (trial_block .- base_block) ./ column_step
     end
     return jacobian
 end
@@ -47,8 +57,8 @@ function structure_jacobian(
     center_rows = structure_center_row_range()
     center_columns = Int[
         _radius_face_index(problem.grid, 1),
-        _radius_face_index(problem.grid, 2),
         _luminosity_face_index(problem.grid, 1),
+        _temperature_cell_index(problem.grid, 1),
         _density_cell_index(problem.grid, 1),
     ]
     center_block = center_boundary_residual(problem, model)
@@ -123,11 +133,12 @@ function finite_difference_jacobian(
 
     for j in 1:n
         perturbed = copy(base_vector)
-        perturbed[j] += step
+        column_step = jacobian_column_step(base_vector, j, step)
+        perturbed[j] += column_step
         trial_structure = unpack_state(model.structure, perturbed)
         trial_model = StellarModel(trial_structure, model.composition, model.evolution)
         trial_residual = assemble_structure_residual(problem, trial_model)
-        jacobian[:, j] = (trial_residual .- base_residual) ./ step
+        jacobian[:, j] = (trial_residual .- base_residual) ./ column_step
     end
 
     return jacobian

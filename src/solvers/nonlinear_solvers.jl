@@ -1,12 +1,3 @@
-function _regularized_linear_update(
-    jacobian::AbstractMatrix{<:Real},
-    residual::AbstractVector{<:Real},
-    regularization::Real,
-)
-    normal_matrix = jacobian' * jacobian + Float64(regularization) * I
-    return normal_matrix \ (-(jacobian' * residual))
-end
-
 function _regularization_ladder(problem::StructureProblem)
     regularization = Float64(problem.solver.linear_regularization)
     ladder = Float64[]
@@ -98,13 +89,14 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
         end
 
         jacobian = structure_jacobian(problem, model)
+        column_scale = state_scaling(problem, model)
         update = nothing
         try
-            update = solve_linear_system(jacobian, -residual)
+            update = solve_linear_system(jacobian, -residual; column_scale = column_scale)
         catch error
             push!(
                 notes,
-                "Direct linear solve hit $(typeof(error)); retrying with regularized normal equations.",
+                "Direct linear solve hit $(typeof(error)); retrying with regularized normal equations on the scaled Newton system.",
             )
         end
 
@@ -132,10 +124,15 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
         for regularization in _regularization_ladder(problem)
             push!(
                 notes,
-                "Retrying with regularization λ=$(regularization) in the normal-equation solve.",
+                "Retrying with regularization λ=$(regularization) in the scaled normal-equation solve.",
             )
             regularized_update = try
-                _regularized_linear_update(jacobian, residual, regularization)
+                solve_regularized_linear_system(
+                    jacobian,
+                    residual,
+                    regularization;
+                    column_scale = column_scale,
+                )
             catch fallback_error
                 push!(
                     notes,

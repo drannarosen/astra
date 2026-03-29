@@ -200,8 +200,13 @@ function _integrated_source_luminosity(
     density_cell_g_cm3::AbstractVector{<:Real},
     temperature_cell_k::AbstractVector{<:Real},
 )
+    center_energy_rate_erg_g_s = problem.microphysics.nuclear(
+        density_cell_g_cm3[1],
+        temperature_cell_k[1],
+        problem.composition,
+    ).energy_rate_erg_g_s
     composition = problem.composition
-    return sum(
+    return problem.grid.m_face_g[1] * center_energy_rate_erg_g_s + sum(
         problem.grid.dm_cell_g[k] * problem.microphysics.nuclear(
             density_cell_g_cm3[k],
             temperature_cell_k[k],
@@ -262,6 +267,11 @@ function _source_matched_luminosity_profile(
     temperature_cell_k::AbstractVector{<:Real},
 )
     luminosity_face_erg_s = zeros(Float64, problem.grid.n_cells + 1)
+    luminosity_face_erg_s[1] = problem.grid.m_face_g[1] * problem.microphysics.nuclear(
+        density_cell_g_cm3[1],
+        temperature_cell_k[1],
+        problem.composition,
+    ).energy_rate_erg_g_s
     for k in 1:problem.grid.n_cells
         energy_rate_erg_g_s = problem.microphysics.nuclear(
             density_cell_g_cm3[k],

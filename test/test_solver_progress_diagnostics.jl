@@ -13,21 +13,26 @@ function _capped_exit_progress_fixture()
     )
     base_state = initialize_state(capped_problem)
     base_vector = ASTRA.pack_state(base_state.structure)
-    Random.seed!(42)
-    state = base_state
 
-    for _ in 1:223
-        perturbed_vector =
-            base_vector .+ 1.0e-6 .* randn(length(base_vector)) .* abs.(base_vector)
-        perturbed_structure = ASTRA.unpack_state(base_state.structure, perturbed_vector)
-        state = ASTRA.StellarModel(
-            perturbed_structure,
-            base_state.composition,
-            base_state.evolution,
-        )
+    for amplitude in (1.0e-6, 1.0e-5, 1.0e-4, 1.0e-3)
+        Random.seed!(42)
+        for _ in 1:256
+            perturbed_vector =
+                base_vector .+ amplitude .* randn(length(base_vector)) .* max.(abs.(base_vector), 1.0)
+            perturbed_structure = ASTRA.unpack_state(base_state.structure, perturbed_vector)
+            state = ASTRA.StellarModel(
+                perturbed_structure,
+                base_state.composition,
+                base_state.evolution,
+            )
+            result = solve_structure(capped_problem; state = state)
+            if result.diagnostics.accepted_step_count == capped_problem.solver.max_newton_iterations
+                return capped_problem, state
+            end
+        end
     end
 
-    return capped_problem, state
+    error("Unable to find a capped one-step Newton-progress fixture.")
 end
 
 @testset "solver progress diagnostics" begin

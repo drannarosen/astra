@@ -1,15 +1,34 @@
 const SURFACE_DENSITY_GUESS_G_CM3 = 1.0e-7
 
+function center_radius_series_target_cm(problem::StructureProblem, model::StellarModel)
+    density_g_cm3 = exp(model.structure.log_density_cell_g_cm3[1])
+    enclosed_mass_g = problem.grid.m_face_g[1]
+    return (3.0 * enclosed_mass_g / (4.0 * π * clip_positive(density_g_cm3)))^(1.0 / 3.0)
+end
+
+function center_luminosity_series_target_erg_s(problem::StructureProblem, model::StellarModel)
+    density_g_cm3 = exp(model.structure.log_density_cell_g_cm3[1])
+    temperature_k = exp(model.structure.log_temperature_cell_k[1])
+    composition = Composition(
+        model.composition.hydrogen_mass_fraction_cell[1],
+        model.composition.helium_mass_fraction_cell[1],
+        model.composition.metal_mass_fraction_cell[1],
+    )
+    energy_rate_erg_g_s = problem.microphysics.nuclear(
+        density_g_cm3,
+        temperature_k,
+        composition,
+    ).energy_rate_erg_g_s
+    return problem.grid.m_face_g[1] * energy_rate_erg_g_s
+end
+
 function center_boundary_residual(problem::StructureProblem, model::StellarModel)
     state = model.structure
     r_inner_cm = exp(state.log_radius_face_cm[1])
-    r_outer_cm = exp(state.log_radius_face_cm[2])
-    density_g_cm3 = exp(state.log_density_cell_g_cm3[1])
-    dm_1_g = problem.grid.dm_cell_g[1]
 
     return Float64[
-        shell_volume_cm3(r_inner_cm, r_outer_cm) - dm_1_g / clip_positive(density_g_cm3),
-        state.luminosity_face_erg_s[1],
+        r_inner_cm - center_radius_series_target_cm(problem, model),
+        state.luminosity_face_erg_s[1] - center_luminosity_series_target_erg_s(problem, model),
     ]
 end
 

@@ -67,7 +67,8 @@ include("io.jl")
 
 module Solvers
 using LinearAlgebra
-using ..ASTRA: SolveResult,
+using ..ASTRA: SOLAR_LUMINOSITY_ERG_S,
+    SolveResult,
     StructureProblem,
     StructureDiagnostics,
     StellarModel,

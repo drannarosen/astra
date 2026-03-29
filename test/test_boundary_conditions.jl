@@ -14,15 +14,11 @@
     center_luminosity_face_erg_s = copy(model.structure.luminosity_face_erg_s)
     center_log_temperature_cell_k = copy(model.structure.log_temperature_cell_k)
     center_log_density_cell_g_cm3 = copy(model.structure.log_density_cell_g_cm3)
-    dm_1 = problem.grid.dm_cell_g[1]
-    rho_1 = 100.0
-    r_inner_cm = 1.0e8
-    r_outer_cm = (r_inner_cm^3 + (3.0 * dm_1) / (4.0 * π * rho_1))^(1.0 / 3.0)
+    center_radius_cm = ASTRA.center_radius_series_target_cm(problem, model)
+    center_luminosity_erg_s = ASTRA.center_luminosity_series_target_erg_s(problem, model)
 
-    center_log_radius_face_cm[1] = log(r_inner_cm)
-    center_log_radius_face_cm[2] = log(r_outer_cm)
-    center_luminosity_face_erg_s[1] = 0.0
-    center_log_density_cell_g_cm3[1] = log(rho_1)
+    center_log_radius_face_cm[1] = log(center_radius_cm)
+    center_luminosity_face_erg_s[1] = center_luminosity_erg_s
 
     center_model = ASTRA.StellarModel(
         ASTRA.StructureState(
@@ -37,8 +33,8 @@
     )
 
     center_residual = ASTRA.center_boundary_residual(problem, center_model)
-    @test abs(center_residual[1]) <= 1.0e-12 * (dm_1 / rho_1)
-    @test center_residual[2] == 0.0
+    @test abs(center_residual[1]) <= 1.0e-12 * center_radius_cm
+    @test abs(center_residual[2]) <= 1.0e-12 * center_luminosity_erg_s
 
     surface_log_radius_face_cm = copy(model.structure.log_radius_face_cm)
     surface_luminosity_face_erg_s = copy(model.structure.luminosity_face_erg_s)
