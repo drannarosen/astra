@@ -4,3 +4,4 @@
 .worktrees/
 _build/
 Manifest.toml.bak
+docs/plans/
