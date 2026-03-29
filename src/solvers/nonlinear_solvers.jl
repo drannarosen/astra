@@ -17,10 +17,8 @@ function _accepted_trial_step(
     base_norm = residual_norm(residual)
     damping = problem.solver.damping
     rejected_trials = 0
-    damping_history = Float64[]
 
     while damping >= problem.solver.minimum_damping
-        push!(damping_history, damping)
         next_vector = base_vector .+ damping .* update
         next_structure = unpack_state(model.structure, next_vector)
         next_model = StellarModel(next_structure, model.composition, model.evolution)
