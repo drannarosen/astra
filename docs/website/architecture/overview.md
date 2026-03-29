@@ -24,3 +24,7 @@ The key near-term contract is:
 - and **derived closures** owned by microphysics rather than by the state vector itself.
 
 That design now appears directly in the bootstrap implementation through `StellarModel`, `StructureState`, `CompositionState`, and `EvolutionState`. The remaining internal `StellarState` scaffold is transitional legacy support rather than the current public architecture.
+
+## Why this separation matters
+
+In a stellar code, the same number can easily try to play three different roles at once: persistent model truth, nonlinear-solve unknown, and derived diagnostic. ASTRA is trying to prevent that confusion early. If a contributor can answer "who owns this quantity?" before they answer "where is it stored?", the architecture is doing its job.

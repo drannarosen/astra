@@ -13,3 +13,10 @@ At bootstrap, the diagnostics object tracks:
 - and explicit notes explaining the toy nature of the solve.
 
 That note field is intentional: scientific software should preserve what a result does **not** prove, not only what it prints.
+
+## Pedagogical point
+
+Diagnostics are part of the teaching surface of ASTRA. A contributor should be able to inspect a solve result and learn both:
+
+- what the code measured,
+- and what conclusions would still be scientifically premature.

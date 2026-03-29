@@ -25,3 +25,10 @@ In the current bootstrap, the residual system is an analytic reference-profile p
 - and formulation dispatch.
 
 The returned object is a `StellarModel` with explicit `structure`, `composition`, and `evolution` blocks. That is useful because it lets ASTRA grow around a real numerical interface without pretending that the classical stellar-structure physics is already finished.
+
+## What to notice in the output
+
+- `result.diagnostics` tells you what the current solve did and what formulation it used.
+- `ASTRA.pack_state(result.state.structure)` shows the exact block that the bootstrap Newton solve owns.
+- `result.state.composition` is persistent model state, but it is not part of the initial solve vector.
+- `result.state.evolution` exists so timestep-aware ownership has a real home later instead of being hidden in ad hoc diagnostics.

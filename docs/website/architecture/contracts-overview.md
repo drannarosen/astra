@@ -59,6 +59,16 @@ The evolution layer owns timestep-aware quantities such as age, timestep size, a
 
 The EOS, opacity, nuclear, and convection layers provide closures and coefficients. They are not the canonical model state.
 
+## Worked ownership example
+
+Suppose ASTRA needs pressure at one cell during residual assembly. The canonical persisted model state is:
+
+- `rho` from `model.structure`,
+- composition from `model.composition`,
+- and any timestep-aware bookkeeping later from `model.evolution`.
+
+Pressure itself is then produced by the EOS closure. That means pressure is essential, but it is still not solve-owned or persisted as a primary state variable in the current contract.
+
 ## Physical residual ordering
 
 ASTRA's classical residual contract should read in physical order:

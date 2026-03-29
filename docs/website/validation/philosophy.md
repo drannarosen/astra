@@ -16,3 +16,14 @@ The current scaffold is meant to validate:
 - and one toy nonlinear solve surface.
 
 It does **not** yet validate the full classical structure equations.
+
+## What passing current tests still does not prove
+
+Passing the current suite does not mean:
+
+- the hydrostatic equations are physically correct,
+- the solar lane is validated,
+- the evolution algorithm exists,
+- or the microphysics closures are production-ready.
+
+What it does mean is narrower and still useful: the ownership contract, package surfaces, example workflows, and bootstrap nonlinear-solve plumbing are internally consistent enough to build on.

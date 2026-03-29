@@ -32,11 +32,19 @@
         "docs/website/validation/philosophy.md",
         "docs/website/validation/hydrostatic-tests.md",
         "docs/website/validation/jacobian-checks.md",
+        "docs/website/validation/solar-validation-ladder.md",
         "docs/website/validation/benchmark-plan.md",
         "docs/website/planning/roadmap.md",
         "docs/website/planning/milestones.md",
         "docs/website/planning/design-principles.md",
+        "docs/website/planning/solar-first-strategy.md",
+        "docs/website/planning/julia-dependency-strategy.md",
         "docs/website/planning/migration-notes-from-stellax.md",
+        "docs/website/development/development-guide.md",
+        "docs/website/development/progress-summary.md",
+        "docs/website/development/changelog.md",
+        "docs/website/development/backlog.md",
+        "docs/website/development/issues.md",
         "docs/website/contributing/contributing.md",
         "docs/website/contributing/coding-style.md",
         "docs/website/contributing/testing.md",
@@ -70,6 +78,21 @@
         "docs/website/architecture/state-ownership.md" => [
             "`StellarModel`",
             "internal transitional scaffold",
+        ],
+        "docs/website/development/progress-summary.md" => [
+            "2026-03-29",
+            "`StellarModel`",
+            "Next step",
+        ],
+        "docs/website/development/backlog.md" => [
+            "Next up",
+            "Queued after that",
+            "Not backlog items yet",
+        ],
+        "docs/website/development/issues.md" => [
+            "Active issues",
+            "Bootstrap residual is still pedagogical",
+            "Evolution remains intentionally stubbed",
         ],
     )
 

@@ -1,5 +1,7 @@
 # Milestones
 
+Read these milestones as architecture checkpoints, not release-marketing labels. A milestone matters in ASTRA only if it changes what the code can honestly claim to own or validate.
+
 ## Milestone 0
 
 - package scaffold
@@ -15,16 +17,23 @@
 
 ## Milestone 2
 
-- first toy hydrostatic pipeline with meaningful diagnostics
+- state/model ownership refactor
+- contract-aware tests
+- explicit residual ordering and solve-owned structure block
 
 ## Milestone 3
 
-- classical baseline solver
+- classical baseline structure solver
+- EOS and opacity closures serving a real hydrostatic residual
+- baseline MLT-based convection closure
 
 ## Milestone 4
 
-- minimal evolution
+- initialization lane: low-mass PMS seed plus relaxation
+- minimal evolution with gravothermal bookkeeping
+- ZAMS detection by energy partition
 
 ## Milestone 5
 
-- Entropy-DAE experimental formulation and comparison framework
+- solar-age compact target-vector validation
+- later, Entropy-DAE experimental formulation and comparison framework

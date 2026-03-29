@@ -28,6 +28,9 @@ That makes ASTRA a companion code and a reference engine, not a replacement.
 - Read [Architecture](architecture/overview.md) if you want to understand how ASTRA separates physics, numerics, and orchestration.
 - Read [Validation](validation/philosophy.md) if you want to know what the current scaffold proves and what it does not.
 - Read [Planning](planning/roadmap.md) if you want the scientific sequence from bootstrap to classical baseline and later method-comparison work.
+- Read [Development](development/development-guide.md) if you want to know what changed recently, what is blocked, and what is queued next.
+
+If you are new to the repo, read the site in that order. ASTRA's docs are meant to teach how to think about the codebase, not just where the files live.
 
 ## Current status
 

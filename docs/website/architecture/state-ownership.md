@@ -25,6 +25,10 @@ Approved centering:
 
 This is a MESA-like staggered arrangement and is physically natural for a mass-coordinate 1D stellar solver.
 
+### What to look for in code
+
+When you read the implementation, the key ownership question is simple: what gets packed into the Newton vector? In the current contract, only `model.structure` should cross that boundary. `model.composition` and `model.evolution` should remain attached to the persistent model even when the solver updates the structure block.
+
 ## CompositionState
 
 For the first solar evolution lane, `CompositionState` should store explicit cell-centered bulk composition arrays:
