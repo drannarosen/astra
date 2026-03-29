@@ -1,0 +1,6 @@
+.DS_Store
+.julia
+.myst
+.worktrees/
+_build/
+Manifest.toml.bak

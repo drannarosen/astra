@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Julia
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: "1.11"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install MyST
+        run: npm install -g mystmd
+
+      - name: Instantiate Julia environment
+        run: julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.precompile(); using ASTRA'
+
+      - name: Check formatting
+        run: |
+          julia -e 'using Pkg; Pkg.activate(temp=true); Pkg.add("JuliaFormatter"); using JuliaFormatter; format(".")'
+          git diff --exit-code
+
+      - name: Run tests
+        run: julia --project=. -e 'using Pkg; Pkg.test()'
+
+      - name: Run examples
+        run: julia --project=. scripts/run_examples.jl
+
+      - name: Build docs
+        run: |
+          cd docs/website
+          myst build --site --html --strict

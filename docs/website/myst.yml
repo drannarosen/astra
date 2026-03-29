@@ -1,0 +1,67 @@
+version: 1
+
+project:
+  title: ASTRA
+  description: Adaptive STellar Research Architecture
+  authors:
+    - name: Anna Rosen
+  license: BSD-3-Clause
+  toc:
+    - file: index.md
+    - title: Getting Started
+      children:
+        - file: getting-started/installation.md
+        - file: getting-started/quickstart.md
+        - file: getting-started/developer-setup.md
+    - title: Architecture
+      children:
+        - file: architecture/overview.md
+        - file: architecture/package-layout.md
+        - file: architecture/data-model.md
+        - file: architecture/solver-architecture.md
+        - file: architecture/formulation-interface.md
+    - title: Physics
+      children:
+        - file: physics/stellar-structure.md
+        - file: physics/eos.md
+        - file: physics/opacity.md
+        - file: physics/nuclear.md
+        - file: physics/convection.md
+        - file: physics/boundary-conditions.md
+    - title: Numerics
+      children:
+        - file: numerics/residuals.md
+        - file: numerics/jacobians.md
+        - file: numerics/nonlinear-solvers.md
+        - file: numerics/linear-solvers.md
+        - file: numerics/timestepping.md
+        - file: numerics/diagnostics.md
+    - title: Formulations
+      children:
+        - file: formulations/classical-baseline.md
+        - file: formulations/entropy-dae.md
+        - file: formulations/method-comparison.md
+    - title: Tutorials
+      children:
+        - file: tutorials/first-hydrostatic-model.md
+        - file: tutorials/reading-the-codebase.md
+        - file: tutorials/adding-a-microphysics-module.md
+    - title: Validation
+      children:
+        - file: validation/philosophy.md
+        - file: validation/hydrostatic-tests.md
+        - file: validation/jacobian-checks.md
+        - file: validation/benchmark-plan.md
+    - title: Planning
+      children:
+        - file: planning/roadmap.md
+        - file: planning/milestones.md
+        - file: planning/design-principles.md
+        - file: planning/migration-notes-from-stellax.md
+    - title: Contributing
+      children:
+        - file: contributing/contributing.md
+        - file: contributing/coding-style.md
+        - file: contributing/testing.md
+        - file: contributing/documentation-style.md
+    - file: glossary.md
