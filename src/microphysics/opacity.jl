@@ -19,3 +19,12 @@ function opacity_temperature_derivative(
     κ = opacity(density_g_cm3, temperature_k, composition).opacity_cm2_g
     return -3.5 * κ / clip_positive(temperature_k)
 end
+
+function opacity_density_derivative(
+    opacity::KramersOpacity,
+    density_g_cm3::Real,
+    temperature_k::Real,
+    composition::Composition,
+)
+    return 4.0e25 * max(composition.Z, 1.0e-3) * temperature_k^(-3.5)
+end

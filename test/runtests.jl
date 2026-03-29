@@ -17,6 +17,7 @@ using ASTRA
     include("test_convergence_basin.jl")
     include("test_local_derivative_validation.jl")
     include("test_block_jacobian.jl")
+    include("test_jacobian_fidelity_audit.jl")
     include("test_solver_boundary_api.jl")
     include("test_solver_progress_diagnostics.jl")
     include("test_default_newton_progress.jl")

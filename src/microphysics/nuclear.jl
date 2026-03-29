@@ -19,3 +19,13 @@ function nuclear_temperature_derivative(
     ε = nuclear(density_g_cm3, temperature_k, composition).energy_rate_erg_g_s
     return 4.0 * ε / clip_positive(temperature_k)
 end
+
+function nuclear_density_derivative(
+    nuclear::ProtonProtonToyNuclear,
+    density_g_cm3::Real,
+    temperature_k::Real,
+    composition::Composition,
+)
+    scaled_temperature = temperature_k / 1.0e6
+    return 1.07e-7 * composition.X^2 * scaled_temperature^4
+end

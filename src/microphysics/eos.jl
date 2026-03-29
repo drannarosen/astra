@@ -33,3 +33,13 @@ function pressure_temperature_derivative(
     radiation_term = 4.0 * RADIATION_CONSTANT_CGS * temperature_k^3 / 3.0
     return gas_term + radiation_term
 end
+
+function pressure_density_derivative(
+    eos::IdealGasRadiationEOS,
+    density_g_cm3::Real,
+    temperature_k::Real,
+    composition::Composition,
+)
+    mu = mean_molecular_weight(composition)
+    return BOLTZMANN_CONSTANT_CGS * temperature_k / (mu * HYDROGEN_MASS_CGS)
+end
