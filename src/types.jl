@@ -86,6 +86,107 @@ struct StellarGrid
 end
 
 """
+    StructureState(grid, log_radius_face_cm, luminosity_face_erg_s,
+                   log_temperature_cell_k, log_density_cell_g_cm3)
+
+Persistent structure block for ASTRA's bootstrap stellar model. This is the
+canonical solve-owned state block for the classical lane.
+"""
+struct StructureState
+    grid::StellarGrid
+    log_radius_face_cm::Vector{Float64}
+    luminosity_face_erg_s::Vector{Float64}
+    log_temperature_cell_k::Vector{Float64}
+    log_density_cell_g_cm3::Vector{Float64}
+
+    function StructureState(
+        grid::StellarGrid,
+        log_radius_face_cm::Vector{Float64},
+        luminosity_face_erg_s::Vector{Float64},
+        log_temperature_cell_k::Vector{Float64},
+        log_density_cell_g_cm3::Vector{Float64},
+    )
+        n = grid.n_cells
+        length(log_radius_face_cm) == n + 1 || throw(
+            ArgumentError("log_radius_face_cm must have n_cells + 1 entries."),
+        )
+        length(luminosity_face_erg_s) == n + 1 || throw(
+            ArgumentError("luminosity_face_erg_s must have n_cells + 1 entries."),
+        )
+        length(log_temperature_cell_k) == n || throw(
+            ArgumentError("log_temperature_cell_k must have n_cells entries."),
+        )
+        length(log_density_cell_g_cm3) == n || throw(
+            ArgumentError("log_density_cell_g_cm3 must have n_cells entries."),
+        )
+        return new(
+            grid,
+            log_radius_face_cm,
+            luminosity_face_erg_s,
+            log_temperature_cell_k,
+            log_density_cell_g_cm3,
+        )
+    end
+end
+
+"""
+    CompositionState(hydrogen_mass_fraction_cell, helium_mass_fraction_cell,
+                     metal_mass_fraction_cell)
+
+Persistent cell-centered bulk composition block for ASTRA's bootstrap stellar
+model.
+"""
+struct CompositionState
+    hydrogen_mass_fraction_cell::Vector{Float64}
+    helium_mass_fraction_cell::Vector{Float64}
+    metal_mass_fraction_cell::Vector{Float64}
+
+    function CompositionState(
+        hydrogen_mass_fraction_cell::Vector{Float64},
+        helium_mass_fraction_cell::Vector{Float64},
+        metal_mass_fraction_cell::Vector{Float64},
+    )
+        n = length(hydrogen_mass_fraction_cell)
+        length(helium_mass_fraction_cell) == n || throw(
+            ArgumentError("helium_mass_fraction_cell must match hydrogen length."),
+        )
+        length(metal_mass_fraction_cell) == n || throw(
+            ArgumentError("metal_mass_fraction_cell must match hydrogen length."),
+        )
+        return new(
+            hydrogen_mass_fraction_cell,
+            helium_mass_fraction_cell,
+            metal_mass_fraction_cell,
+        )
+    end
+end
+
+"""
+    EvolutionState(age_s, timestep_s, previous_timestep_s, accepted_steps, rejected_steps)
+
+Persistent evolution-metadata block for ASTRA's bootstrap stellar model.
+"""
+struct EvolutionState
+    age_s::Float64
+    timestep_s::Float64
+    previous_timestep_s::Float64
+    accepted_steps::Int
+    rejected_steps::Int
+end
+
+"""
+    StellarModel(structure, composition, evolution)
+
+Top-level persistent model container bundling ASTRA's explicit state-ownership
+blocks.
+"""
+struct StellarModel{S,C,E}
+    structure::S
+    composition::C
+    evolution::E
+end
+
+"""
     MicrophysicsBundle(eos, opacity, nuclear, convection)
 
 Type-stable container for ASTRA's microphysics callables.

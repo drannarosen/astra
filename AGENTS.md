@@ -12,6 +12,7 @@ ASTRA is a Julia-first forward-model laboratory for stellar structure and evolut
 ## Engineering contract
 
 - Keep the public API intentionally small.
+- Treat `StellarModel` with explicit `StructureState`, `CompositionState`, and `EvolutionState` blocks as the current public ownership contract.
 - Keep physics, numerics, and orchestration separated.
 - Use cgs `Float64` values in the solver path.
 - Prefer immutable structs and type-stable parametric containers.

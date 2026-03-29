@@ -20,6 +20,7 @@ This repository bootstrap covers Milestone 0 and the beginning of Milestone 1:
 - a root Julia package scaffold,
 - a pedagogical MystMD documentation site,
 - a modular `src/` tree,
+- an explicit `StellarModel` contract with `StructureState`, `CompositionState`, and `EvolutionState`,
 - tests and examples for the scaffolded interfaces,
 - planning and contributor guidance,
 - toy physics and solver pathways that are intentionally honest about being placeholders.

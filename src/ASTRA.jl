@@ -7,7 +7,10 @@ export StellarParameters,
     GridConfig,
     SolverConfig,
     StellarGrid,
-    StellarState,
+    StructureState,
+    CompositionState,
+    EvolutionState,
+    StellarModel,
     MicrophysicsBundle,
     StructureProblem,
     SolveResult,
@@ -60,7 +63,7 @@ using LinearAlgebra
 using ..ASTRA: SolveResult,
     StructureProblem,
     StructureDiagnostics,
-    StellarState,
+    StellarModel,
     assemble_structure_residual,
     build_diagnostics,
     finite_difference_jacobian,
@@ -74,7 +77,7 @@ include("solvers/nonlinear_solvers.jl")
 end
 
 module Evolution
-using ..ASTRA: StructureProblem, StellarState
+using ..ASTRA: StellarModel, StructureProblem
 
 include("evolution/timestepping.jl")
 include("evolution/controllers.jl")
@@ -128,12 +131,12 @@ stellar structure solve.
 """
 function solve_structure(
     problem::StructureProblem;
-    state::Union{Nothing,StellarState} = nothing,
+    state::Union{Nothing,StellarModel} = nothing,
 )
-    working_state = isnothing(state) ? initialize_state(problem) : state
+    working_model = isnothing(state) ? initialize_state(problem) : state
 
     if problem.formulation isa ClassicalHenyeyFormulation
-        return Solvers.solve_nonlinear_system(problem, working_state)
+        return Solvers.solve_nonlinear_system(problem, working_model)
     elseif problem.formulation isa EntropyDAEFormulation
         throw(ArgumentError("Entropy-DAE is intentionally stubbed during ASTRA bootstrap."))
     else

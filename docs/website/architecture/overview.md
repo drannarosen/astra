@@ -23,4 +23,4 @@ The key near-term contract is:
 - an **evolution block** owned by timestep-aware orchestration,
 - and **derived closures** owned by microphysics rather than by the state vector itself.
 
-That design is stricter than the current bootstrap implementation, which still uses a single `StellarState` scaffold. The handbook should therefore be read as the canonical architecture target, while the current code is the transitional implementation.
+That design now appears directly in the bootstrap implementation through `StellarModel`, `StructureState`, `CompositionState`, and `EvolutionState`. The remaining internal `StellarState` scaffold is transitional legacy support rather than the current public architecture.

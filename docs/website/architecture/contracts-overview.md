@@ -18,15 +18,17 @@ That is especially important for the first serious science target: a solar-mass 
 
 ## Current ASTRA status
 
-The current codebase still contains a single bootstrap `StellarState` type. That is acceptable as a scaffold, but it should be understood as transitional rather than final.
+The current codebase now exposes an explicit `StellarModel` with separate `StructureState`, `CompositionState`, and `EvolutionState` blocks.
 
-The approved near-term architecture is to think in terms of three explicit conceptual blocks:
+An internal bootstrap `StellarState` helper still exists only as transitional legacy scaffolding for the old solver path. It is not part of the public ownership contract.
+
+The approved near-term architecture now appears directly in code as three explicit conceptual blocks:
 
 - `StructureState`
 - `CompositionState`
 - `EvolutionState`
 
-The current implementation does not yet expose those as separate Julia types, but the handbook now treats that split as the canonical design target.
+The handbook should therefore be read as a description of the current public contract, not merely of a future target.
 
 ## Contract layers
 

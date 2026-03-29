@@ -1,7 +1,7 @@
 """
     StellarState
 
-Discrete bootstrap state for ASTRA's structure solver.
+Internal transitional bootstrap state for ASTRA's legacy structure solver path.
 """
 struct StellarState
     grid::StellarGrid
@@ -77,16 +77,20 @@ function _analytic_profile_state(
         parameters.center_density_guess_g_cm3 .* (1.0 .- 0.92 .* cell_fraction) .+ 1.0e-7
 
     n = grid.n_cells
-    return StellarState(
+    structure = StructureState(
         grid,
         positive_log.(radius_face_cm),
         luminosity_face_erg_s,
         positive_log.(temperature_cell_k),
         positive_log.(density_cell_g_cm3),
+    )
+    composition_state = CompositionState(
         fill(composition.X, n),
         fill(composition.Y, n),
         fill(composition.Z, n),
     )
+    evolution = EvolutionState(0.0, 0.0, 0.0, 0, 0)
+    return StellarModel(structure, composition_state, evolution)
 end
 
 toy_reference_state(problem::StructureProblem) =
@@ -109,14 +113,14 @@ end
 initialize_state(problem::StructureProblem) =
     initialize_state(problem.parameters, problem.composition, problem.grid)
 
-pack_state(state::StellarState) = vcat(
+pack_state(state::StructureState) = vcat(
     state.log_radius_face_cm,
     state.luminosity_face_erg_s,
     state.log_temperature_cell_k,
     state.log_density_cell_g_cm3,
 )
 
-function unpack_state(template::StellarState, values::AbstractVector{<:Real})
+function unpack_state(template::StructureState, values::AbstractVector{<:Real})
     n = template.grid.n_cells
     expected = 4 * n + 2
     length(values) == expected || throw(
@@ -127,14 +131,11 @@ function unpack_state(template::StellarState, values::AbstractVector{<:Real})
     i1 = n + 1
     i2 = 2 * (n + 1)
     i3 = i2 + n
-    return StellarState(
+    return StructureState(
         template.grid,
         values_f64[1:i1],
         values_f64[(i1 + 1):i2],
         values_f64[(i2 + 1):i3],
         values_f64[(i3 + 1):end],
-        copy(template.hydrogen_mass_fraction_cell),
-        copy(template.helium_mass_fraction_cell),
-        copy(template.metal_mass_fraction_cell),
     )
 end

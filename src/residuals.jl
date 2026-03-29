@@ -1,10 +1,11 @@
-function assemble_structure_residual(problem::StructureProblem, state::StellarState)
-    reference = toy_reference_state(problem)
+function assemble_structure_residual(problem::StructureProblem, model::StellarModel)
+    state = model.structure
+    reference = toy_reference_state(problem).structure
     n = problem.grid.n_cells
     residual = Vector{Float64}(undef, 4 * n + 2)
     index = 1
 
-    center = center_boundary_residual(problem, state)
+    center = center_boundary_residual(problem, model)
     residual[index:(index + 1)] = center
     index += 2
 
@@ -19,7 +20,7 @@ function assemble_structure_residual(problem::StructureProblem, state::StellarSt
         index += 4
     end
 
-    surface = surface_boundary_residual(problem, state)
+    surface = surface_boundary_residual(problem, model)
     residual[index:(index + 3)] = surface
     return residual
 end

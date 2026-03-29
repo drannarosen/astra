@@ -5,7 +5,7 @@ Placeholder mutation-oriented evolution entry point for ASTRA's future
 time-dependent workflows.
 """
 function step_evolution!(
-    state::StellarState,
+    state::StellarModel,
     problem::StructureProblem,
     controller::AbstractTimestepController = FixedTimestepController(),
 )

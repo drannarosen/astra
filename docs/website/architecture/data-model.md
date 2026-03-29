@@ -7,7 +7,10 @@ ASTRA's current implementation is centered on small immutable structs:
 - `GridConfig`
 - `SolverConfig`
 - `StellarGrid`
-- `StellarState`
+- `StructureState`
+- `CompositionState`
+- `EvolutionState`
+- `StellarModel`
 - `MicrophysicsBundle`
 - `StructureProblem`
 - `StructureDiagnostics`
@@ -16,15 +19,13 @@ That list describes the **current code**, not the final ownership model.
 
 ## Transitional implementation versus canonical architecture
 
-The bootstrap package still uses a single `StellarState` object because it was the smallest honest scaffold for package bring-up.
+The bootstrap package now exposes the explicit ownership split directly in code.
 
-The approved architecture now treats that flat state as transitional. The canonical conceptual split is:
+An internal `StellarState` helper still exists only as transitional legacy scaffolding. The canonical split is:
 
 - `StructureState`
 - `CompositionState`
 - `EvolutionState`
-
-ASTRA does not yet expose those exact Julia types, but the rest of the architecture and docs should now be read through that lens.
 
 ## Why immutable structs
 

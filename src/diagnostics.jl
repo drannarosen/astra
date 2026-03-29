@@ -11,14 +11,20 @@ end
 
 function build_diagnostics(
     problem::StructureProblem,
-    state::StellarState,
+    model::StellarModel,
     residual::AbstractVector{<:Real},
     iterations::Integer,
     converged::Bool,
 )
+    state = model.structure
     density = exp(state.log_density_cell_g_cm3[1])
     temperature = exp(state.log_temperature_cell_k[1])
-    eos_state = problem.microphysics.eos(density, temperature, problem.composition)
+    composition = Composition(
+        model.composition.hydrogen_mass_fraction_cell[1],
+        model.composition.helium_mass_fraction_cell[1],
+        model.composition.metal_mass_fraction_cell[1],
+    )
+    eos_state = problem.microphysics.eos(density, temperature, composition)
     notes = String[
         "Bootstrap solve uses an analytic reference-profile residual system.",
         "Classical baseline is canonical; Entropy-DAE remains a documented stub.",

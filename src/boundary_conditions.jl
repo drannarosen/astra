@@ -1,13 +1,15 @@
-function center_boundary_residual(problem::StructureProblem, state::StellarState)
-    reference = toy_reference_state(problem)
+function center_boundary_residual(problem::StructureProblem, model::StellarModel)
+    state = model.structure
+    reference = toy_reference_state(problem).structure
     return Float64[
         state.log_radius_face_cm[1] - reference.log_radius_face_cm[1],
         state.luminosity_face_erg_s[1] - reference.luminosity_face_erg_s[1],
     ]
 end
 
-function surface_boundary_residual(problem::StructureProblem, state::StellarState)
-    reference = toy_reference_state(problem)
+function surface_boundary_residual(problem::StructureProblem, model::StellarModel)
+    state = model.structure
+    reference = toy_reference_state(problem).structure
     n = problem.grid.n_cells
     return Float64[
         state.log_radius_face_cm[end] - reference.log_radius_face_cm[end],

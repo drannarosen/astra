@@ -10,7 +10,7 @@ The approved conceptual model is:
 - `CompositionState`
 - `EvolutionState`
 
-The current code still uses a single bootstrap `StellarState`, but that should be read as an implementation scaffold, not as the long-term ownership model.
+The public model contract now uses `StellarModel` to bundle those three blocks. The old bootstrap `StellarState` remains only as an internal transitional scaffold and should not be treated as the public ownership model.
 
 ## StructureState
 

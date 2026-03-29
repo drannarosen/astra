@@ -1,3 +1,8 @@
+println("== basic_structure_demo ==")
 include(joinpath(@__DIR__, "..", "examples", "basic_structure_demo.jl"))
+println()
+println("== inspect_state_layout ==")
 include(joinpath(@__DIR__, "..", "examples", "inspect_state_layout.jl"))
+println()
+println("== toy_residual_demo ==")
 include(joinpath(@__DIR__, "..", "examples", "toy_residual_demo.jl"))

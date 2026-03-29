@@ -45,4 +45,36 @@
     ]
 
     @test all(path -> isfile(joinpath(root, path)), expected)
+
+    contract_docs = Dict(
+        "docs/website/getting-started/quickstart.md" => [
+            "`StellarModel`",
+            "result.state.structure",
+            "result.state.composition",
+        ],
+        "docs/website/tutorials/first-hydrostatic-model.md" => [
+            "result.state.structure",
+            "result.state.composition",
+            "result.state.evolution",
+        ],
+        "docs/website/tutorials/reading-the-codebase.md" => [
+            "`StellarModel`",
+            "`StructureState`",
+            "`CompositionState`",
+            "`EvolutionState`",
+        ],
+        "docs/website/architecture/contracts-overview.md" => [
+            "`StellarModel`",
+            "current public contract",
+        ],
+        "docs/website/architecture/state-ownership.md" => [
+            "`StellarModel`",
+            "internal transitional scaffold",
+        ],
+    )
+
+    for (path, needles) in contract_docs
+        content = read(joinpath(root, path), String)
+        @test all(needle -> occursin(needle, content), needles)
+    end
 end
