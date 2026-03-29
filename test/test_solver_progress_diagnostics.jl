@@ -11,5 +11,12 @@
     @test last(result.diagnostics.residual_history) ≈ result.diagnostics.residual_norm
     @test result.diagnostics.accepted_step_count >= 0
     @test result.diagnostics.rejected_trial_count >= 0
-    @test length(result.diagnostics.damping_history) == result.diagnostics.accepted_step_count
+    @test length(result.diagnostics.damping_history) >= result.diagnostics.accepted_step_count
+    @test all(0.0 < damping <= problem.solver.damping for damping in result.diagnostics.damping_history)
+
+    if !result.diagnostics.converged && result.diagnostics.accepted_step_count == 0
+        @test !isempty(result.diagnostics.damping_history)
+        @test result.diagnostics.rejected_trial_count > 0
+        @test first(result.diagnostics.damping_history) ≈ problem.solver.damping
+    end
 end

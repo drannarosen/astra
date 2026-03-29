@@ -17,8 +17,10 @@ function _accepted_trial_step(
     base_norm = residual_norm(residual)
     damping = problem.solver.damping
     rejected_trials = 0
+    damping_history = Float64[]
 
     while damping >= problem.solver.minimum_damping
+        push!(damping_history, damping)
         next_vector = base_vector .+ damping .* update
         next_structure = unpack_state(model.structure, next_vector)
         next_model = StellarModel(next_structure, model.composition, model.evolution)
@@ -30,11 +32,12 @@ function _accepted_trial_step(
                 "Backtracking accepted damping factor $(damping) after rejecting a larger trial step.",
             ] : String[]
             return (
+                accepted = true,
                 model = next_model,
                 residual = next_residual,
                 notes = notes,
                 rejected_trials = rejected_trials,
-                accepted_damping = damping,
+                damping_history = damping_history,
             )
         end
 
@@ -42,7 +45,16 @@ function _accepted_trial_step(
         damping *= 0.5
     end
 
-    return nothing
+    return (
+        accepted = false,
+        model = model,
+        residual = residual,
+        notes = String[
+            "Backtracking exhausted without an acceptable damping factor.",
+        ],
+        rejected_trials = rejected_trials,
+        damping_history = damping_history,
+    )
 end
 
 function solve_nonlinear_system(problem::StructureProblem, initial_model::StellarModel)
@@ -129,7 +141,10 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
         end
 
         trial_step = _accepted_trial_step(problem, model, residual, update)
-        if isnothing(trial_step)
+        append!(notes, trial_step.notes)
+        rejected_trial_count += trial_step.rejected_trials
+        append!(damping_history, trial_step.damping_history)
+        if !trial_step.accepted
             diagnostics = build_diagnostics(
                 problem,
                 model,
@@ -141,18 +156,12 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 rejected_trial_count,
                 iteration,
                 false,
-                vcat(
-                    notes,
-                    ["No residual-reducing trial step was found down to damping factor $(problem.solver.minimum_damping)."],
-                ),
+                notes,
             )
             return SolveResult(model, diagnostics)
         end
 
-        append!(notes, trial_step.notes)
-        rejected_trial_count += trial_step.rejected_trials
         accepted_step_count += 1
-        push!(damping_history, trial_step.accepted_damping)
         model = trial_step.model
         residual = trial_step.residual
         push!(residual_history, residual_norm(residual))
