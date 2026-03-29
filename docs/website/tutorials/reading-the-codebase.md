@@ -7,8 +7,9 @@ If you are new to Julia, the most important reading habit is to follow the modul
 1. `src/ASTRA.jl`
 2. `src/config.jl` and `src/types.jl`
 3. `src/grid.jl` and `src/state.jl`
-4. `src/microphysics/`
-5. `src/residuals.jl`, `src/jacobians.jl`, and `src/solvers/`
-6. `src/formulations/`
+4. `docs/website/architecture/contracts-overview.md`
+5. `src/microphysics/`
+6. `src/residuals.jl`, `src/jacobians.jl`, and `src/solvers/`
+7. `src/formulations/`
 
 That order mirrors ownership: data first, then closures, then numerics, then method dispatch.

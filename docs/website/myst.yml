@@ -16,6 +16,9 @@ project:
     - title: Architecture
       children:
         - file: architecture/overview.md
+        - file: architecture/contracts-overview.md
+        - file: architecture/state-ownership.md
+        - file: architecture/residual-ownership.md
         - file: architecture/package-layout.md
         - file: architecture/data-model.md
         - file: architecture/solver-architecture.md
