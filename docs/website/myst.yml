@@ -72,6 +72,8 @@ project:
       title: Planning
     - children:
         - file: development/development-guide.md
+        - file: development/checklists.md
+        - file: development/checklists/solar-first-lane.md
         - file: development/progress-summary.md
         - file: development/changelog.md
         - file: development/backlog.md

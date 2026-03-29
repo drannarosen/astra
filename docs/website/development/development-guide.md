@@ -15,6 +15,8 @@ Use [Progress Summary](progress-summary.md) for dated executive TL;DR entries. E
 
 Use [Changelog](changelog.md) for a durable record of user-visible or architecture-significant repository changes.
 
+Use [Checklists](checklists.md) for developer-facing lane tracking where approval, implementation, verification, and intentional deferrals should stay visible in one place.
+
 Use [Backlog](backlog.md) for planned work that is accepted as real but not yet implemented.
 
 Use [Issues](issues.md) for active risks, unresolved questions, known limitations, or blockers that deserve visibility.

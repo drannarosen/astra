@@ -43,6 +43,8 @@
         "docs/website/planning/differentiable-astra-roadmap.md",
         "docs/website/planning/migration-notes-from-stellax.md",
         "docs/website/development/development-guide.md",
+        "docs/website/development/checklists.md",
+        "docs/website/development/checklists/solar-first-lane.md",
         "docs/website/development/progress-summary.md",
         "docs/website/development/changelog.md",
         "docs/website/development/backlog.md",
@@ -91,6 +93,16 @@
             "`StellarModel`",
             "Next step",
             "First classical residual minimal slice",
+        ],
+        "docs/website/development/checklists.md" => [
+            "developer-facing checklists",
+            "Current checklists",
+            "Solar-First Lane Checklist",
+        ],
+        "docs/website/development/checklists/solar-first-lane.md" => [
+            "Solar-First Lane Checklist",
+            "Tier 0 structural sanity checks implemented",
+            "Entropy-DAE comparison lane",
         ],
         "docs/website/physics/stellar-structure.md" => [
             "first classical residual",
