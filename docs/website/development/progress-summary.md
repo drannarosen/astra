@@ -158,3 +158,34 @@ What this still does not prove:
 Next step:
 
 - audit the Jacobian blocks and regularization path that still force the solver into one accepted step plus hundreds of rejected trials.
+
+### Jacobian fidelity audit
+
+ASTRA's classical Jacobian now carries explicit local partials for the center radius/luminosity rows and the interior geometry/luminosity rows, while the remaining hydrostatic and transport rows stay on a block-local central-difference fallback path. The default 24-cell public example now takes `8` accepted Newton steps, lowers the residual from `2.1962008371612166e22` to `1.1903032914682583e19`, and reduces rejected trials from the old `380` regime down to `289`.
+
+Why this mattered:
+
+- it replaced the cleanest residual rows with exact local derivatives that are now validated against independent local finite differences,
+- it kept the remaining fallback rows narrow and explicit instead of pretending the whole Jacobian is analytic already,
+- and it improved the public Newton trajectory without changing the physics stack, solve boundary, or outer nonlinear algorithm.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_local_derivative_validation.jl")'`
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_jacobian_fidelity_audit.jl")'`
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_block_jacobian.jl"); include("test/test_default_newton_progress.jl")'`
+- `~/.juliaup/bin/julia --project=. scripts/run_examples.jl`
+
+What this still does not prove:
+
+- the public examples still do not reach `converged = true`,
+- hydrostatic, transport, and surface rows are still not on a fully analytic Jacobian path,
+- and this remains a placeholder-microphysics bootstrap lane rather than a trustworthy solar model.
+
+Small correction applied during this slice:
+
+- a full analytic replacement of the interior hydrostatic and transport rows regressed the 24-cell public example, so the accepted implementation keeps those rows on block-local central-difference fallback while retaining the exact center/geometry/luminosity rows.
+
+Next step:
+
+- tighten the remaining fallback rows or the physical closure stack in a way that is checkpointed against the stronger multi-step public Newton path, rather than reverting to one-step progress claims.

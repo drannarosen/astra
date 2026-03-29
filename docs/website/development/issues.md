@@ -6,7 +6,7 @@ This page tracks known limitations and unresolved questions that should stay vis
 
 ### Classical residual convergence basin is still provisional
 
-ASTRA's default classical initializer now includes center asymptotic targets and solver-side luminosity conditioning, and the solve no longer stalls at iteration 0. The public 24-cell example now takes one accepted step with damping `0.03125` and lowers the residual from `2.1962008371612166e22` to `2.1275638477172188e22`, but it still returns `converged = false` after `380` rejected trials. The remaining blocker is therefore no longer "can ASTRA move at all?" but "why is the residual-reducing direction still so narrow on the current Jacobian/update path even after center cleanup and column scaling?"
+ASTRA's default classical initializer now includes center asymptotic targets, solver-side luminosity conditioning, and a higher-fidelity structured Jacobian. The public 24-cell example now takes `8` accepted steps and lowers the residual from `2.1962008371612166e22` to `1.1903032914682583e19`, but it still returns `converged = false` after `289` rejected trials. The remaining blocker is no longer "can ASTRA move at all?" but "which remaining fallback rows or placeholder closures still prevent the public path from finishing the solve cleanly?"
 
 ### Surface closure remains provisional
 
@@ -18,7 +18,7 @@ The current outer boundary uses a simple guessed surface density rather than a p
 
 ### Validation is still early-stage
 
-The current test suite proves package integrity, ownership boundaries, example integrity, the first classical residual row semantics, one local derivative validation for the radiative-temperature-gradient helper, the block-aware Jacobian contract, and explicit solve-boundary diagnostics. It does not yet prove a trustworthy solar lane or a converged classical nonlinear solve.
+The current test suite proves package integrity, ownership boundaries, example integrity, exact-row local derivative validation for the current toy helper kernels, the structured Jacobian audit surface, and explicit solve-boundary diagnostics. It does not yet prove a trustworthy solar lane or a converged classical nonlinear solve.
 
 ## Questions to keep asking
 
