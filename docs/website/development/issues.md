@@ -6,7 +6,7 @@ This page tracks known limitations and unresolved questions that should stay vis
 
 ### Classical residual convergence basin is still provisional
 
-ASTRA's default classical initializer now lands at a materially smaller residual norm than the first residual slice by building a geometry-consistent shell profile and a source-matched toy luminosity profile. The solve now also uses a block-aware Jacobian path, but the bootstrap examples still stall at iteration 0 with `converged = false`. The remaining blocker is now the quality of the Newton update and the fidelity of the assembled Jacobian, not the old missing-contract or missing-diagnostics problems.
+ASTRA's default classical initializer now lands at a materially smaller residual norm than the first residual slice, and the solve no longer stalls at iteration 0. The public 24-cell example now takes one accepted step and lowers the residual slightly, but it still returns `converged = false` after `219` rejected trials. The remaining blocker is therefore no longer "can ASTRA move at all?" but "why is the residual-reducing direction so narrow on the current Jacobian/update path?"
 
 ### Surface closure remains provisional
 

@@ -104,3 +104,29 @@ What this still does not prove:
 Next step:
 
 - make the classical Newton update actually converge from the improved seed, with the next blocker now centered on update quality and Jacobian fidelity rather than on missing ownership, helper, or API contracts.
+
+### Default Newton progress reporting
+
+ASTRA's public default classical solve now reports real Newton-progress evidence instead of the old iteration-0 stall story. The default 24-cell example takes one accepted step, lowers the residual norm from `1.5669943212166535e22` to `1.5669942857059996e22`, records `219` rejected trials, and reports damping history explicitly as `[0.001953125]`.
+
+Why this mattered:
+
+- it makes the public example and docs consistent with the verified solver behavior,
+- it keeps the one-step progress claim falsifiable instead of hand-wavy,
+- and it shows that the remaining blocker is narrow-step update quality rather than missing progress diagnostics.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_default_newton_progress.jl")'`
+- `~/.juliaup/bin/julia --project=. scripts/run_examples.jl`
+
+What this still does not prove:
+
+- the solve still does not reach `converged = true`,
+- the accepted-step residual history is monotonic so far only in the trivial sense that there is one accepted step,
+- this is not yet evidence of robust basin control,
+- and the Jacobian/update direction is still weak enough to require very heavy regularization and many rejected trials.
+
+Next step:
+
+- run the full package/docs verification and then record the slice as provisional, with Jacobian fidelity and stronger globalization still the next numerical bottleneck.
