@@ -57,6 +57,7 @@ project:
         - file: planning/roadmap.md
         - file: planning/milestones.md
         - file: planning/design-principles.md
+        - file: planning/julia-dependency-strategy.md
         - file: planning/migration-notes-from-stellax.md
     - title: Contributing
       children:
