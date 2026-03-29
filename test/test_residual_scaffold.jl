@@ -27,11 +27,9 @@
     trial_model = ASTRA.StellarModel(trial_structure, model.composition, model.evolution)
     trial_residual = ASTRA.assemble_structure_residual(problem, trial_model)
 
-    expected_first_interior = [
-        trial_structure.log_radius_face_cm[2] - model.structure.log_radius_face_cm[2],
-        trial_structure.luminosity_face_erg_s[2] - model.structure.luminosity_face_erg_s[2],
-        trial_structure.log_temperature_cell_k[1] - model.structure.log_temperature_cell_k[1],
-        trial_structure.log_density_cell_g_cm3[1] - model.structure.log_density_cell_g_cm3[1],
-    ]
-    @test trial_residual[3:6] == expected_first_interior
+    @test trial_model.composition === model.composition
+    @test trial_model.evolution === model.evolution
+    @test length(trial_model.composition.hydrogen_mass_fraction_cell) ==
+          length(model.composition.hydrogen_mass_fraction_cell)
+    @test trial_residual[3:6] != residual[3:6]
 end

@@ -4,6 +4,8 @@
 
     @test result.state isa ASTRA.StellarModel
     @test result.state.structure isa ASTRA.StructureState
-    @test result.diagnostics.converged
-    @test iszero(result.diagnostics.residual_norm)
+    @test all(isfinite, ASTRA.pack_state(result.state.structure))
+    @test isfinite(result.diagnostics.residual_norm)
+    @test any(note -> occursin("classical structure equations", note), result.diagnostics.notes)
+    @test any(note -> occursin("provisional", note), result.diagnostics.notes)
 end

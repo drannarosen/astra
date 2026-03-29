@@ -21,7 +21,13 @@ export StellarParameters,
     initialize_state,
     build_grid,
     solve_structure,
-    step_evolution!
+    step_evolution!,
+    shell_volume_cm3,
+    cell_composition,
+    cell_eos_state,
+    cell_opacity_state,
+    cell_nuclear_state,
+    radiative_temperature_gradient
 
 include("constants.jl")
 include("units.jl")
@@ -44,6 +50,7 @@ include("microphysics/convection.jl")
 end
 
 include("boundary_conditions.jl")
+include("structure_equations.jl")
 include("residuals.jl")
 include("jacobians.jl")
 

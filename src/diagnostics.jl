@@ -15,20 +15,18 @@ function build_diagnostics(
     residual::AbstractVector{<:Real},
     iterations::Integer,
     converged::Bool,
+    extra_notes::AbstractVector{<:AbstractString} = String[],
 )
     state = model.structure
     density = exp(state.log_density_cell_g_cm3[1])
     temperature = exp(state.log_temperature_cell_k[1])
-    composition = Composition(
-        model.composition.hydrogen_mass_fraction_cell[1],
-        model.composition.helium_mass_fraction_cell[1],
-        model.composition.metal_mass_fraction_cell[1],
-    )
-    eos_state = problem.microphysics.eos(density, temperature, composition)
+    eos_state = problem.microphysics.eos(density, temperature, cell_composition(problem, model, 1))
     notes = String[
-        "Bootstrap solve uses an analytic reference-profile residual system.",
+        "Residual now uses the first classical structure equations with simple placeholder closures.",
+        "EOS, opacity, convection, and surface closure remain provisional at this milestone.",
         "Classical baseline is canonical; Entropy-DAE remains a documented stub.",
     ]
+    append!(notes, String.(extra_notes))
 
     return StructureDiagnostics(
         residual_norm(residual),
