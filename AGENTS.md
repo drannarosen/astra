@@ -25,6 +25,12 @@ ASTRA is a Julia-first forward-model laboratory for stellar structure and evolut
 - The MystMD site is a first-class product: architecture memory, developer handbook, and teaching surface.
 - Docs should state what is real, what is stubbed, and what is intentionally deferred.
 
+## MESA reference contract
+
+- The local MESA source mirror lives at `/Users/anna/projects/jaxstro-dev/legacy/stellax-legacy/reference/mesa/`.
+- When ASTRA work depends on MESA behavior, data layout, conditioning choices, variable scaling, solver boundaries, or parity claims, read the relevant MESA source files from that local mirror first.
+- Do not answer MESA-comparison questions from memory when the local source tree can resolve them.
+
 ## Docs and checklist workflow
 
 - Treat `docs/website/**` as the canonical developer-facing documentation surface.
