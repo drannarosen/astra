@@ -6,7 +6,7 @@ This page tracks known limitations and unresolved questions that should stay vis
 
 ### Classical residual convergence basin is still provisional
 
-ASTRA's default classical initializer now lands at a materially smaller residual norm than the first residual slice, and the solve no longer stalls at iteration 0. The public 24-cell example now takes one accepted step and lowers the residual slightly, but it still returns `converged = false` after `219` rejected trials. The remaining blocker is therefore no longer "can ASTRA move at all?" but "why is the residual-reducing direction so narrow on the current Jacobian/update path?"
+ASTRA's default classical initializer now includes center asymptotic targets and solver-side luminosity conditioning, and the solve no longer stalls at iteration 0. The public 24-cell example now takes one accepted step with damping `0.03125` and lowers the residual from `2.1962008371612166e22` to `2.1275638477172188e22`, but it still returns `converged = false` after `380` rejected trials. The remaining blocker is therefore no longer "can ASTRA move at all?" but "why is the residual-reducing direction still so narrow on the current Jacobian/update path even after center cleanup and column scaling?"
 
 ### Surface closure remains provisional
 

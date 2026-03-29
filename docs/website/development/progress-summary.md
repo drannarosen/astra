@@ -130,3 +130,31 @@ What this still does not prove:
 Next step:
 
 - run the full package/docs verification and then record the slice as provisional, with Jacobian fidelity and stronger globalization still the next numerical bottleneck.
+
+### Center asymptotics and luminosity conditioning
+
+ASTRA's current classical slice now conditions the luminosity columns in the Newton solve and replaces the old innermost shell-volume / zero-luminosity center closure with leading-order center asymptotic targets. The default 24-cell example still does not converge, but it now lowers the residual norm from `2.1962008371612166e22` to `2.1275638477172188e22`, accepts one step with damping `[0.03125]`, and keeps the initialized center luminosity consistent with the local source target to machine precision.
+
+Why this mattered:
+
+- it removes a real center-path fragility from the first zone rather than asking Float64 to resolve a subtractive-cancellation boundary row,
+- it conditions the mixed `log(...)` / raw-`L` solve vector without changing solver-owned physical luminosity units away from `erg/s`,
+- and it gives the current default Newton path a materially larger residual-reducing step on the same placeholder-closure stack.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_center_asymptotic_scaling.jl")'`
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_boundary_conditions.jl")'`
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_block_jacobian.jl")'`
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_solver_progress_diagnostics.jl"); include("test/test_default_newton_progress.jl")'`
+- `~/.juliaup/bin/julia --project=. scripts/run_examples.jl`
+
+What this still does not prove:
+
+- the classical nonlinear solve is still not converged on the public examples,
+- the current center asymptotic form is a bootstrap-level leading-order fix rather than a full physically mature central expansion scheme,
+- and the Jacobian/update path is still weak enough to require heavy retrying even after scaling.
+
+Next step:
+
+- audit the Jacobian blocks and regularization path that still force the solver into one accepted step plus hundreds of rejected trials.

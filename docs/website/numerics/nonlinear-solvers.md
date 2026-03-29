@@ -4,7 +4,7 @@ The current nonlinear solver is a plain Newton-style loop with:
 
 - residual evaluation,
 - block-aware Jacobian assembly,
-- dense linear solve,
+- a column-scaled dense linear solve,
 - bounded damping / backtracking checks,
 - a regularized normal-equation retry ladder when the direct solve is singular or unhelpful,
 - explicit convergence bookkeeping.
@@ -20,11 +20,11 @@ That still matters. It proves that ASTRA can:
 - pack the solve-owned structure block,
 - evaluate a consistent residual,
 - build a Jacobian,
-- apply regularized and damped updates,
+- apply scaled, regularized, and damped updates,
 - and return diagnostics tied to the same ownership story.
 
 ## Current caveat
 
-The current examples no longer stop at iteration 0, but they are still only barely moving. On the current 24-cell public demo, ASTRA reduces the residual norm from `1.5669943212166535e22` to `1.5669942857059996e22`, accepts exactly one step with damping `0.001953125`, records `219` rejected trials, and still returns `converged = false`.
+The current examples no longer stop at iteration 0, and the accepted step is now materially larger than in the previous slice. On the current 24-cell public demo, ASTRA reduces the residual norm from `2.1962008371612166e22` to `2.1275638477172188e22`, accepts exactly one step with damping `0.03125`, records `380` rejected trials, and still returns `converged = false`.
 
-That is scientifically useful because it proves there is a residual-reducing direction on the current placeholder-closure stack. It is also a warning sign: the basin is extremely narrow, so the next blocker is still update quality and Jacobian fidelity rather than missing ownership, missing diagnostics, or missing solver-boundary language.
+That is scientifically useful because it proves there is a residual-reducing direction on the current placeholder-closure stack and that solver-side luminosity conditioning plus center asymptotics improved the usable step. It is also a warning sign: the basin is still extremely narrow, so the next blocker remains update quality and Jacobian fidelity rather than missing ownership, missing diagnostics, or missing solver-boundary language.
