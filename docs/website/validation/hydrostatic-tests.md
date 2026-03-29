@@ -6,13 +6,15 @@ The real hydrostatic test suite belongs to a later milestone. For now, ASTRA's h
 - state dimension consistency,
 - boundary row counts,
 - residual-vector shape,
-- and solver convergence on the analytic reference profile.
+- convergence-basin improvement and honest non-convergence reporting on the current classical slice,
+- local derivative validation for the radiative-temperature-gradient helper,
+- and block-aware Jacobian agreement against the dense finite-difference reference.
 
-These are meaningful because they protect the interfaces that the classical residual will later rely on.
+These are meaningful because they protect the interfaces that the current classical residual already relies on.
 
 ## What the next hydrostatic tests should prove
 
-Once ASTRA starts replacing the toy residual, the hydrostatic-facing tests should be organized around the ownership contract rather than around raw file coverage.
+Now that ASTRA has replaced the old reference-profile residual, the hydrostatic-facing tests should continue shifting toward the ownership contract rather than raw file coverage.
 
 That means testing:
 

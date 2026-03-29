@@ -6,7 +6,7 @@ This page tracks known limitations and unresolved questions that should stay vis
 
 ### Classical residual convergence basin is still provisional
 
-ASTRA now uses the first classical stellar-structure residual, but the current `initialize_state` does not yet place Newton in a robust convergence basin. The solver now reports that honestly with non-converged diagnostics instead of pretending the structure solve is complete.
+ASTRA's default classical initializer now lands at a materially smaller residual norm than the first residual slice by building a geometry-consistent shell profile and a source-matched toy luminosity profile. The solve now also uses a block-aware Jacobian path, but the bootstrap examples still stall at iteration 0 with `converged = false`. The remaining blocker is now the quality of the Newton update and the fidelity of the assembled Jacobian, not the old missing-contract or missing-diagnostics problems.
 
 ### Surface closure remains provisional
 
@@ -18,7 +18,7 @@ The current outer boundary uses a simple guessed surface density rather than a p
 
 ### Validation is still early-stage
 
-The current test suite proves package integrity, ownership boundaries, example integrity, the first classical residual row semantics, and solver/diagnostic honesty on that residual. It does not yet prove a trustworthy solar lane.
+The current test suite proves package integrity, ownership boundaries, example integrity, the first classical residual row semantics, one local derivative validation for the radiative-temperature-gradient helper, the block-aware Jacobian contract, and explicit solve-boundary diagnostics. It does not yet prove a trustworthy solar lane or a converged classical nonlinear solve.
 
 ## Questions to keep asking
 

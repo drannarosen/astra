@@ -78,6 +78,12 @@ For each kernel, ASTRA should ask:
 4. do any sharp switches need smoothing or explicit non-differentiable handling,
 5. is a custom derivative rule actually needed here.
 
+Current checkpoint:
+
+- ASTRA now validates the local temperature sensitivity of the radiative-temperature-gradient helper against a finite-difference reference on the bootstrap classical lane.
+- The current explicit derivative surface is still intentionally narrow: toy EOS and Kramers-opacity temperature derivatives plus a helper-level comparison test.
+- This is enough to prove where local derivatives belong in the architecture, but it is not yet evidence for solver-boundary or trajectory-level sensitivities.
+
 ## Phase 3: define a derivative boundary for the structure solve
 
 This is the decisive differentiability step.
@@ -89,6 +95,11 @@ model_star = solve_structure(problem; state = guess)
 ```
 
 and then define its derivative in terms of the converged residual system, not the Newton trace.
+
+Current checkpoint:
+
+- ASTRA now treats `solve_structure(problem; state = guess)` as the named public solve boundary for later sensitivity work.
+- The current milestone is interface-level only: diagnostics and docs now say what that boundary owns, but no `rrule`, `frule`, or solver-aware sensitivity package integration has landed yet.
 
 ### Practical Julia tools
 

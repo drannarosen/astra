@@ -3,8 +3,8 @@
 ASTRA's current classical solver stack is intentionally modest but now physically meaningful:
 
 - the residual carries the first classical structure rows rather than an analytic reference-profile comparison,
-- the Jacobian is still finite-difference,
-- the nonlinear loop is still a plain Newton-style iteration,
+- the nonlinear solve now consumes a block-aware Jacobian path, with the dense global finite-difference builder retained as a validation reference,
+- the nonlinear loop is still a plain Newton-style iteration with bounded step checks,
 - and convergence is tracked explicitly in diagnostics rather than hidden behind optimistic success language.
 
 This is still not a research-grade stellar-structure solver. It is the first truthful surface where ASTRA can stabilize:

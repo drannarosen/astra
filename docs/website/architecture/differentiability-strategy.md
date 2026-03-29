@@ -180,6 +180,12 @@ This layer should be differentiable, but it should not be written as though reve
 
 The nonlinear solve should be the first explicit derivative boundary in ASTRA.
 
+Current status:
+
+- `solve_structure(problem; state = guess)` is now spelled out as the public solve boundary for future sensitivities.
+- The returned `SolveResult` still carries the full `StellarModel`, but only `result.state.structure` is solve-owned by that boundary.
+- The diagnostics now say that boundary explicitly so future derivative rules can target the solved structure map rather than the Newton transcript.
+
 That boundary is where ASTRA should use either:
 
 - solver-aware nonlinear sensitivities from the SciML stack, or
@@ -258,6 +264,9 @@ That is still a nonlinear solve. The same derivative discipline applies:
 ASTRA is not yet at the stage where full differentiable stellar evolution should be advertised. What is true today is narrower and more useful:
 
 - the repo now has an explicit ownership model,
+- the classical radiative-temperature-gradient helper now has an explicit local temperature sensitivity checked against a finite-difference reference,
+- toy EOS and opacity layers now expose local temperature-derivative helpers that support kernel-level validation,
+- and the nonlinear solve boundary is still diagnostic-first rather than a validated implicit-differentiation interface.
 - the classical residual is real rather than pedagogical,
 - the Jacobian and diagnostics are honest about that residual,
 - and the documentation can now state the differentiability architecture without pretending the whole pipeline is already implemented.

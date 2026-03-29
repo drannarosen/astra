@@ -4,8 +4,8 @@ This backlog is for accepted future work, not vague ideas. Items should be concr
 
 ## Next up
 
-- classical baseline structure residual replacing the toy reference-profile residual
-- EOS and opacity closures serving the real hydrostatic residual
+- make the classical Newton update actually converge from the improved bootstrap seed
+- tighten EOS and opacity closures serving the real hydrostatic residual
 - baseline MLT closure with fixed declared `alpha_MLT`
 
 ## Queued after that
@@ -14,6 +14,7 @@ This backlog is for accepted future work, not vague ideas. Items should be concr
 - relaxation stage with explicit acceptance criteria
 - gravothermal bookkeeping in the evolution ownership layer
 - ZAMS detection by persistent energy-partition criteria
+- explicit sensitivity rules at the classical solve boundary once convergence is trustworthy
 
 ## Later, but already on the map
 

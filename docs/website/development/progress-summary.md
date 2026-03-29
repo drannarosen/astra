@@ -53,3 +53,54 @@ Verification run:
 Next step:
 
 - tighten closure fidelity and initialization quality without pretending that the current placeholder microphysics or provisional surface closure are already solar-ready.
+
+### Classical convergence-basin tightening
+
+ASTRA's default classical solve now starts from a geometry-consistent radius/density seed, a source-matched toy luminosity profile, and a surface-anchored temperature profile. That reduces the default residual norm from the old `~1e33` regime into the `~1e22` regime for the bootstrap examples and adds explicit diagnostics notes about the initialization and bounded step logic.
+
+Why this mattered:
+
+- it makes the default solve measurably less degenerate without adding new physics or new solver packages,
+- it keeps the caveat visible that the seed is numerically helpful rather than physically calibrated,
+- and it gives the later Jacobian work a cleaner starting point than the singular old seed.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_convergence_basin.jl")'`
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_solve_contract.jl"); include("test/test_convergence_basin.jl")'`
+- `~/.juliaup/bin/julia --project=. scripts/run_examples.jl`
+
+Next step:
+
+- add local derivative validation for classical helper kernels before replacing the global finite-difference Jacobian.
+
+### Classical baseline next-steps close-out
+
+ASTRA has now completed the four planned implementation slices for this round:
+
+- the default classical seed lands in a materially better residual basin,
+- one local helper derivative is validated against finite differences,
+- the nonlinear solve now consumes a block-aware Jacobian path rather than the old global dense finite-difference builder,
+- and `solve_structure(problem; state = guess)` is spelled out as the current public solve boundary for future sensitivities.
+
+Why this mattered:
+
+- it turns the classical lane into a more falsifiable baseline for later science work,
+- it makes the derivative story explicit at both the helper and solve-boundary levels without overselling sensitivity readiness,
+- and it keeps ASTRA's current limitations visible instead of hiding them behind aspirational architecture language.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. -e 'using Pkg; Pkg.test()'`
+- `~/.juliaup/bin/julia --project=. scripts/run_examples.jl`
+- `cd docs/website && myst build --site --html --strict`
+
+What this still does not prove:
+
+- the classical nonlinear solve still does not converge on the toy examples,
+- the block-aware Jacobian is still partly local finite-difference fallback rather than fully analytic,
+- and no implicit sensitivity rule or solver-aware AD integration has landed yet.
+
+Next step:
+
+- make the classical Newton update actually converge from the improved seed, with the next blocker now centered on update quality and Jacobian fidelity rather than on missing ownership, helper, or API contracts.
