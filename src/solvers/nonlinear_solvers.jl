@@ -174,7 +174,7 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
         damping_history,
         accepted_step_count,
         rejected_trial_count,
-        problem.solver.max_newton_iterations,
+        accepted_step_count,
         false,
         notes,
     )
