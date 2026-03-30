@@ -188,6 +188,8 @@ function row_family_merit_summary(
     geometry = 0.0
     hydrostatic = 0.0
     luminosity = 0.0
+    interior_transport = 0.0
+    outer_transport = 0.0
     transport = 0.0
 
     for k in 1:(n - 1)
@@ -196,13 +198,34 @@ function row_family_merit_summary(
         geometry += _family_merit(weighted_residual, row:row)
         hydrostatic += _family_merit(weighted_residual, (row + 1):(row + 1))
         luminosity += _family_merit(weighted_residual, (row + 2):(row + 2))
-        transport += _family_merit(weighted_residual, (row + 3):(row + 3))
+        if k == n - 1
+            outer_transport += _family_merit(weighted_residual, (row + 3):(row + 3))
+        else
+            interior_transport += _family_merit(weighted_residual, (row + 3):(row + 3))
+        end
     end
 
+    transport = interior_transport + outer_transport
     surface = _family_merit(weighted_residual, structure_surface_row_range(n))
     total = center + geometry + hydrostatic + luminosity + transport + surface
-    family_values = (center, geometry, hydrostatic, luminosity, transport, surface)
-    family_names = (:center, :geometry, :hydrostatic, :luminosity, :transport, :surface)
+    family_values = (
+        center,
+        geometry,
+        hydrostatic,
+        luminosity,
+        interior_transport,
+        outer_transport,
+        surface,
+    )
+    family_names = (
+        :center,
+        :geometry,
+        :hydrostatic,
+        :luminosity,
+        :interior_transport,
+        :outer_transport,
+        :surface,
+    )
     dominant_family = family_names[argmax(family_values)]
 
     return _ASTRA_MODULE.RowFamilyMeritSummary(
@@ -210,6 +233,8 @@ function row_family_merit_summary(
         geometry,
         hydrostatic,
         luminosity,
+        interior_transport,
+        outer_transport,
         transport,
         surface,
         total,

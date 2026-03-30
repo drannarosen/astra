@@ -23,6 +23,8 @@
     @test summary.geometry >= 0.0
     @test summary.hydrostatic >= 0.0
     @test summary.luminosity >= 0.0
+    @test summary.interior_transport >= 0.0
+    @test summary.outer_transport >= 0.0
     @test summary.transport >= 0.0
     @test summary.surface >= 0.0
     @test summary.dominant_family in (
@@ -30,7 +32,8 @@
         :geometry,
         :hydrostatic,
         :luminosity,
-        :transport,
+        :interior_transport,
+        :outer_transport,
         :surface,
     )
 end

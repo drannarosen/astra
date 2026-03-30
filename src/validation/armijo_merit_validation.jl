@@ -82,6 +82,8 @@ function _write_armijo_merit_validation_row_family_summary(
     println(io, prefix * ".geometry = ", repr(summary.geometry))
     println(io, prefix * ".hydrostatic = ", repr(summary.hydrostatic))
     println(io, prefix * ".luminosity = ", repr(summary.luminosity))
+    println(io, prefix * ".interior_transport = ", repr(summary.interior_transport))
+    println(io, prefix * ".outer_transport = ", repr(summary.outer_transport))
     println(io, prefix * ".transport = ", repr(summary.transport))
     println(io, prefix * ".surface = ", repr(summary.surface))
     println(io, prefix * ".total = ", repr(summary.total))

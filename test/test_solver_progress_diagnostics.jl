@@ -110,9 +110,9 @@ end
           first(result.diagnostics.merit_history)
     @test result.diagnostics.final_row_family_merit.total ≈ result.diagnostics.merit_value
     @test result.diagnostics.initial_row_family_merit.dominant_family in
-          (:center, :geometry, :hydrostatic, :luminosity, :transport, :surface)
+          (:center, :geometry, :hydrostatic, :luminosity, :interior_transport, :outer_transport, :surface)
     @test result.diagnostics.final_row_family_merit.dominant_family in
-          (:center, :geometry, :hydrostatic, :luminosity, :transport, :surface)
+          (:center, :geometry, :hydrostatic, :luminosity, :interior_transport, :outer_transport, :surface)
     @test result.diagnostics.accepted_step_count >= 0
     @test result.diagnostics.rejected_trial_count >= 0
     @test length(result.diagnostics.damping_history) == result.diagnostics.accepted_step_count
@@ -146,7 +146,7 @@ end
         @test isfinite(accepted_trial.armijo_target)
         @test accepted_trial.row_family_merit.total ≈ accepted_trial.merit_value rtol = 1e-12
         @test accepted_trial.row_family_merit.dominant_family in
-              (:center, :geometry, :hydrostatic, :luminosity, :transport, :surface)
+              (:center, :geometry, :hydrostatic, :luminosity, :interior_transport, :outer_transport, :surface)
     end
 
     if result.diagnostics.rejected_trial_count > 0
@@ -155,7 +155,7 @@ end
         @test rejected_trial.predicted_decrease > 0.0 || isnan(rejected_trial.decrease_ratio)
         @test rejected_trial.row_family_merit.total ≈ rejected_trial.merit_value rtol = 1e-12
         @test rejected_trial.row_family_merit.dominant_family in
-              (:center, :geometry, :hydrostatic, :luminosity, :transport, :surface)
+              (:center, :geometry, :hydrostatic, :luminosity, :interior_transport, :outer_transport, :surface)
     else
         @test isnothing(result.diagnostics.best_rejected_trial)
     end

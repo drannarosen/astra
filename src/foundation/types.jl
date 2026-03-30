@@ -270,13 +270,16 @@ end
     RowFamilyMeritSummary(...)
 
 Grouped frozen-weight merit contributions for the current classical residual
-row families.
+row families. Transport is split into interior and outer contributions so the
+one-sided outer boundary can be diagnosed separately from the interior stencil.
 """
 struct RowFamilyMeritSummary
     center::Float64
     geometry::Float64
     hydrostatic::Float64
     luminosity::Float64
+    interior_transport::Float64
+    outer_transport::Float64
     transport::Float64
     surface::Float64
     total::Float64

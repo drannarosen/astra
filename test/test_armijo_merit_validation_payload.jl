@@ -22,9 +22,9 @@
     @test payload.actual_decrease_history == result.diagnostics.actual_decrease_history
     @test payload.decrease_ratio_history == result.diagnostics.decrease_ratio_history
     @test payload.accepted_dominant_family in
-          Union{Nothing,Symbol}[(nothing), :center, :geometry, :hydrostatic, :luminosity, :transport, :surface]
+          Union{Nothing,Symbol}[(nothing), :center, :geometry, :hydrostatic, :luminosity, :interior_transport, :outer_transport, :surface]
     @test payload.best_rejected_trial === nothing ||
           payload.best_rejected_trial.row_family_merit.dominant_family in
-          (:center, :geometry, :hydrostatic, :luminosity, :transport, :surface)
+          (:center, :geometry, :hydrostatic, :luminosity, :interior_transport, :outer_transport, :surface)
     @test payload.used_regularized_fallback isa Bool
 end
