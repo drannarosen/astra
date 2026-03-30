@@ -10,13 +10,13 @@ The guiding idea is intentionally conservative: ASTRA should not "hide" a bad Ne
 
 ## Step acceptance
 
-Each iteration evaluates the residual, builds the Jacobian, solves for a correction, applies a weighted correction limiter, and then tries a damped update. If the frozen-weight merit function satisfies Armijo sufficient decrease and the raw residual norm does not increase, the step is accepted. If not, the damping factor is cut in half and the trial is retried.
+Each iteration evaluates the residual, builds the Jacobian, solves for a correction, applies a weighted correction limiter, may apply a narrow outer-boundary domain guard for the one-sided transport trial, and then tries a damped update. If the frozen-weight merit function satisfies Armijo sufficient decrease and the raw residual norm does not increase, the step is accepted. If not, the damping factor is cut in half and the trial is retried.
 
 That means ASTRA's current acceptance rule is still a modest damped-Newton controller, not yet a full trust-region strategy or line-search merit method. The value of writing that down explicitly is that future changes can be judged against a known baseline instead of slipping in as undocumented solver folklore.
 
 ## Normative acceptance contract
 
-For the current classical lane, a trial Newton step is accepted only if it satisfies Armijo sufficient decrease for the frozen-weight merit function on the same residual definition and does not increase the raw residual norm. Backtracking changes the damping factor, but it does not change the residual, the packed-variable basis, or the physical ownership of the equations.
+For the current classical lane, a trial Newton step is accepted only if it satisfies Armijo sufficient decrease for the frozen-weight merit function on the same residual definition and does not increase the raw residual norm. Backtracking changes the damping factor, but it does not change the residual, the packed-variable basis, or the physical ownership of the equations. The current outer-boundary domain guard is solver-side only: it protects the one-sided outer transport trial from crossing into negative surface luminosity, but it does not redefine the surface closure or atmosphere ownership.
 
 The merit objective is a frozen-weight merit function built from the base iterate's row weights. The current controller now also records predicted-versus-actual decrease and the best rejected trial, but adaptive regularization remains deferred.
 
@@ -33,6 +33,10 @@ That is why the diagnostics keep both accepted and rejected counts. For a resear
 ## Regularization
 
 If the direct solve is singular or the update is non-finite, ASTRA retries the Newton subproblem with regularized normal equations on the same scaled Jacobian. That is a solver robustness feature, not a physics change.
+
+## Domain guard
+
+The current transport-hardening slice adds one narrow domain-aware safeguard before backtracking: if a proposed trial update would drive the surface luminosity negative, ASTRA clips that update first. This is not a general positivity framework and it is not a new boundary condition. It is a solver-side guard for the one-sided outer transport interface, where the surface luminosity directly feeds the photospheric temperature reconstruction.
 
 ## Why this matters
 

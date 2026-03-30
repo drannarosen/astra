@@ -28,6 +28,29 @@ function _best_rejected_trial(
     return best
 end
 
+function limit_outer_boundary_domain(
+    problem::StructureProblem,
+    model::StellarModel,
+    update::AbstractVector{<:Real},
+)
+    update_f64 = Float64.(update)
+    surface_luminosity_erg_s = model.structure.luminosity_face_erg_s[end]
+    surface_luminosity_index = 2 * (problem.grid.n_cells + 1)
+    delta_surface_luminosity_erg_s = update_f64[surface_luminosity_index]
+    factor = 1.0
+
+    if surface_luminosity_erg_s > 0.0 && delta_surface_luminosity_erg_s < 0.0
+        limiting_factor = -0.9 * surface_luminosity_erg_s / delta_surface_luminosity_erg_s
+        factor = min(factor, limiting_factor)
+    end
+
+    factor = clamp(factor, 0.0, 1.0)
+    return (
+        factor = factor,
+        update = factor .* update_f64,
+    )
+end
+
 function _accepted_trial_step(
     problem::StructureProblem,
     model::StellarModel,
@@ -40,7 +63,18 @@ function _accepted_trial_step(
     base_row_weights = residual_row_weights(problem, model)
     base_weighted_norm = weighted_residual_norm(residual, base_row_weights)
     base_merit = weighted_residual_merit(residual, base_row_weights)
-    limited_update = limit_weighted_correction(problem, model, update)
+    weighted_limited_update = limit_weighted_correction(problem, model, update)
+    domain_limited_update = limit_outer_boundary_domain(
+        problem,
+        model,
+        weighted_limited_update.update,
+    )
+    limited_update = (
+        factor = weighted_limited_update.factor * domain_limited_update.factor,
+        update = domain_limited_update.update,
+        weighted_correction_norm = weighted_correction_norm(problem, model, domain_limited_update.update),
+        weighted_max_correction = weighted_max_correction(problem, model, domain_limited_update.update),
+    )
     jacobian_times_step = jacobian * limited_update.update
     base_slope = weighted_merit_slope(residual, jacobian_times_step, base_row_weights)
     damping = problem.solver.damping
@@ -48,10 +82,16 @@ function _accepted_trial_step(
     best_rejected_trial = nothing
     notes = String[]
 
-    if limited_update.factor < 1.0
+    if weighted_limited_update.factor < 1.0
         push!(
             notes,
-            "Weighted correction limiter scaled the trial step by factor $(limited_update.factor).",
+            "Weighted correction limiter scaled the trial step by factor $(weighted_limited_update.factor).",
+        )
+    end
+    if domain_limited_update.factor < 1.0
+        push!(
+            notes,
+            "Outer-boundary domain guard scaled the trial step by factor $(domain_limited_update.factor) to keep the surface luminosity positive for the one-sided transport trial.",
         )
     end
 
