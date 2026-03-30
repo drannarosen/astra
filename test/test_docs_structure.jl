@@ -263,6 +263,27 @@
             "block jacobian",
             "default newton progress",
         ],
+        "docs/website/methods/mesa-reference/index.md" => [
+            "file-backed parity",
+            "partial parity",
+            "analogy only",
+            "not yet proven",
+        ],
+        "docs/website/methods/mesa-reference/solver-scaling.md" => [
+            "solver_support.f90",
+            "x_scale",
+            "correction_weight",
+        ],
+        "docs/website/methods/mesa-reference/boundary-conditions.md" => [
+            "L_center",
+            "R_center",
+            "auto_diff_support.f90",
+        ],
+        "docs/website/methods/mesa-reference/mesh-and-variables.md" => [
+            "star_data_step_input.inc",
+            "star_data_step_work.inc",
+            "i_lum",
+        ],
         "docs/website/numerics/residuals.md" => [
             "first classical structure equations",
             "source-decomposed",
