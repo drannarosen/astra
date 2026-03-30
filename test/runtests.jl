@@ -29,6 +29,7 @@ using ASTRA
     include("test_weighted_solver_metrics.jl")
     include("test_atmosphere_boundary_helpers.jl")
     include("test_atmosphere_ttau_helpers.jl")
+    include("test_atmosphere_match_point.jl")
     include("test_outer_transport_boundary.jl")
     include("test_docs_structure.jl")
 end

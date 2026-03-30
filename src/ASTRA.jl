@@ -33,7 +33,10 @@ export StellarParameters,
     eddington_photospheric_pressure_dyn_cm2,
     eddington_t_tau_temperature_k,
     outer_half_cell_column_density_g_cm2,
-    outer_half_cell_optical_depth
+    outer_half_cell_optical_depth,
+    outer_match_optical_depth,
+    outer_match_temperature_k,
+    outer_match_pressure_dyn_cm2
 
 include("foundation/constants.jl")
 include("foundation/units.jl")
