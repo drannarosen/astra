@@ -377,6 +377,9 @@ function with_previous_thermodynamic_state(
     length(previous_log_density_cell_g_cm3) == n || throw(
         ArgumentError("previous_log_density_cell_g_cm3 must have n_cells entries."),
     )
+    Float64(timestep_s) > 0.0 || throw(
+        ArgumentError("timestep_s must be positive when attaching previous thermodynamic history."),
+    )
     evolution = EvolutionState(
         age_s,
         timestep_s,

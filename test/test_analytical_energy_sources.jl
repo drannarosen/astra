@@ -1,6 +1,7 @@
 @testset "analytical energy sources" begin
     problem = ASTRA.build_toy_problem(n_cells = 6)
     model = initialize_state(problem)
+    composition = ASTRA.Composition(0.70, 0.28, 0.02)
     history = ASTRA.with_previous_thermodynamic_state(
         model;
         previous_log_temperature_cell_k = model.structure.log_temperature_cell_k .- log(1.01),
@@ -21,6 +22,9 @@
         dlog_temperature_dt = 1.0e-14,
         dlog_density_dt = -2.0e-14,
     )
+    eps_nu_cool = ASTRA.Microphysics.analytical_neutrino_loss_rate(1.0e4, 1.0e8, composition)
+    eps_nu_mid = ASTRA.Microphysics.analytical_neutrino_loss_rate(1.0e4, 3.0e8, composition)
+    eps_nu_hot = ASTRA.Microphysics.analytical_neutrino_loss_rate(1.0e4, 1.0e9, composition)
 
     @test sources.eps_nuc_erg_g_s > 0.0
     @test isfinite(sources.eps_grav_erg_g_s)
@@ -37,4 +41,14 @@
         history_sources.eps_nuc_erg_g_s +
         history_sources.eps_grav_erg_g_s -
         history_sources.eps_nu_erg_g_s
+    @test_throws ArgumentError ASTRA.with_previous_thermodynamic_state(
+        model;
+        previous_log_temperature_cell_k = model.structure.log_temperature_cell_k .- log(1.01),
+        previous_log_density_cell_g_cm3 = model.structure.log_density_cell_g_cm3 .+ log(1.01),
+    )
+    @test isfinite(eps_nu_cool)
+    @test isfinite(eps_nu_mid)
+    @test isfinite(eps_nu_hot)
+    @test eps_nu_cool > 0.0
+    @test eps_nu_cool < eps_nu_mid < eps_nu_hot
 end

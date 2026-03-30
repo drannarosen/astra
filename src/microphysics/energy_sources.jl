@@ -71,7 +71,10 @@ function _history_gravothermal_rate(
         return 0.0, :no_history
     end
 
-    dt_s = clip_positive(model.evolution.timestep_s)
+    dt_s = Float64(model.evolution.timestep_s)
+    dt_s > 0.0 || throw(
+        ArgumentError("Evolution history requires a positive timestep_s for eps_grav evaluation."),
+    )
     current_log_temperature = model.structure.log_temperature_cell_k[k]
     current_log_density = model.structure.log_density_cell_g_cm3[k]
     dlog_temperature_dt = (current_log_temperature - prev_temperature[k]) / dt_s
