@@ -163,12 +163,28 @@ function _write_armijo_merit_validation_payload(
         "accepted_dominant_family = ",
         _format_armijo_merit_validation_scalar(payload.accepted_dominant_family),
     )
+    println(
+        io,
+        "accepted_transport_dominant_family = ",
+        _format_armijo_merit_validation_scalar(
+            _armijo_merit_validation_transport_family(payload.accepted_dominant_family),
+        ),
+    )
 
     if payload.best_rejected_trial === nothing
         println(io, "best_rejected_trial.present = false")
     else
         _write_armijo_merit_validation_trial_summary(io, payload.best_rejected_trial)
     end
+    println(
+        io,
+        "best_rejected_transport_dominant_family = ",
+        _format_armijo_merit_validation_scalar(
+            _armijo_merit_validation_transport_family(
+                _armijo_merit_validation_best_rejected_family(payload),
+            ),
+        ),
+    )
 
     println(
         io,
@@ -182,6 +198,13 @@ function _armijo_merit_validation_best_rejected_family(
 )
     payload.best_rejected_trial === nothing && return nothing
     return payload.best_rejected_trial.row_family_merit.dominant_family
+end
+
+function _armijo_merit_validation_transport_family(
+    family::Union{Nothing,Symbol},
+)
+    family in (:interior_transport, :outer_transport) || return nothing
+    return family
 end
 
 function _armijo_merit_validation_amplitude_label(amplitude::Real)
@@ -220,9 +243,25 @@ function _write_armijo_merit_validation_manifest_entry(io::IO, payload, payload_
     )
     println(
         io,
+        "accepted_transport_dominant_family = ",
+        _format_armijo_merit_validation_scalar(
+            _armijo_merit_validation_transport_family(payload.accepted_dominant_family),
+        ),
+    )
+    println(
+        io,
         "best_rejected_dominant_family = ",
         _format_armijo_merit_validation_scalar(
             _armijo_merit_validation_best_rejected_family(payload),
+        ),
+    )
+    println(
+        io,
+        "best_rejected_transport_dominant_family = ",
+        _format_armijo_merit_validation_scalar(
+            _armijo_merit_validation_transport_family(
+                _armijo_merit_validation_best_rejected_family(payload),
+            ),
         ),
     )
     println(
