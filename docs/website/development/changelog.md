@@ -6,19 +6,26 @@ This page records significant ASTRA repository changes in a compact, contributor
 
 ### Added
 
+- a canonical Physics page for the Eddington-grey atmosphere and photosphere staging
+- a Phase 1 atmosphere closure for the classical outer boundary
 - explicit weighted residual and correction metrics for the classical Newton controller
 - weighted residual and correction histories in solve diagnostics
 - a canonical Methods page for nonlinear step metrics and the future merit-based globalization direction
+- a progress-history fix so the stored weighted residual metric matches the frozen acceptance metric
 
 ### Changed
 
+- the surface temperature and pressure rows now use atmosphere-derived targets instead of guessed outer thermodynamic values
+- the outer transport row now uses a one-sided atmosphere-aware match
+- solver row weights now treat the atmosphere surface rows in temperature and pressure units rather than the old density guess
 - trial steps are now limited by weighted correction RMS and max-correction envelopes before backtracking
 - nonlinear acceptance now requires weighted residual improvement plus a raw-residual safeguard
 - the handbook now distinguishes solver metrics from physical residual meaning more explicitly
+- the atmosphere boundary is now documented as Phase 1 Eddington-grey rather than a guessed density closure
 
 ### Notes
 
-The current controller is stronger and more transparent than the older raw-norm-only slice, but it is still not a full merit-function or trust-region globalization scheme. The weighting policy remains part of the current bootstrap numerical contract rather than a proven final design.
+The current controller is stronger and more transparent than the older raw-norm-only slice, but it is still not a full merit-function or trust-region globalization scheme. The weighting policy remains part of the current bootstrap numerical contract rather than a proven final design. The atmosphere boundary is still a staged representative-cell approximation, not yet a full `T(\tau)` module.
 
 ## 2026-03-29
 

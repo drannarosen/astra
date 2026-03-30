@@ -19,6 +19,7 @@
         "docs/website/physics/nuclear.md",
         "docs/website/physics/convection.md",
         "docs/website/physics/boundary-conditions.md",
+        "docs/website/physics/atmosphere-and-photosphere.md",
         "docs/website/physics/stellar-structure/mass-conservation.md",
         "docs/website/physics/stellar-structure/hydrostatic-equilibrium.md",
         "docs/website/physics/stellar-structure/energy-generation.md",
@@ -224,6 +225,14 @@
             "Numerical realization in ASTRA",
             "What is deferred",
         ],
+        "docs/website/physics/atmosphere-and-photosphere.md" => [
+            "photosphere",
+            "tau = 2/3",
+            "Eddington-grey",
+            "Phase 1",
+            "Phase 2",
+            "Phase 3",
+        ],
         "docs/website/physics/stellar-structure/mass-conservation.md" => [
             "dr/dm",
             "shell volume",
@@ -423,7 +432,7 @@
         "docs/website/development/issues.md" => [
             "Active issues",
             "Classical residual convergence basin is still provisional",
-            "Surface closure remains provisional",
+            "Surface closure is now staged, not finished",
             "Evolution remains intentionally stubbed",
         ],
         "docs/website/contributing/documentation-style.md" => [
@@ -448,6 +457,7 @@
         "docs/website/physics/stellar-structure.md" => "Implementation checklist",
         "docs/website/physics/stellar-structure/energy-generation.md" => "Deferred-scope checklist",
         "docs/website/physics/boundary-conditions.md" => "Production-grade status checklist",
+        "docs/website/physics/atmosphere-and-photosphere.md" => "Atmosphere roadmap checklist",
         "docs/website/physics/eos.md" => "Implementation checklist",
         "docs/website/physics/opacity.md" => "Validation checklist",
         "docs/website/physics/nuclear.md" => "Implementation checklist",

@@ -38,7 +38,7 @@ The row ownership is deliberately simple. The center radius row is owned by geom
 
 ## Surface closure
 
-The surface rows are still provisional closure rows for radius, luminosity, temperature, and density. They make the problem square and numerically stable, but they are not a finished atmosphere model.
+The surface rows now use a Phase 1 Eddington-grey atmosphere closure rather than hard guesses. They keep the problem square and numerically stable while giving the outer boundary a physically interpretable temperature and pressure scale.
 
 ## Normative surface-boundary contract
 
@@ -46,10 +46,12 @@ For the current classical lane, the outer boundary is closed by four explicit re
 
 1. outer radius,
 2. outer luminosity,
-3. surface temperature,
-4. surface density.
+3. surface temperature matched to the Eddington effective temperature,
+4. surface pressure matched to the Eddington photospheric pressure scale.
 
-Those rows are intentionally provisional. They are part of the canonical current solve, but they are not yet a production atmosphere or photosphere specification.
+Those rows are intentionally staged. They are part of the canonical current solve, but they are still a representative-cell atmosphere approximation rather than a production atmosphere or photosphere specification.
+
+For the physics-side explanation of the photosphere, tau `= 2/3`, and the planned `T(\tau)` path, see [Atmosphere and Photosphere](../physics/atmosphere-and-photosphere.md).
 
 ## Why this matters
 
@@ -62,7 +64,8 @@ The continuous boundary story is summarized in [Physics: Boundary Conditions](..
 - [x] The center residual equations are written explicitly.
 - [x] The surface closure is identified as explicit but provisional.
 - [x] The page states that these rows are the current ASTRA equations, not only design goals.
-- [ ] The exact current surface row formulas should be written explicitly once the surface closure stops being purely provisional.
+- [x] The current surface row formulas are written explicitly.
+- [ ] The Phase 2 `T(\tau)` path should be documented once it is implemented.
 
 ## MESA parity checklist
 
@@ -71,5 +74,5 @@ The continuous boundary story is summarized in [Physics: Boundary Conditions](..
 
 ## Production-grade status checklist
 
-- [ ] Replace the provisional outer rows with a physically motivated surface match.
-- [ ] Demonstrate that the boundary rows support convergence without excessive rejected trials across representative models.
+- [x] Replace the provisional outer rows with a physically motivated surface match.
+- [ ] Demonstrate that the atmosphere boundary supports convergence without excessive rejected trials across representative models.

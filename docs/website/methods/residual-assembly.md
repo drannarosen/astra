@@ -21,7 +21,7 @@ The center rows enforce the asymptotic inner radius and luminosity targets. Each
 3. luminosity balance,
 4. transport.
 
-The surface rows enforce the provisional outer closure.
+The surface rows enforce the Phase 1 atmosphere closure. Radius and luminosity targets stay in place, the temperature row matches `T_eff`, the pressure row matches the photospheric pressure scale, and the final transport row becomes one-sided at the outer edge.
 
 ## Normative interior residual contract
 
@@ -72,6 +72,26 @@ $$
 
 but the current ASTRA residual only owns the nuclear term. That means the residual is already source-decomposed in the energy equation in spirit, but only partially in the bootstrap implementation. The current closure stack is still toy physics; the row order and ownership boundaries are what matter here.
 
+The current surface formulas are:
+
+$$
+R_{\mathrm{surf},r} = r_\mathrm{surf} - r_\mathrm{target},
+$$
+
+$$
+R_{\mathrm{surf},L} = L_\mathrm{surf} - L_\mathrm{target},
+$$
+
+$$
+R_{\mathrm{surf},T} = \log T_\mathrm{outer} - \log T_\mathrm{eff},
+$$
+
+$$
+R_{\mathrm{surf},P} = P_\mathrm{EOS}(\rho_\mathrm{outer}, T_\mathrm{outer}) - P_\mathrm{ph}.
+$$
+
+The outer transport row is one-sided and uses the photospheric target instead of the generic interior stencil. That keeps the outer edge boundary-aware without adding a new atmosphere state block.
+
 It is useful to spell out exactly what is and is not true today:
 
 - ASTRA already owns a real luminosity-balance row with a physically meaningful sign convention.
@@ -95,7 +115,7 @@ The continuous counterparts live in:
 - [x] The center, interior, and surface row grouping is explicit.
 - [x] The interior rows are written with exact current ASTRA signs.
 - [x] The current source decomposition of the luminosity row is stated honestly.
-- [ ] The center and surface row formulas are expanded here with the same level of detail as the interior block or linked to a page that is equally explicit.
+- [x] The center and surface row formulas are expanded here with the same level of detail as the interior block.
 
 ## Validation checklist
 

@@ -14,6 +14,32 @@ For each update, record:
 
 ## 2026-03-30
 
+### Atmosphere boundary hardening
+
+ASTRA's classical lane now uses an Eddington-grey representative-cell atmosphere closure at the surface. The outer radius and luminosity target rows remain in place, but the surface temperature row is now tied to `T_eff`, the surface pressure row is tied to the photospheric pressure scale, and the final transport row is one-sided at the outer edge. The solver-side row weights were also realigned so the surface temperature row is dimensionless and the surface pressure row is weighted on a pressure scale rather than the old density guess.
+
+Why this mattered:
+
+- it replaces the provisional hard surface temperature/density guesses with a physically interpretable atmosphere closure,
+- it makes the outer transport row consistent with the same atmosphere semantics,
+- and it fixes the weighted acceptance metric so it judges the new pressure row in pressure units instead of the old density units.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_boundary_conditions.jl")'`
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_outer_transport_boundary.jl"); include("test/test_jacobian_fidelity_audit.jl")'`
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_solver_progress_diagnostics.jl"); include("test/test_default_newton_progress.jl"); include("test/test_convergence_basin.jl")'`
+
+What this still does not prove:
+
+- the outer atmosphere treatment is still Phase 1 representative-cell physics rather than a full `T(\tau)` atmosphere,
+- the solver still has a large rejected-trial count even though it now makes accepted progress again,
+- and the docs/validation surfaces still need a Phase 2 atmosphere follow-up.
+
+Next step:
+
+- document the current atmosphere boundary, then later upgrade the outer closure to an explicit `T(\tau)` path.
+
 ### Weighted solver metrics and safeguarded acceptance
 
 ASTRA's classical solver now carries explicit row weights, explicit correction weights, weighted correction limiting, weighted residual histories, and weighted correction histories. The nonlinear controller now accepts a step only if the weighted residual metric decreases and the raw residual norm does not increase.

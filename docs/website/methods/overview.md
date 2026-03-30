@@ -8,6 +8,8 @@ These pages are intended to be specification-grade for the current numerics. If 
 
 This section is the canonical numerical specification section for ASTRA. The older [Numerics](../numerics/residuals.md) pages remain useful as short summaries, but they are intentionally secondary. If a contributor needs the authoritative answer to a numerics question, this section should be the place they land.
 
+The current surface atmosphere story is split between this section and [Atmosphere and Photosphere](../physics/atmosphere-and-photosphere.md). Read them together when tracing the outer rows.
+
 ## What this section covers
 
 The method pages document the current bootstrap implementation, not a future target:
@@ -26,7 +28,7 @@ The method pages document the current bootstrap implementation, not a future tar
 
 Start with [From Equations to Residual](from-equations-to-residual.md) to see the unknown vector and residual vector, then read [Staggered Mesh and State Layout](staggered-mesh-and-state-layout.md) for ownership, [Residual Assembly](residual-assembly.md) for the row-by-row equations, and [Jacobian Construction](jacobian-construction.md) for the analytic rows and central differences. The remaining pages explain scaling, weighted step metrics, Newton progress, seeding, boundary-condition realization, and verification.
 
-The physical companion surface is [Physics](../physics/overview.md). For source-backed comparison notes against the local MESA mirror, see [MESA Reference](mesa-reference/overview.md).
+The physical companion surface is [Physics](../physics/overview.md). For the atmosphere boundary specifically, start with [Atmosphere and Photosphere](../physics/atmosphere-and-photosphere.md). For source-backed comparison notes against the local MESA mirror, see [MESA Reference](mesa-reference/overview.md).
 
 For new research students, the simplest way to use this section is to follow one question across pages:
 

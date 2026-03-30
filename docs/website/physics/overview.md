@@ -47,7 +47,7 @@ For new contributors, this is one of the most important distinctions in the hand
 
 Boundary conditions are the extra center and surface conditions that close the global stellar-structure problem.
 
-The center and surface close the global solve. The center uses asymptotic series targets for the innermost face, and the surface uses provisional guessed outer conditions. See [Boundary Conditions](boundary-conditions.md) for the current closure and [Methods](../methods/overview.md) for how those conditions enter the residual.
+The center and surface close the global solve. The center uses asymptotic series targets for the innermost face, and the surface now uses a staged Eddington-grey atmosphere closure. See [Boundary Conditions](boundary-conditions.md) for the current closure, [Atmosphere and Photosphere](atmosphere-and-photosphere.md) for the photospheric meaning and planned phases, and [Methods](../methods/overview.md) for how those conditions enter the residual.
 
 This matters numerically because the center and surface are exactly where the naive differential forms become least trustworthy. The center is formally singular in several common rearrangements, and the outer boundary is where a stellar interior model must decide how it is being matched to an atmosphere or outer-layer prescription.
 

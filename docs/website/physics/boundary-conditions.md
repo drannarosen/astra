@@ -10,11 +10,11 @@ That is the physical reason boundary conditions matter. The numerical reason is 
 
 Near the center, symmetry requires the solution to stay regular rather than diverge. In practice that means the innermost radius and luminosity must behave like leading-order series quantities, not like generic interior unknowns. The center is therefore a special asymptotic limit, not merely "the first cell."
 
-At the surface, the continuous stellar-structure equations need a matching condition to some outer-layer or atmosphere model. Production stellar codes often use atmosphere integrations, optical-depth conditions, or tabulated surface relations. ASTRA does not own that full story yet. It currently owns a deliberately simple outer closure that keeps the problem square and numerically inspectable.
+At the surface, the continuous stellar-structure equations need a matching condition to some outer-layer or atmosphere model. Production stellar codes often use atmosphere integrations, optical-depth conditions, or tabulated surface relations. ASTRA now owns a staged outer atmosphere closure, but it is still a Phase 1 representative-cell approximation rather than a finished atmosphere module.
 
 ## Current ASTRA implementation
 
-ASTRA currently uses center asymptotic targets for radius and luminosity, plus provisional surface guesses for radius, luminosity, temperature, and density. The center closure follows the leading-order series form, and the surface closure is intentionally lightweight.
+ASTRA currently uses center asymptotic targets for radius and luminosity, plus an Eddington-grey outer atmosphere closure for radius, luminosity, temperature, and pressure. The center closure follows the leading-order series form, and the surface closure is intentionally lightweight but physically meaningful.
 
 The current center targets are:
 
@@ -32,17 +32,17 @@ The numerical motivation for this choice is worth making explicit. A center row 
 
 ## Numerical realization in ASTRA
 
-The center rows are assembled in [Residual Assembly](../methods/residual-assembly.md) through the boundary helper layer, and the solver-side interpretation is described in [Boundary Condition Realization](../methods/boundary-condition-realization.md). The surface guesses are still provisional and remain part of the bootstrap lane only.
+The center rows are assembled in [Residual Assembly](../methods/residual-assembly.md) through the boundary helper layer, and the solver-side interpretation is described in [Boundary Condition Realization](../methods/boundary-condition-realization.md). The atmosphere page [Atmosphere and Photosphere](atmosphere-and-photosphere.md) explains the current Phase 1 outer closure in more detail.
 
 ## What is deferred
 
-Real atmosphere fitting, solar-calibrated outer layers, and a finished surface closure are deferred. ASTRA currently needs the surface to be explicit and numerically stable, not astrophysically complete.
+Phase 2 `T(\tau)` matching, real atmosphere tables, and a more explicit photospheric reconstruction are deferred. ASTRA currently needs the surface to be explicit, numerically stable, and scientifically legible, not yet astrophysically complete.
 
 ## Implementation checklist
 
 - [x] The center asymptotic targets for radius and luminosity are written explicitly.
 - [x] The page states that the center is a regularity problem, not an ordinary interior stencil.
-- [x] The surface closure is identified as provisional rather than physical atmosphere matching.
+- [x] The surface closure is identified as a Phase 1 atmosphere approximation rather than a finished atmosphere model.
 - [ ] The exact sign and indexing conventions for all boundary residual rows are cross-checked against the methods page and tests.
 
 ## MESA parity checklist
@@ -52,5 +52,5 @@ Real atmosphere fitting, solar-calibrated outer layers, and a finished surface c
 
 ## Production-grade status checklist
 
-- [ ] Replace the provisional surface density/temperature guesses with a physically justified outer closure.
-- [ ] Demonstrate that the boundary rows support robust convergence across more than the current narrow bootstrap basin.
+- [x] Replace the provisional surface density/temperature guesses with a physically justified outer closure.
+- [ ] Demonstrate that the atmosphere closure supports robust convergence across more than the current narrow bootstrap basin.
