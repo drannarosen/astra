@@ -36,15 +36,12 @@ function _interior_transport_reference_scale(
     model::StellarModel,
     k::Int,
 )
-    state = model.structure
-    pressure_k_dyn_cm2 = cell_eos_state(problem, model, k).pressure_dyn_cm2
-    pressure_kp1_dyn_cm2 = cell_eos_state(problem, model, k + 1).pressure_dyn_cm2
-    delta_log_temperature = state.log_temperature_cell_k[k + 1] - state.log_temperature_cell_k[k]
-    delta_log_pressure =
-        log(_safe_scale(pressure_kp1_dyn_cm2)) - log(_safe_scale(pressure_k_dyn_cm2))
-    gradient_term =
-        _ASTRA_MODULE.radiative_temperature_gradient(problem, model, k) * delta_log_pressure
-    return max(abs(delta_log_temperature), abs(gradient_term), 1.0)
+    transport_terms = _ASTRA_MODULE.transport_row_terms(problem, model, k)
+    return max(
+        abs(transport_terms.delta_log_temperature),
+        abs(transport_terms.gradient_term),
+        1.0,
+    )
 end
 
 function _outer_transport_reference_scale(
@@ -52,29 +49,12 @@ function _outer_transport_reference_scale(
     model::StellarModel,
     k::Int,
 )
-    state = model.structure
-    n = problem.grid.n_cells
-    radius_surface_cm = exp(state.log_radius_face_cm[end])
-    luminosity_surface_erg_s = state.luminosity_face_erg_s[end]
-    face_temperature_k = _ASTRA_MODULE.surface_effective_temperature_k(
-        radius_surface_cm,
-        luminosity_surface_erg_s,
+    transport_terms = _ASTRA_MODULE.transport_row_terms(problem, model, k)
+    return max(
+        abs(transport_terms.delta_log_temperature),
+        abs(transport_terms.gradient_term),
+        1.0,
     )
-    outer_cell_pressure_dyn_cm2 = cell_eos_state(problem, model, k).pressure_dyn_cm2
-    surface_gravity_cgs_value =
-        _ASTRA_MODULE.surface_gravity_cgs(problem.parameters.mass_g, radius_surface_cm)
-    opacity_outer_cm2_g = _ASTRA_MODULE.cell_opacity_state(problem, model, n).opacity_cm2_g
-    face_pressure_dyn_cm2 = _ASTRA_MODULE.eddington_photospheric_pressure_dyn_cm2(
-        surface_gravity_cgs_value,
-        opacity_outer_cm2_g,
-    )
-    delta_log_temperature =
-        _ASTRA_MODULE.positive_log(face_temperature_k) - state.log_temperature_cell_k[k]
-    delta_log_pressure =
-        log(_safe_scale(face_pressure_dyn_cm2)) - log(_safe_scale(outer_cell_pressure_dyn_cm2))
-    gradient_term =
-        _ASTRA_MODULE.radiative_temperature_gradient(problem, model, k) * delta_log_pressure
-    return max(abs(delta_log_temperature), abs(gradient_term), 1.0)
 end
 
 """

@@ -97,6 +97,66 @@ function radiative_temperature_gradient(problem::StructureProblem, model::Stella
     )
 end
 
+"""
+    transport_row_terms(problem, model, k)
+
+Return the canonical transport-row decomposition for cell `k`, including the
+temperature term, the gradient term, and the assembled residual contribution.
+The final interior row uses the one-sided outer photospheric face.
+"""
+function transport_row_terms(problem::StructureProblem, model::StellarModel, k::Int)
+    state = model.structure
+    n = problem.grid.n_cells
+    pressure_k_dyn_cm2 = cell_eos_state(problem, model, k).pressure_dyn_cm2
+    nabla_transport = radiative_temperature_gradient(problem, model, k)
+    is_outer = k == n - 1
+
+    if is_outer
+        radius_surface_cm = exp(state.log_radius_face_cm[end])
+        luminosity_surface_erg_s = state.luminosity_face_erg_s[end]
+        face_temperature_k = surface_effective_temperature_k(
+            radius_surface_cm,
+            luminosity_surface_erg_s,
+        )
+        surface_gravity_cgs_value = surface_gravity_cgs(problem.parameters.mass_g, radius_surface_cm)
+        opacity_outer_cm2_g = cell_opacity_state(problem, model, n).opacity_cm2_g
+        face_pressure_dyn_cm2 = eddington_photospheric_pressure_dyn_cm2(
+            surface_gravity_cgs_value,
+            opacity_outer_cm2_g,
+        )
+        delta_log_temperature = positive_log(face_temperature_k) - state.log_temperature_cell_k[k]
+        delta_log_pressure =
+            log(clip_positive(face_pressure_dyn_cm2)) - log(clip_positive(pressure_k_dyn_cm2))
+        gradient_term = nabla_transport * delta_log_pressure
+        return (
+            cell_index = k,
+            location = :outer,
+            is_outer = true,
+            delta_log_temperature = delta_log_temperature,
+            delta_log_pressure = delta_log_pressure,
+            nabla_transport = nabla_transport,
+            gradient_term = gradient_term,
+            residual = delta_log_temperature + gradient_term,
+        )
+    end
+
+    pressure_kp1_dyn_cm2 = cell_eos_state(problem, model, k + 1).pressure_dyn_cm2
+    delta_log_temperature = state.log_temperature_cell_k[k + 1] - state.log_temperature_cell_k[k]
+    delta_log_pressure =
+        log(clip_positive(pressure_kp1_dyn_cm2)) - log(clip_positive(pressure_k_dyn_cm2))
+    gradient_term = nabla_transport * delta_log_pressure
+    return (
+        cell_index = k,
+        location = :interior,
+        is_outer = false,
+        delta_log_temperature = delta_log_temperature,
+        delta_log_pressure = delta_log_pressure,
+        nabla_transport = nabla_transport,
+        gradient_term = gradient_term,
+        residual = delta_log_temperature + gradient_term,
+    )
+end
+
 function _with_cell_temperature(
     model::StellarModel,
     k::Int,
