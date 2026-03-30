@@ -1,12 +1,17 @@
 # Boundary Conditions in MESA
 
-The relevant MESA evidence is in `star/private/auto_diff_support.f90` and `star_data/public/star_data_step_input.inc`.
+The relevant MESA evidence for the current ASTRA comparison is in:
+
+- `star_data/public/star_data_step_input.inc`
+- `star/private/auto_diff_support.f90`
 
 ## file-backed parity
 
 `star_data_step_input.inc` shows that MESA stores `R_center` and `L_center` as inner-boundary inputs, with both described as values at the inner edge of the innermost cell.
 
-`auto_diff_support.f90` shows that the boundary wrapping for luminosity and radius treats the center values as the special inner-edge quantities used by the solver. In particular, `wrap_L_p1` falls back to `s% L_center`, while `wrap_r_p1` falls back to `s% r_center`, the working-state radius counterpart of the input-side `R_center` name.
+`auto_diff_support.f90` shows that the AD-aware boundary wrapping for luminosity and radius treats center values as special stored boundary quantities rather than as ordinary interior neighbors. In particular, `wrap_L_p1` falls back to `s% L_center`, while `wrap_r_p1` falls back to `s% r_center`.
+
+That is the source-backed reason ASTRA treats MESA as a reference surface for explicit center-boundary ownership: the center is represented separately in the solver machinery, not silently folded into an interior stencil.
 
 ## partial parity
 
@@ -19,3 +24,9 @@ The outer surface closure in ASTRA is only analogy only relative to the MESA sou
 ## not yet proven
 
 We have not yet matched MESA's full center/surface ownership semantics across all boundary-related variables, nor have we shown that ASTRA reproduces MESA's exact solver behavior when those center values are updated during a full step.
+
+## MESA parity checklist
+
+- [x] Center-value storage claims are tied to `star_data_step_input.inc`.
+- [x] Special center-boundary wrapping claims are tied to `auto_diff_support.f90`.
+- [ ] ASTRA does not yet have source-backed surface-boundary parity claims against MESA.

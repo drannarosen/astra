@@ -4,7 +4,7 @@ ASTRA's current residual vector now carries the first classical structure equati
 
 Canonical guide: [Residual Assembly](../methods/residual-assembly.md).
 
-The continuous equations are summarized in [Physics: Stellar Structure](../physics/stellar-structure.md). This page remains as a shorter numerics-side note.
+The continuous equations are summarized in [Physics: Stellar Structure](../physics/stellar-structure.md). This page remains as a shorter numerics-side note and is not the canonical numerical specification.
 
 The residual is assembled in explicit physical order:
 
@@ -43,3 +43,9 @@ This first classical residual still uses placeholder closures:
 - and a provisional surface closure.
 
 Those limitations are explicit. They do not make the residual pedagogical-only again; they simply define the narrow scientific scope of the current slice.
+
+## Summary checklist
+
+- [x] This page explicitly points back to the canonical numerical specification in `Methods`.
+- [x] This page explicitly says it is not the canonical numerical specification.
+- [ ] Keep this page short as the handbook grows; detailed residual equations belong in [Residual Assembly](../methods/residual-assembly.md).

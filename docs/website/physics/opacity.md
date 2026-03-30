@@ -17,3 +17,14 @@ Opacity enters the radiative-gradient helper in [Residual Assembly](../methods/r
 ## What is deferred
 
 Real opacity tables, low-temperature molecular physics, conductive opacity, and blend hierarchies are deferred. The current page should be read as the exact placeholder used today, not as a promise about ASTRA's eventual opacity stack.
+
+## Implementation checklist
+
+- [x] The current toy opacity law is stated explicitly.
+- [x] The page says opacity feeds the transport helper and Jacobian path.
+- [ ] The exact derivative conventions used by the helper and Jacobian are summarized in one place.
+
+## Validation checklist
+
+- [ ] The toy opacity law is benchmarked against a known analytic expectation over a representative state range.
+- [ ] Production-grade opacity claims remain deferred until real table or blend validation artifacts exist.

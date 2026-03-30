@@ -2,6 +2,10 @@
 
 ASTRA assembles the residual vector in physical order, not in whatever order happens to be convenient for a matrix buffer.
 
+This page is the discrete-equation specification for the current classical solve.
+
+If the `Physics` pages tell you what the star should satisfy in continuous form, this page tells you exactly what ASTRA is currently asking the Newton solve to drive to zero. It is therefore the canonical residual-spec page, not merely a commentary page.
+
 ## Row ordering
 
 The current residual has three top-level groups:
@@ -19,18 +23,61 @@ The center rows enforce the asymptotic inner radius and luminosity targets. Each
 
 The surface rows enforce the provisional outer closure.
 
+## Normative interior residual contract
+
+For each interior block $k$, ASTRA currently defines the residual rows as
+
+$$
+R_{\mathrm{geom},k} =
+V_\mathrm{shell}(r_k, r_{k+1}) - \frac{dm_k}{\rho_k},
+$$
+
+The literal row label `R_{\mathrm{geom},k}` denotes the geometry equation for block $k$.
+
+$$
+R_{\mathrm{hse},k} =
+P_{k+1} - P_k + \frac{G m_{k+1} dm_k}{4 \pi r_{k+1}^4},
+$$
+
+$$
+R_{L,k} =
+L_{k+1} - L_k - dm_k \, \varepsilon_{\mathrm{nuc},k},
+$$
+
+$$
+R_{T,k} =
+\log T_{k+1} - \log T_k + \nabla_k \left(\log P_{k+1} - \log P_k\right).
+$$
+
+Those equations are the current ASTRA implementation contract. If the code changes any sign, indexing convention, or owner in those rows, the methods docs should change in the same slice.
+
+The most important interpretation detail is that these are residual equations, not copied textbook ODEs. The geometry row compares a shell-volume expression to $dm/\rho$. The transport row is already written in log form because ASTRA solves $\log T$, not $T$, and because the radiative-gradient helper is currently expressed through logarithmic pressure differences.
+
 ## What each interior block means
 
 The row family mirrors the current `src/residuals.jl` implementation:
 
 - geometry compares shell volume to `dm / rho`,
 - hydrostatic balance compares adjacent-cell pressure plus gravity,
-- luminosity balance subtracts $dm \, \varepsilon_\mathrm{nuc}$,
+- luminosity balance currently subtracts $dm \, \varepsilon_\mathrm{nuc}$,
 - transport uses the log-form radiative gradient row.
 
 For the continuous physics behind those rows, see [Mass Conservation](../physics/stellar-structure/mass-conservation.md), [Hydrostatic Equilibrium](../physics/stellar-structure/hydrostatic-equilibrium.md), [Energy Generation](../physics/stellar-structure/energy-generation.md), and [Energy Transport](../physics/stellar-structure/energy-transport.md).
 
-That means the residual is already source-decomposed in the energy equation, but only in the bootstrap sense. The current closure stack is still toy physics; the row order is what matters here.
+The full classical luminosity equation should eventually carry
+
+$$
+\frac{dL}{dm} = \varepsilon_\mathrm{nuc} + \varepsilon_\mathrm{grav} - \varepsilon_\nu,
+$$
+
+but the current ASTRA residual only owns the nuclear term. That means the residual is already source-decomposed in the energy equation in spirit, but only partially in the bootstrap implementation. The current closure stack is still toy physics; the row order and ownership boundaries are what matter here.
+
+It is useful to spell out exactly what is and is not true today:
+
+- ASTRA already owns a real luminosity-balance row with a physically meaningful sign convention.
+- ASTRA does not yet own the full classical source decomposition in that row.
+- ASTRA already owns a transport row in solver basis.
+- ASTRA does not yet own a finished convection-aware transport closure.
 
 ## Why this page exists
 
@@ -42,3 +89,21 @@ The continuous counterparts live in:
 - [Hydrostatic Equilibrium](../physics/stellar-structure/hydrostatic-equilibrium.md)
 - [Energy Generation](../physics/stellar-structure/energy-generation.md)
 - [Energy Transport](../physics/stellar-structure/energy-transport.md)
+
+## Implementation checklist
+
+- [x] The center, interior, and surface row grouping is explicit.
+- [x] The interior rows are written with exact current ASTRA signs.
+- [x] The current source decomposition of the luminosity row is stated honestly.
+- [ ] The center and surface row formulas are expanded here with the same level of detail as the interior block or linked to a page that is equally explicit.
+
+## Validation checklist
+
+- [ ] A benchmark artifact verifies the geometry, hydrostatic, luminosity, and transport rows against an accepted model, not only code self-consistency.
+- [ ] Residual-family diagnostics exist that can be compared before and after major solver changes.
+
+## Deferred-scope checklist
+
+- [x] `eps_grav` is not yet part of `R_{L,k}`.
+- [x] `eps_nu` is not yet part of `R_{L,k}`.
+- [x] The transport row is still radiative-only in the current classical lane.

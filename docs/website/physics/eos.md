@@ -17,3 +17,14 @@ The EOS is evaluated in the residual through [Residual Assembly](../methods/resi
 ## What is deferred
 
 Real EOS tables, partial ionization, degeneracy, Coulomb corrections, and composition-rich thermodynamics are deferred. This page is the place to explain the closure ASTRA actually has now, not the closure we will want later.
+
+## Implementation checklist
+
+- [x] The current EOS closure is stated explicitly.
+- [x] The page says pressure is derived from state, not solve-owned directly.
+- [ ] The exact thermodynamic derivative basis needed by every current Jacobian row is summarized and linked to tests.
+
+## Validation checklist
+
+- [ ] Pressure and derivative formulas are benchmarked against an independent reference for representative states.
+- [ ] The adiabatic-gradient placeholder is replaced or justified quantitatively before this page can claim production-grade thermodynamics.

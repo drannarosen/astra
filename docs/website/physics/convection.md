@@ -18,3 +18,15 @@ The radiative-gradient helper lives in the methods layer and is used by the tran
 ## What is deferred
 
 Real MLT, overshoot, semiconvection, thermohaline mixing, and composition transport are deferred. The current hook is intentionally narrow: it classifies a region so the code can stay honest about what transport physics is and is not implemented.
+
+## Implementation checklist
+
+- [x] The page separates the stability criterion from the transport closure.
+- [x] The page states that the current residual still uses radiative transport.
+- [ ] The exact criterion expression and derivative owner are summarized once the convection hook grows beyond its current placeholder role.
+
+## Deferred-scope checklist
+
+- [x] Real MLT is not implemented.
+- [x] Overshoot and composition transport are not implemented.
+- [ ] The transport residual is updated only when the convection closure is mature enough to replace the radiative-only assumption explicitly.

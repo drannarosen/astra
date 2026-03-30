@@ -27,3 +27,20 @@ Passing the current suite does not mean:
 - or the microphysics closures are production-ready.
 
 What it does mean is narrower and still useful: the ownership contract, package surfaces, example workflows, and bootstrap nonlinear-solve plumbing are internally consistent enough to build on.
+
+That distinction is central to the whole handbook. ASTRA is trying to become a trustworthy stellar-structure engine, and trustworthy means more than "tests passed." A validation claim should tell a contributor exactly which layer has been checked:
+
+- code-shape sanity,
+- equation ownership,
+- derivative fidelity,
+- numerical convergence behavior,
+- or physical agreement with an external reference.
+
+Blurring those layers is how research software starts to sound more mature than it really is.
+
+## Validation checklist
+
+- [x] The page states what the current tests do validate.
+- [x] The page states what the current tests do not validate.
+- [ ] Every major handbook page should link to the relevant validation surface for its claims.
+- [ ] ASTRA still needs benchmark artifacts before the website can describe the classical lane as physically validated.

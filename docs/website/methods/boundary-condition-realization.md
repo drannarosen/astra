@@ -2,6 +2,10 @@
 
 ASTRA realizes the boundary conditions as residual rows, not as special-cased solver magic.
 
+This page is the canonical numerical specification for the current boundary rows.
+
+That separation is an architectural choice as much as a numerical one. Once the boundary conditions are written as explicit rows, they can be inspected, differentiated, validated, and compared against MESA or against future ASTRA alternatives without digging through nonlinear-control flow.
+
 ## Center asymptotic realization
 
 The inner face uses asymptotic center targets for radius and luminosity:
@@ -16,12 +20,56 @@ $$
 
 That is the center asymptotic closure ASTRA now solves instead of the older subtractive-cancellation form. The old shell-volume center row and the old `L_face[1] = 0` style behavior were exactly the kind of inner-boundary numerics that could stall the bootstrap solve.
 
+## Normative center-boundary contract
+
+For the current classical lane, the center residual rows are specified as
+
+$$
+R_{\mathrm{center},r} = r_1 - \left(\frac{3 m_1}{4 \pi \rho_c}\right)^{1/3},
+$$
+
+$$
+R_{\mathrm{center},L} = L_1 - m_1 \, \varepsilon_{\mathrm{nuc},c}.
+$$
+
+Those are the current ASTRA equations, not merely a design intention.
+
+The row ownership is deliberately simple. The center radius row is owned by geometry plus regularity. The center luminosity row is owned by source accounting at the innermost enclosed mass. That clarity is more important right now than carrying a more ambitious but poorly conditioned center formulation.
+
 ## Surface closure
 
 The surface rows are still provisional closure rows for radius, luminosity, temperature, and density. They make the problem square and numerically stable, but they are not a finished atmosphere model.
+
+## Normative surface-boundary contract
+
+For the current classical lane, the outer boundary is closed by four explicit residual rows for:
+
+1. outer radius,
+2. outer luminosity,
+3. surface temperature,
+4. surface density.
+
+Those rows are intentionally provisional. They are part of the canonical current solve, but they are not yet a production atmosphere or photosphere specification.
 
 ## Why this matters
 
 The page exists so future readers can see the boundary conditions as explicit discrete residuals. That makes the center asymptotic choice and the surface closure tradeoff visible instead of hidden inside the solver.
 
 The continuous boundary story is summarized in [Physics: Boundary Conditions](../physics/boundary-conditions.md). For the closest source-backed MESA comparison on center ownership and boundary-side special handling, see [MESA Reference: Boundary Conditions](mesa-reference/boundary-conditions.md).
+
+## Implementation checklist
+
+- [x] The center residual equations are written explicitly.
+- [x] The surface closure is identified as explicit but provisional.
+- [x] The page states that these rows are the current ASTRA equations, not only design goals.
+- [ ] The exact current surface row formulas should be written explicitly once the surface closure stops being purely provisional.
+
+## MESA parity checklist
+
+- [ ] Center-boundary comparisons remain labeled as partial parity or analogy only unless ASTRA matches both ownership and solver semantics.
+- [ ] Surface-boundary parity remains unclaimed until the local MESA atmosphere/boundary files are read and cited directly.
+
+## Production-grade status checklist
+
+- [ ] Replace the provisional outer rows with a physically motivated surface match.
+- [ ] Demonstrate that the boundary rows support convergence without excessive rejected trials across representative models.

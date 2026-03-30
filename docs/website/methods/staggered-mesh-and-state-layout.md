@@ -24,3 +24,9 @@ The staggered layout keeps the residual rows local: geometry couples adjacent fa
 For the physics-side interpretation of those owners, see [Physics: Stellar Structure](../physics/stellar-structure.md). For the closest source-backed MESA comparison on variable staggering and `i_lum`, see [MESA Reference: Mesh and Variables](mesa-reference/mesh-and-variables.md).
 
 For the continuous structure equations that motivate this ownership split, see [Stellar Structure](../physics/stellar-structure.md). For the closest source-backed MESA comparison on variable staggering and solve-owned arrays, see [MESA Reference: Mesh and Variables](mesa-reference/mesh-and-variables.md).
+
+## Implementation checklist
+
+- [x] Face-centered and cell-centered ownership is stated explicitly.
+- [x] `pack_state` and `unpack_state` are identified as the code-level realization of the contract.
+- [ ] The page should eventually include a small stencil diagram showing which row family touches which neighboring state entries.

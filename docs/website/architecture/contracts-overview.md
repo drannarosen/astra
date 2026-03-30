@@ -81,6 +81,13 @@ That ordering is not just aesthetic. It keeps the solver, diagnostics, and Jacob
 
 ## Why ASTRA follows this pattern
 
-This design is strongly informed by MESA's common 1D staggering, where density and temperature are cell-centered and radius and luminosity are face-based, while the EOS works naturally in a density-temperature basis. See the official MESA debugging docs and EOS overview for reference: [MESA debugging docs](https://docs.mesastar.org/en/release-r22.05.1/developing/debugging.html), [MESA EOS overview](https://docs.mesastar.org/en/stable/eos/overview.html).
+This design is strongly informed by MESA's common 1D staggering, where density and temperature are cell-centered and radius and luminosity are face-based, while the EOS works naturally in a density-temperature basis. In ASTRA's handbook, those comparisons should now be read through the local source-backed pages in [Methods: MESA Reference](../methods/mesa-reference/index.md), especially [Mesh and Variables](../methods/mesa-reference/mesh-and-variables.md), rather than through memory or secondary summaries.
 
 ASTRA should learn from that pattern without inheriting MESA's full historical complexity.
+
+## Architecture checklist
+
+- [x] The page states the current public ownership contract in terms of `StellarModel`, `StructureState`, `CompositionState`, and `EvolutionState`.
+- [x] The page distinguishes solve-owned, persistent, and derived quantities.
+- [x] The residual ordering is stated explicitly.
+- [ ] Every major contract page should end with updateable checklists for implementation status, validation status, and open architectural risks.

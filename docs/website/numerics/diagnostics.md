@@ -24,3 +24,9 @@ Diagnostics are part of the teaching surface of ASTRA. A contributor should be a
 
 - what the code measured,
 - and what conclusions would still be scientifically premature.
+
+## Summary checklist
+
+- [x] This page explicitly points back to the canonical numerical specification in `Methods`.
+- [x] The page treats diagnostics as evidence and limitation reporting, not marketing.
+- [ ] Keep detailed verification policy in [Verification and Jacobian Audits](../methods/verification-and-jacobian-audits.md).

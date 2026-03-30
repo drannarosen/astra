@@ -143,12 +143,14 @@
             "Boundary conditions",
             "What is deferred",
             "../methods/index.md",
+            "chain rule with respect to the packed log variables",
         ],
         "docs/website/physics/stellar-structure.md" => [
             "Current ASTRA implementation",
             "Numerical realization in ASTRA",
             "What is deferred",
             "../methods/residual-assembly.md",
+            "continuous-equation specification",
         ],
         "docs/website/physics/eos.md" => [
             "Current ASTRA implementation",
@@ -179,6 +181,8 @@
             "Numerical realization in ASTRA",
             "What is deferred",
             "pp-toy",
+            "eps_grav",
+            "eps_nu",
         ],
         "docs/website/physics/nuclear/pp-toy-heating.md" => [
             "energy rate",
@@ -217,11 +221,14 @@
             "dL/dm",
             "eps_nuc",
             "What is deferred",
+            "eps_grav",
+            "eps_nu",
         ],
         "docs/website/physics/stellar-structure/energy-transport.md" => [
             "dT/dm",
             "radiative gradient",
             "log(T",
+            "d \\log T",
         ],
         "docs/website/physics/stellar-structure/coupled-problem.md" => [
             "boundary-value problem",
@@ -234,12 +241,15 @@
             "Methods",
             "../physics/index.md",
             "mesa-reference/index.md",
+            "specification-grade",
         ],
         "docs/website/methods/from-equations-to-residual.md" => [
             "unknown vector",
             "residual vector",
             "log(radius",
             "../physics/stellar-structure.md",
+            "\\frac{\\partial f}{\\partial \\log T}",
+            "Normative packed-state contract",
         ],
         "docs/website/methods/staggered-mesh-and-state-layout.md" => [
             "face-centered",
@@ -253,6 +263,8 @@
             "surface rows",
             "../physics/stellar-structure/mass-conservation.md",
             "../physics/stellar-structure/energy-transport.md",
+            "Normative interior residual contract",
+            "R_{\\mathrm{geom},k}",
         ],
         "docs/website/methods/jacobian-construction.md" => [
             "analytic rows",
@@ -260,17 +272,21 @@
             "jacobian_fidelity_audit",
             "../physics/eos.md",
             "../physics/nuclear.md",
+            "packed solve variables",
+            "Normative derivative-basis contract",
         ],
         "docs/website/methods/linear-solves-and-scaling.md" => [
             "erg/s",
             "column scaling",
             "regularized normal equations",
             "mesa-reference/solver-scaling.md",
+            "Normative scaling contract",
         ],
         "docs/website/methods/nonlinear-newton-and-backtracking.md" => [
             "damping",
             "accepted steps",
             "rejected trials",
+            "Normative acceptance contract",
         ],
         "docs/website/methods/initial-model-and-seeding.md" => [
             "geometry-consistent",
@@ -283,6 +299,7 @@
             "subtractive-cancellation",
             "../physics/boundary-conditions.md",
             "mesa-reference/boundary-conditions.md",
+            "Normative center-boundary contract",
         ],
         "docs/website/methods/verification-and-jacobian-audits.md" => [
             "local derivative validation",
@@ -310,28 +327,34 @@
             "star_data_step_input.inc",
             "star_data_step_work.inc",
             "i_lum",
+            "auto_diff_support.f90",
+            "\\partial \\rho / \\partial \\ln \\rho",
         ],
         "docs/website/numerics/residuals.md" => [
             "first classical structure equations",
             "source-decomposed",
             "Canonical guide: [Residual Assembly](../methods/residual-assembly.md)",
             "../methods/residual-assembly.md",
+            "not the canonical numerical specification",
         ],
         "docs/website/numerics/jacobians.md" => [
             "Canonical guide: [Jacobian Construction](../methods/jacobian-construction.md)",
             "verified split between analytic rows",
             "../methods/jacobian-construction.md",
+            "not the canonical numerical specification",
         ],
         "docs/website/numerics/linear-solvers.md" => [
             "Canonical guide: [Linear Solves and Scaling](../methods/linear-solves-and-scaling.md)",
             "linear-solver boundary",
             "../methods/linear-solves-and-scaling.md",
+            "not the canonical numerical specification",
         ],
         "docs/website/numerics/nonlinear-solvers.md" => [
             "Canonical guide: [Nonlinear Newton and Backtracking](../methods/nonlinear-newton-and-backtracking.md)",
             "8 accepted steps",
             "289 rejected trials",
             "../methods/nonlinear-newton-and-backtracking.md",
+            "not the canonical numerical specification",
         ],
         "docs/website/numerics/diagnostics.md" => [
             "Canonical guide: [Verification and Jacobian Audits](../methods/verification-and-jacobian-audits.md)",
@@ -381,5 +404,42 @@
             @test !occursin("title: Numerics", content)
         end
         @test all(needle -> occursin(needle, content), needles)
+    end
+
+    checklist_contracts = Dict(
+        "docs/website/physics/index.md" => "Physics handbook checklist",
+        "docs/website/physics/stellar-structure.md" => "Implementation checklist",
+        "docs/website/physics/stellar-structure/energy-generation.md" => "Deferred-scope checklist",
+        "docs/website/physics/boundary-conditions.md" => "Production-grade status checklist",
+        "docs/website/physics/eos.md" => "Implementation checklist",
+        "docs/website/physics/opacity.md" => "Validation checklist",
+        "docs/website/physics/nuclear.md" => "Implementation checklist",
+        "docs/website/physics/convection.md" => "Deferred-scope checklist",
+        "docs/website/methods/index.md" => "Methods handbook checklist",
+        "docs/website/methods/from-equations-to-residual.md" => "MESA parity checklist",
+        "docs/website/methods/staggered-mesh-and-state-layout.md" => "Implementation checklist",
+        "docs/website/methods/residual-assembly.md" => "Deferred-scope checklist",
+        "docs/website/methods/jacobian-construction.md" => "Validation checklist",
+        "docs/website/methods/linear-solves-and-scaling.md" => "Open-risk checklist",
+        "docs/website/methods/nonlinear-newton-and-backtracking.md" => "Open-risk checklist",
+        "docs/website/methods/boundary-condition-realization.md" => "Production-grade status checklist",
+        "docs/website/methods/verification-and-jacobian-audits.md" => "Verification checklist",
+        "docs/website/methods/mesa-reference/index.md" => "Usage checklist",
+        "docs/website/methods/mesa-reference/mesh-and-variables.md" => "MESA parity checklist",
+        "docs/website/methods/mesa-reference/solver-scaling.md" => "MESA parity checklist",
+        "docs/website/methods/mesa-reference/boundary-conditions.md" => "MESA parity checklist",
+        "docs/website/numerics/residuals.md" => "Summary checklist",
+        "docs/website/numerics/jacobians.md" => "Summary checklist",
+        "docs/website/numerics/linear-solvers.md" => "Summary checklist",
+        "docs/website/numerics/nonlinear-solvers.md" => "Summary checklist",
+        "docs/website/numerics/diagnostics.md" => "Summary checklist",
+        "docs/website/validation/philosophy.md" => "Validation checklist",
+        "docs/website/validation/jacobian-checks.md" => "Validation checklist",
+        "docs/website/architecture/contracts-overview.md" => "Architecture checklist",
+    )
+
+    for (path, checklist_heading) in checklist_contracts
+        content = read(joinpath(root, path), String)
+        @test occursin(checklist_heading, content)
     end
 end

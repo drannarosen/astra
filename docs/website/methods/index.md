@@ -4,6 +4,10 @@ ASTRA's solve pipeline is the computational half of the classical lane: `Physics
 
 If you need the continuous equations first, start in [Physics](../physics/index.md). If you need source-backed MESA comparison notes for solver hardening, use the [MESA Reference](mesa-reference/index.md) subtree alongside these ASTRA-specific pages.
 
+These pages are intended to be specification-grade for the current numerics. If the code and the methods docs disagree about variable ownership, row meaning, sign conventions, or derivative basis, that discrepancy should be treated as a bug to resolve rather than as harmless documentation drift.
+
+This section is the canonical numerical specification section for ASTRA. The older [Numerics](../numerics/residuals.md) pages remain useful as short summaries, but they are intentionally secondary. If a contributor needs the authoritative answer to a numerics question, this section should be the place they land.
+
 ## What this section covers
 
 The method pages document the current bootstrap implementation, not a future target:
@@ -23,6 +27,23 @@ Start with [From Equations to Residual](from-equations-to-residual.md) to see th
 
 The physical companion surface is [Physics](../physics/index.md). For source-backed comparison notes against the local MESA mirror, see [MESA Reference](mesa-reference/index.md).
 
+For new research students, the simplest way to use this section is to follow one question across pages:
+
+1. What is the continuous equation trying to say?
+2. Which discrete ASTRA residual row owns it?
+3. Which packed variables does that row depend on?
+4. Which Jacobian entries are analytic and which are still fallback?
+5. How are the linear solve and Newton acceptance conditioned?
+6. What does MESA do in the same neighborhood, and is the comparison file-backed or only analogous?
+
 ## Current scope
 
 This is the classical bootstrap solve pipeline only. The canonical public surface is still `solve_structure(problem; state = guess)`, with `model.structure` treated as solve-owned and the other blocks attached to the returned `StellarModel`.
+
+## Methods handbook checklist
+
+- [x] The section explicitly claims canonical ownership of the current numerical specification.
+- [x] The reading order carries a contributor from continuous equation to residual, Jacobian, scaling, and verification.
+- [x] The MESA comparison subtree is linked as a source-backed reference surface rather than as ASTRA's own specification.
+- [ ] Every major methods page ends with updateable implementation, validation, and open-risk checklists.
+- [ ] The docs tests enforce the summary-only status of the `Numerics` section and the canonical status of `Methods`.
