@@ -74,6 +74,7 @@
         "docs/website/development/checklists/solar-first-lane.md",
         "docs/website/development/progress-summary.md",
         "docs/website/development/armijo-merit-validation-2026-03-30.md",
+        "docs/website/development/transport-outer-boundary-hardening-2026-03-30.md",
         "docs/website/development/changelog.md",
         "docs/website/development/backlog.md",
         "docs/website/development/issues.md",
@@ -135,6 +136,12 @@
             "First classical residual minimal slice",
             "Phase 2 atmosphere contract recorded",
             "outer transport row remains one-sided to the photospheric face",
+        ],
+        "docs/website/development/transport-outer-boundary-hardening-2026-03-30.md" => [
+            "boundary ownership",
+            "Boundary validity checks",
+            "outer transport",
+            "interior transport",
         ],
         "docs/website/development/armijo-merit-validation-2026-03-30.md" => [
             "accepted step count",
@@ -263,6 +270,8 @@
             "Phase 2",
             "surface thermodynamic rows use the shared outer match-point helper layer",
             "outer transport row remains one-sided to the photospheric face",
+            "Boundary rows own the edge equations of the global residual, but they do not own EOS, opacity, or atmosphere microphysics internals.",
+            "Boundary validity checks",
         ],
         "docs/website/physics/atmosphere-and-photosphere.md" => [
             "photosphere",

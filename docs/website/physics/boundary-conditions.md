@@ -34,6 +34,19 @@ The numerical motivation for this choice is worth making explicit. A center row 
 
 The center rows are assembled in [Residual Assembly](../methods/residual-assembly.md) through the boundary helper layer, and the solver-side interpretation is described in [Boundary Condition Realization](../methods/boundary-condition-realization.md). The atmosphere page [Atmosphere and Photosphere](atmosphere-and-photosphere.md) explains the current Phase 2 outer closure in more detail.
 
+Boundary rows own the edge equations of the global residual, but they do not own EOS, opacity, or atmosphere microphysics internals. That ownership split matters because it keeps the boundary contract narrow: the boundary layer sets edge equations, while the constitutive physics still lives in its own modules.
+
+## Boundary validity checks
+
+The current boundary contract is acceptable when:
+
+- the center targets remain well scaled as the inner mass cell shrinks,
+- the outer closure returns thermodynamically admissible surface values,
+- the boundary rows do not dominate the residual only because of unit or scale mismatch,
+- and converged solutions are not hypersensitive to the exact outer attachment choice.
+
+The 2026-03-30 transport-family validation bundle says the boundary story is mixed rather than purely outer-boundary-local: `interior_transport` dominates the default-12 and larger-cell runs, while `outer_transport` still dominates the smallest `n_cells = 6, 8` cases. That is a boundary-sensitive signal, but it is not a proof that the outer edge alone is the bottleneck.
+
 ## What is deferred
 
 Phase 3 richer atmosphere options and a more explicit benchmark campaign are deferred. ASTRA currently needs the surface to be explicit, numerically stable, and scientifically legible, not yet astrophysically complete.

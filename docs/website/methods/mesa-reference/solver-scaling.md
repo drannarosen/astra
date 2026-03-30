@@ -26,7 +26,7 @@ That combination is the file-backed pattern ASTRA should use as its reference su
 
 ASTRA shares the same high-level goal: keep luminosity in physical `erg/s` and scale the solve numerically rather than redefining the physics variable. That is partial parity, because ASTRA's scaling is much simpler and does not reproduce MESA's full per-variable machinery.
 
-The current best ASTRA analogue is not a literal clone of `x_scale` across every packed variable. ASTRA already gains part of that scaling from the log basis itself for `R`, `T`, and `\rho`. The closer partial-parity move is therefore to harden transport-local normalization and boundary-domain guards before broadening global scaling policy.
+The current best ASTRA analogue is not a literal clone of `x_scale` across every packed variable. ASTRA already gains part of that scaling from the log basis itself for `R`, `T`, and `\rho`. The closer partial-parity move is therefore to harden transport-local normalization and boundary-domain guards before broadening global scaling policy. The newest transport-family evidence says that the bottleneck is mixed: `interior_transport` dominates the default-12 and larger-cell cases, while `outer_transport` still dominates the smallest ladders. So the MESA-style layering analogy still points to local normalization, but it does not justify overfitting the outer boundary alone.
 
 ## analogy only
 

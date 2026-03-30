@@ -101,7 +101,7 @@ $$
 
 The outer transport row is one-sided and uses the photospheric target instead of the generic interior stencil. That keeps the outer edge boundary-aware without adding a new atmosphere state block.
 
-The current dated Armijo validation bundle adds one more important interpretation detail. The repeated dominant weighted-failure signal is currently in the aggregate `transport` family, not in geometry, hydrostatic balance, or luminosity. That is a measured diagnostics fact from the current bundle, not yet a proof that the outer one-sided row itself is the only problem. The present diagnostics still aggregate interior and outer transport, so the next hardening slice should split those two contributions before ASTRA claims a boundary-local cause.
+The 2026-03-30 transport-family validation bundle adds one more important interpretation detail. The repeated dominant weighted-failure signal is no longer a single aggregate `transport` bucket: `interior_transport` dominates the default-12 case and the larger-cell ladder, while `outer_transport` still dominates the smallest `n_cells = 6, 8` runs. That is a measured diagnostics fact from the current bundle, not yet a proof that the outer one-sided row alone is the problem. The current evidence points to transport-family-local trouble that is boundary-sensitive, but not purely outer-boundary-local.
 
 It is useful to spell out exactly what is and is not true today:
 

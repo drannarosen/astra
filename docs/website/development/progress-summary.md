@@ -33,6 +33,24 @@ Next step:
 
 - execute `docs/plans/2026-03-30-transport-outer-boundary-hardening-implementation-plan.md` task-by-task and stop early if the split diagnostics point away from the outer boundary.
 
+### Transport-family split validation evidence
+
+The fresh `2026-03-30-transport-outer-boundary-hardening` artifact bundle now splits transport into `interior_transport` and `outer_transport`. The measured pattern is mixed rather than purely outer-boundary-local: `outer_transport` dominates the smallest `n_cells = 6, 8` runs, but `interior_transport` dominates the default-12 case, the larger-cell ladder, and most perturbation payloads. Every payload still reports `converged = false` and `used_regularized_fallback = true`, so the solve is not healthy yet, but the evidence now says the bottleneck is transport-family-local with a boundary sensitivity rather than a boundary-only failure.
+
+Why this mattered:
+
+- it sharpens the diagnosis beyond the earlier aggregate `transport` label,
+- it prevents the website from overstating the outer boundary as the sole culprit,
+- and it gives the next hardening slice a more honest target: mixed transport-family conditioning, not just a one-sided surface fix.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. scripts/run_armijo_merit_validation.jl artifacts/validation/2026-03-30-transport-outer-boundary-hardening`
+
+Next step:
+
+- keep the boundary contract explicit while hardening the transport-family rows against the mixed interior/outer failure signature.
+
 ### Armijo merit validation evidence
 
 ASTRA now has a dated artifact bundle and interpretation note for the current Armijo merit validation sweep at `artifacts/validation/2026-03-30-armijo-merit-validation/` and `docs/website/development/armijo-merit-validation-2026-03-30.md`. The bundle covers the 6, 8, 12, 16, and 24 cell ladder plus the default-12 fixture and a deterministic perturbation family; every recorded payload is still `converged = false`, every accepted and best-rejected dominant family is `transport`, and regularized fallback appears in every payload.

@@ -52,9 +52,9 @@ The transport row is assembled in [Residual Assembly](../../methods/residual-ass
 
 ## Current validation status
 
-The current dated Armijo validation bundle makes one point sharply: the dominant weighted failure signal is repeatedly in the `transport` family. In the committed `2026-03-30` bundle, every payload still reports `transport` as both the accepted-step dominant family and the best-rejected dominant family, while regularized fallback is used everywhere.
+The current dated Armijo validation bundle makes one point sharply: the dominant weighted failure signal is transport-family-local, but it is not exclusively outer-boundary-local. In the committed `2026-03-30` bundle, `interior_transport` dominates the default-12 case and the larger-cell ladder, while `outer_transport` still dominates the smallest `n_cells = 6, 8` runs. Regularized fallback is used everywhere.
 
-That is a measured solver diagnostics result, not yet a proof that the radiative-gradient law itself is wrong. The sharper current hypothesis is narrower: the present transport bottleneck may be concentrated in the one-sided outer transport interface, the local transport derivative quality, or both. The current diagnostics do not yet split interior transport from the outer one-sided transport row, so ASTRA should harden that evidence surface before claiming a purely boundary-local cause.
+That is a measured solver diagnostics result, not yet a proof that the radiative-gradient law itself is wrong. The sharper current hypothesis is narrower: the present transport bottleneck is mixed between interior transport and the one-sided outer transport interface, so ASTRA should harden that evidence surface before claiming a purely boundary-local cause.
 
 ## What is deferred
 
