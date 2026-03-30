@@ -272,6 +272,61 @@ function row_family_merit_summary(
     )
 end
 
+function transport_hotspot_summary(
+    problem::StructureProblem,
+    model::StellarModel,
+    residual::AbstractVector{<:Real};
+    row_weights::AbstractVector{<:Real} = residual_row_weights(problem, model),
+)
+    n = problem.grid.n_cells
+    if n <= 1
+        return _ASTRA_MODULE.TransportHotspotSummary(
+            false,
+            0,
+            :none,
+            0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        )
+    end
+
+    best_summary = nothing
+    best_abs_weighted = -Inf
+    residual_f64 = Float64.(residual)
+    weight_f64 = Float64.(row_weights)
+
+    for k in 1:(n - 1)
+        row_index = first(interior_structure_row_range(k)) + 3
+        transport_terms = _ASTRA_MODULE.transport_row_terms(problem, model, k)
+        raw_residual = residual_f64[row_index]
+        row_weight = weight_f64[row_index]
+        weighted_contribution = row_weight * raw_residual
+        if abs(weighted_contribution) > best_abs_weighted
+            best_abs_weighted = abs(weighted_contribution)
+            best_summary = _ASTRA_MODULE.TransportHotspotSummary(
+                true,
+                transport_terms.cell_index,
+                transport_terms.location,
+                row_index,
+                raw_residual,
+                row_weight,
+                weighted_contribution,
+                transport_terms.delta_log_temperature,
+                transport_terms.delta_log_pressure,
+                transport_terms.nabla_transport,
+                transport_terms.gradient_term,
+            )
+        end
+    end
+
+    return something(best_summary)
+end
+
 """
     correction_weights(problem, model)
 

@@ -287,6 +287,26 @@ struct RowFamilyMeritSummary
 end
 
 """
+    TransportHotspotSummary(...)
+
+Row-level transport hotspot summary for the weighted residual at one model state.
+This is diagnostic-only and does not alter solver ownership or acceptance.
+"""
+struct TransportHotspotSummary
+    present::Bool
+    cell_index::Int
+    location::Symbol
+    row_index::Int
+    raw_residual::Float64
+    row_weight::Float64
+    weighted_contribution::Float64
+    delta_log_temperature::Float64
+    delta_log_pressure::Float64
+    nabla_transport::Float64
+    gradient_term::Float64
+end
+
+"""
     TrialMeritSummary(...)
 
 Frozen-weight merit attribution for one damped Newton trial.
@@ -301,6 +321,7 @@ struct TrialMeritSummary
     actual_decrease::Float64
     decrease_ratio::Float64
     row_family_merit::RowFamilyMeritSummary
+    transport_hotspot::TransportHotspotSummary
 end
 
 """

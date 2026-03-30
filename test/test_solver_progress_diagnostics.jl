@@ -147,6 +147,17 @@ end
         @test accepted_trial.row_family_merit.total ≈ accepted_trial.merit_value rtol = 1e-12
         @test accepted_trial.row_family_merit.dominant_family in
               (:center, :geometry, :hydrostatic, :luminosity, :interior_transport, :outer_transport, :surface)
+        @test accepted_trial.transport_hotspot.present
+        @test accepted_trial.transport_hotspot.cell_index in 1:(problem.grid.n_cells - 1)
+        @test accepted_trial.transport_hotspot.location in (:interior, :outer)
+        @test accepted_trial.transport_hotspot.weighted_contribution ≈
+              accepted_trial.transport_hotspot.row_weight * accepted_trial.transport_hotspot.raw_residual
+        @test accepted_trial.transport_hotspot.raw_residual ≈
+              accepted_trial.transport_hotspot.delta_log_temperature +
+              accepted_trial.transport_hotspot.gradient_term
+        @test accepted_trial.transport_hotspot.gradient_term ≈
+              accepted_trial.transport_hotspot.nabla_transport *
+              accepted_trial.transport_hotspot.delta_log_pressure
     end
 
     if result.diagnostics.rejected_trial_count > 0
@@ -156,6 +167,9 @@ end
         @test rejected_trial.row_family_merit.total ≈ rejected_trial.merit_value rtol = 1e-12
         @test rejected_trial.row_family_merit.dominant_family in
               (:center, :geometry, :hydrostatic, :luminosity, :interior_transport, :outer_transport, :surface)
+        @test rejected_trial.transport_hotspot.present
+        @test rejected_trial.transport_hotspot.cell_index in 1:(problem.grid.n_cells - 1)
+        @test rejected_trial.transport_hotspot.location in (:interior, :outer)
     else
         @test isnothing(result.diagnostics.best_rejected_trial)
     end

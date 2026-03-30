@@ -128,6 +128,12 @@ function _accepted_trial_step(
                 next_residual;
                 row_weights = base_row_weights,
             ),
+            transport_hotspot_summary(
+                problem,
+                next_model,
+                next_residual;
+                row_weights = base_row_weights,
+            ),
         )
 
         if isfinite(base_slope) &&
