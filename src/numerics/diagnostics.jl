@@ -38,6 +38,7 @@ function build_diagnostics(
         "Solve boundary: solve_structure(problem; state = guess) is the current public solve boundary for future sensitivities, with only model.structure treated as solve-owned.",
         "Atmosphere boundary note: surface temperature is matched in log form to T_eff and the surface pressure row is weighted on a pressure scale, not the old density guess.",
         "Solver acceptance and convergence now use weighted residual metrics; raw residual histories are still reported for scientific honesty.",
+        "Weighted residual histories report the frozen acceptance metric used for globalization decisions.",
     ]
     append!(notes, String.(extra_notes))
 

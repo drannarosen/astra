@@ -103,7 +103,7 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
     ]
 
     for _ in 1:problem.solver.max_newton_iterations
-        current_weighted_residual_norm = weighted_residual_norm(problem, model, residual)
+        current_weighted_residual_norm = last(weighted_residual_history)
         if converged_residual(problem, model, residual)
             diagnostics = build_diagnostics(
                 problem,
@@ -148,7 +148,7 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 model = trial_step.model
                 residual = trial_step.residual
                 push!(residual_history, residual_norm(residual))
-                push!(weighted_residual_history, weighted_residual_norm(problem, model, residual))
+                push!(weighted_residual_history, trial_step.weighted_residual_norm)
                 push!(
                     weighted_correction_norm_history,
                     trial_step.weighted_correction_norm,
@@ -201,7 +201,7 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 model = trial_step.model
                 residual = trial_step.residual
                 push!(residual_history, residual_norm(residual))
-                push!(weighted_residual_history, weighted_residual_norm(problem, model, residual))
+                push!(weighted_residual_history, trial_step.weighted_residual_norm)
                 push!(
                     weighted_correction_norm_history,
                     trial_step.weighted_correction_norm,
@@ -213,7 +213,7 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
         end
 
         if !accepted
-            current_weighted_residual_norm = weighted_residual_norm(problem, model, residual)
+            current_weighted_residual_norm = last(weighted_residual_history)
             diagnostics = build_diagnostics(
                 problem,
                 model,
@@ -235,7 +235,7 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
         end
     end
 
-    current_weighted_residual_norm = weighted_residual_norm(problem, model, residual)
+    current_weighted_residual_norm = last(weighted_residual_history)
     diagnostics = build_diagnostics(
         problem,
         model,
