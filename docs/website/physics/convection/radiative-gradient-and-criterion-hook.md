@@ -36,6 +36,8 @@ $$
 
 So the criterion hook is diagnostic scaffolding around a radiative transport row, not a full convection model.
 
+The discrete transport row is described in [Residual Assembly](../../methods/residual-assembly.md), and the current derivative checks are summarized in [Jacobian Construction](../../methods/jacobian-construction.md).
+
 ## What is deferred
 
 Real mixing-length theory, convective overshoot, semiconvection, thermohaline transport, and composition transport are deferred. This page documents the current radiative-gradient helper and criterion hook only.

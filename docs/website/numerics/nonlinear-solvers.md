@@ -1,5 +1,7 @@
 # Nonlinear Solvers
 
+Canonical guide: [Nonlinear Newton and Backtracking](../methods/nonlinear-newton-and-backtracking.md).
+
 The current nonlinear solver is a plain Newton-style loop with:
 
 - residual evaluation,
@@ -9,7 +11,7 @@ The current nonlinear solver is a plain Newton-style loop with:
 - a regularized normal-equation retry ladder when the direct solve is singular or unhelpful,
 - explicit convergence bookkeeping.
 
-This is enough for Milestone 0 and Milestone 1 because it stabilizes the solver-facing interfaces before ASTRA commits to more specialized numerics.
+This page stays as a compact numerics-side summary. It is enough for Milestone 0 and Milestone 1 because it stabilizes the solver-facing interfaces before ASTRA commits to more specialized numerics.
 
 ## What Newton is and is not doing here
 
@@ -25,6 +27,6 @@ That still matters. It proves that ASTRA can:
 
 ## Current caveat
 
-The current examples no longer stop at iteration 0, and the accepted step is now materially larger than in the previous slice. On the current 24-cell public demo, ASTRA reduces the residual norm from `2.1962008371612166e22` to `2.1275638477172188e22`, accepts exactly one step with damping `0.03125`, records `380` rejected trials, and still returns `converged = false`.
+The current examples no longer stop at iteration 0, and the accepted-step sequence is now materially stronger than in the earlier center-conditioning slice. On the current 24-cell public demo, ASTRA reduces the residual norm from `2.1962008371612166e22` to `1.1903032914682583e19`, reaches 8 accepted steps, records 289 rejected trials, and still returns `converged = false`.
 
-That is scientifically useful because it proves there is a residual-reducing direction on the current placeholder-closure stack and that solver-side luminosity conditioning plus center asymptotics improved the usable step. It is also a warning sign: the basin is still extremely narrow, so the next blocker remains update quality and Jacobian fidelity rather than missing ownership, missing diagnostics, or missing solver-boundary language.
+That is scientifically useful because it proves the public default path now has a sustained residual-reducing direction on the current placeholder-closure stack. It is also a warning sign: the basin is still narrow, so the next blocker remains full convergence quality rather than missing ownership, missing diagnostics, or missing solver-boundary language.

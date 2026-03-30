@@ -2,6 +2,8 @@
 
 ASTRA's solve pipeline is the computational half of the classical lane: `Physics` defines the equations, `Methods` explains how ASTRA turns them into a nonlinear system, and the solver then works on that system as a coupled whole.
 
+If you need the continuous equations first, start in [Physics](../physics/index.md). If you need source-backed MESA comparison notes for solver hardening, use the [MESA Reference](mesa-reference/index.md) subtree alongside these ASTRA-specific pages.
+
 ## What this section covers
 
 The method pages document the current bootstrap implementation, not a future target:
@@ -18,6 +20,8 @@ The method pages document the current bootstrap implementation, not a future tar
 ## Reading order
 
 Start with [From Equations to Residual](from-equations-to-residual.md) to see the unknown vector and residual vector, then read [Staggered Mesh and State Layout](staggered-mesh-and-state-layout.md) for ownership, [Residual Assembly](residual-assembly.md) for the row-by-row equations, and [Jacobian Construction](jacobian-construction.md) for the analytic rows and central differences. The remaining pages explain scaling, Newton progress, seeding, boundary-condition realization, and verification.
+
+The physical companion surface is [Physics](../physics/index.md). For source-backed comparison notes against the local MESA mirror, see [MESA Reference](mesa-reference/index.md).
 
 ## Current scope
 

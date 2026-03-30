@@ -34,6 +34,8 @@ These are the `opacity_temperature_derivative(...)` and `opacity_density_derivat
 
 Opacity feeds the radiative-gradient helper in `src/structure_equations.jl`. That helper multiplies opacity, luminosity, pressure, and the local geometric factors to produce the transport gradient used by the residual. The local derivatives matter because the Jacobian audit checks the same helper in density and temperature directions.
 
+The discrete method-side realization is documented in [Residual Assembly](../../methods/residual-assembly.md), and the current derivative path is summarized in [Jacobian Construction](../../methods/jacobian-construction.md).
+
 ## What is deferred
 
 Real Rosseland tables, low-temperature molecular physics, conductive opacity, and blend hierarchies are deferred. This is the current placeholder opacity law, not a production opacity subsystem.

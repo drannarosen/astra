@@ -1,10 +1,18 @@
 # From Equations to Residual
 
-This page shows how ASTRA turns the continuous classical equations into a residual vector. The important bridge is between the `Physics` pages and the solver-side `Methods` pages.
+This page shows how ASTRA turns the continuous classical equations into a residual vector. The important bridge is between the `Physics` pages and the solver-side `Methods` pages, especially [Physics: Stellar Structure](../physics/stellar-structure.md).
+
+The physics side of that bridge lives in [Stellar Structure](../physics/stellar-structure.md) and the closure hub pages under [Physics](../physics/index.md).
 
 ## Unknown vector
 
 ASTRA packs the structure state as
+
+$$
+x = \left(\log r_{i+1/2},\; L_{i+1/2},\; \log T_i,\; \log \rho_i \right)
+$$
+
+or, in the literal packed storage order,
 
 ```text
 [ log(radius_face_cm),

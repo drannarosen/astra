@@ -14,6 +14,8 @@ This local derivative validation checks the EOS, opacity, nuclear, and transport
 
 `test_default_newton_progress.jl` and `scripts/run_examples.jl` check the public solve path. The current default newton progress evidence is the 24-cell demo with `8` accepted steps, `289` rejected trials, and a residual drop from `2.1962008371612166e22` to `1.1903032914682583e19`.
 
+The physics-side reason this matters is the coupled solve described in [Physics: The Coupled Problem](../physics/stellar-structure/coupled-problem.md): a Jacobian improvement is only meaningful if the full boundary-value problem actually takes better Newton steps.
+
 ## Why this matters
 
 Verification is not a side effect. It is the method by which we distinguish a solver improvement from a better-looking failure.

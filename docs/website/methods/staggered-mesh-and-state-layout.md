@@ -20,3 +20,7 @@ That face/cell split is the core of the layout. Radius and luminosity naturally 
 ## Why this layout exists
 
 The staggered layout keeps the residual rows local: geometry couples adjacent faces and a cell density, hydrostatic balance uses adjacent cell pressures and one face radius, luminosity uses one cell source term, and transport uses adjacent cell temperatures and pressures. That locality is what makes the Jacobian block structure readable.
+
+For the physics-side interpretation of those owners, see [Physics: Stellar Structure](../physics/stellar-structure.md). For the closest source-backed MESA comparison on variable staggering and `i_lum`, see [MESA Reference: Mesh and Variables](mesa-reference/mesh-and-variables.md).
+
+For the continuous structure equations that motivate this ownership split, see [Stellar Structure](../physics/stellar-structure.md). For the closest source-backed MESA comparison on variable staggering and solve-owned arrays, see [MESA Reference: Mesh and Variables](mesa-reference/mesh-and-variables.md).

@@ -8,6 +8,8 @@ The scaling vector is built from the packed state so the Newton correction sees 
 
 That is numerical conditioning, not a change in variable ownership.
 
+For the closest file-backed MESA comparison, see [MESA Reference: Solver Scaling](mesa-reference/solver-scaling.md). The physics-side reason luminosity needs special care appears in [Physics: Energy Generation](../physics/stellar-structure/energy-generation.md).
+
 ## Linear solve
 
 The current direct solve is a dense backslash solve. If that fails or returns a non-finite update, ASTRA retries with regularized normal equations on the same scaled system.
@@ -19,3 +21,5 @@ The regularization ladder is the fallback path when the direct linearized step i
 ## Why this matters
 
 The current bootstrap lane is small enough that dense algebra is acceptable, but the explicit linear-solver boundary makes it clear where a future sparse or external solver would enter without changing the nonlinear ownership contract.
+
+For the physical role of luminosity in the structure equations, see [Energy Generation](../physics/stellar-structure/energy-generation.md). For the source-backed MESA comparison on `x_scale`, correction weights, and energy-equation scaling, see [MESA Reference: Solver Scaling](mesa-reference/solver-scaling.md).

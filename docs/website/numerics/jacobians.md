@@ -2,6 +2,10 @@
 
 ASTRA now carries two Jacobian paths with different jobs:
 
+Canonical guide: [Jacobian Construction](../methods/jacobian-construction.md).
+
+This page stays as a compact numerics-side summary.
+
 - `finite_difference_jacobian(problem, model)` remains the global dense reference used for validation,
 - `structure_jacobian(problem, model)` is the current solver-facing block-aware path.
 

@@ -6,10 +6,10 @@ ASTRA's physics pages explain the continuous stellar-structure model before the 
 
 The classical baseline is the coupled four-equation problem in enclosed mass:
 
-- mass conservation: `dr/dm`
-- hydrostatic equilibrium: `dP/dm`
-- energy generation: `dL/dm`
-- energy transport: `dT/dm`
+- mass conservation, shorthand `dr/dm`: $\frac{dr}{dm}$
+- hydrostatic equilibrium, shorthand `dP/dm`: $\frac{dP}{dm}$
+- energy generation, shorthand `dL/dm`: $\frac{dL}{dm}$
+- energy transport, shorthand `dT/dm`: $\frac{dT}{dm}$
 
 Those equations appear in [Stellar Structure](stellar-structure.md), and ASTRA currently solves their discrete residual form on a staggered face/cell mesh.
 
@@ -30,7 +30,7 @@ The center and surface close the global solve. The center uses asymptotic series
 
 ## Current ASTRA implementation
 
-ASTRA currently solves a classical residual with `log(radius)`, `log(temperature)`, and `log(density)` as the thermodynamic/geometry unknowns, while keeping luminosity in raw cgs `erg/s`. The result is a bootstrap classical solve, not a production stellar model, but the ownership of each quantity is now explicit enough that the equations can be hardened step by step.
+ASTRA currently solves a classical residual with `log(radius)`, `log(temperature)`, and `log(density)` as the thermodynamic/geometry unknowns, while keeping luminosity in raw cgs $\mathrm{erg\,s^{-1}}$. The result is a bootstrap classical solve, not a production stellar model, but the ownership of each quantity is now explicit enough that the equations can be hardened step by step.
 
 ## Numerical realization in ASTRA
 

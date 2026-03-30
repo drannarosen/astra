@@ -1,6 +1,10 @@
 # Diagnostics
 
+Canonical guide: [Verification and Jacobian Audits](../methods/verification-and-jacobian-audits.md).
+
 Diagnostics are where ASTRA reports what a solve did, not what we wish it had done.
+
+The canonical hardening and verification narrative now lives in [Methods: Verification and Jacobian Audits](../methods/verification-and-jacobian-audits.md). This page remains as a shorter note about what the diagnostics object reports.
 
 At bootstrap, the diagnostics object tracks:
 

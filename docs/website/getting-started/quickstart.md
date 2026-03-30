@@ -1,6 +1,6 @@
 # Quickstart
 
-The bootstrap quickstart is intentionally modest. It does **not** claim to solve a production stellar model. It shows how ASTRA's package architecture, explicit model ownership, first classical residual slice, and diagnostics fit together.
+The bootstrap quickstart is intentionally modest. It does **not** claim to solve a production stellar model. It shows how the `ASTRA` package architecture, explicit model ownership, first classical residual slice, and diagnostics fit together.
 
 ```julia
 using ASTRA

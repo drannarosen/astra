@@ -2,6 +2,10 @@
 
 The bootstrap still uses Julia's dense backslash solve for the Newton update.
 
+Canonical guide: [Linear Solves and Scaling](../methods/linear-solves-and-scaling.md).
+
+This page stays as a compact numerics-side summary.
+
 That is a placeholder decision, not a long-term endorsement of dense algebra for realistic stellar solves. The important architectural rule is that the nonlinear layer should delegate the update step to a linear-solver boundary instead of hard-coding one strategy everywhere.
 
 Current status:

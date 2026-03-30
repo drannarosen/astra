@@ -10,8 +10,13 @@ ASTRA currently uses center asymptotic targets for radius and luminosity, plus p
 
 The current center targets are:
 
-- `r_inner = (3 m_inner / (4 pi rho_c))^(1/3)`
-- `L_inner = m_inner * epsilon_nuc`
+$$
+r_\mathrm{inner} = \left(\frac{3 m_\mathrm{inner}}{4 \pi \rho_c}\right)^{1/3}
+$$
+
+$$
+L_\mathrm{inner} = m_\mathrm{inner} \, \varepsilon_\mathrm{nuc}
+$$
 
 Those are the rows that replaced the older fragile center closure.
 

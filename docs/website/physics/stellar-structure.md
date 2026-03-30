@@ -6,10 +6,10 @@ The classical 1D stellar-structure problem is a single coupled boundary-value pr
 
 The four structure equations are:
 
-- `dr/dm` for mass conservation and shell geometry
-- `dP/dm` for hydrostatic support
-- `dL/dm` for energy generation
-- `dT/dm` for energy transport
+- shorthand `dr/dm` for mass conservation and shell geometry: $\frac{dr}{dm}$
+- shorthand `dP/dm` for hydrostatic support: $\frac{dP}{dm}$
+- shorthand `dL/dm` for energy generation: $\frac{dL}{dm}$
+- shorthand `dT/dm` for energy transport: $\frac{dT}{dm}$
 
 ASTRA now arranges those equations on a staggered mesh with face-centered radius and luminosity, and cell-centered density and temperature. That is the classical baseline lane, not a finished stellar-evolution package.
 

@@ -34,6 +34,8 @@ In code, these are the `pressure_temperature_derivative(...)` and `pressure_dens
 
 The EOS pressure is used directly in the hydrostatic row and in the transport helper. ASTRA does not store pressure as a separate solve-owned variable; it evaluates the EOS from the local cell state whenever a residual or derivative needs it.
 
+The method-side realization is documented in [Residual Assembly](../../methods/residual-assembly.md) and [Jacobian Construction](../../methods/jacobian-construction.md), where the EOS sensitivities enter the hydrostatic and transport rows.
+
 The EOS also supplies `adiabatic_gradient = 0.4` and a specific heat value, but this page is only documenting the current bootstrap closure, not a general thermodynamic package.
 
 ## What is deferred

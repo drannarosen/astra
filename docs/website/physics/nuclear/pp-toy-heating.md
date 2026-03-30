@@ -32,6 +32,8 @@ These are the `nuclear_temperature_derivative(...)` and `nuclear_density_derivat
 
 The luminosity residual subtracts `dm * epsilon_nuc` for each interior cell, so the source term enters the nonlinear solve as a volumetric heating rate rather than as a separate conserved variable. The Jacobian uses the local source derivatives above when the luminosity row is linearized.
 
+The row-level realization is documented in [Residual Assembly](../../methods/residual-assembly.md), and the current linearization contract is described in [Jacobian Construction](../../methods/jacobian-construction.md).
+
 ## What is deferred
 
 Real reaction networks, neutrino losses, composition evolution, and detailed screening physics are deferred. This page documents the bootstrap source ASTRA actually uses today, not the pp-chain in full physical detail.

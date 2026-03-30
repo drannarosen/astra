@@ -83,10 +83,19 @@
     @test all(path -> isfile(joinpath(root, path)), expected)
 
     contract_docs = Dict(
+        "docs/website/index.md" => [
+            "trustworthy classical stellar-structure baseline",
+            "solver ownership",
+            "research framework",
+            "Physics",
+            "Methods",
+            "validated classical baseline solver",
+        ],
         "docs/website/getting-started/quickstart.md" => [
             "`StellarModel`",
             "result.state.structure",
             "result.state.composition",
+            "`ASTRA` package architecture",
         ],
         "docs/website/tutorials/first-hydrostatic-model.md" => [
             "result.state.structure",
@@ -133,11 +142,13 @@
             "Constitutive physics",
             "Boundary conditions",
             "What is deferred",
+            "../methods/index.md",
         ],
         "docs/website/physics/stellar-structure.md" => [
             "Current ASTRA implementation",
             "Numerical realization in ASTRA",
             "What is deferred",
+            "../methods/residual-assembly.md",
         ],
         "docs/website/physics/eos.md" => [
             "Current ASTRA implementation",
@@ -149,6 +160,7 @@
             "pressure decomposition",
             "dP/dT",
             "dP/drho",
+            "../../methods/jacobian-construction.md",
         ],
         "docs/website/physics/opacity.md" => [
             "Current ASTRA implementation",
@@ -160,6 +172,7 @@
             "Rosseland",
             "dκ/dT",
             "dκ/drho",
+            "../../methods/residual-assembly.md",
         ],
         "docs/website/physics/nuclear.md" => [
             "Current ASTRA implementation",
@@ -171,6 +184,7 @@
             "energy rate",
             "dε/dT",
             "dε/drho",
+            "../../methods/residual-assembly.md",
         ],
         "docs/website/physics/convection.md" => [
             "Current ASTRA implementation",
@@ -182,6 +196,7 @@
             "nabla_rad",
             "nabla_ad",
             "residual still uses radiative transport",
+            "../../methods/jacobian-construction.md",
         ],
         "docs/website/physics/boundary-conditions.md" => [
             "Current ASTRA implementation",
@@ -217,31 +232,40 @@
             "solve pipeline",
             "Physics",
             "Methods",
+            "../physics/index.md",
+            "mesa-reference/index.md",
         ],
         "docs/website/methods/from-equations-to-residual.md" => [
             "unknown vector",
             "residual vector",
             "log(radius",
+            "../physics/stellar-structure.md",
         ],
         "docs/website/methods/staggered-mesh-and-state-layout.md" => [
             "face-centered",
             "cell-centered",
             "packed state",
+            "mesa-reference/mesh-and-variables.md",
         ],
         "docs/website/methods/residual-assembly.md" => [
             "center rows",
             "interior blocks",
             "surface rows",
+            "../physics/stellar-structure/mass-conservation.md",
+            "../physics/stellar-structure/energy-transport.md",
         ],
         "docs/website/methods/jacobian-construction.md" => [
             "analytic rows",
             "central differences",
             "jacobian_fidelity_audit",
+            "../physics/eos.md",
+            "../physics/nuclear.md",
         ],
         "docs/website/methods/linear-solves-and-scaling.md" => [
             "erg/s",
             "column scaling",
             "regularized normal equations",
+            "mesa-reference/solver-scaling.md",
         ],
         "docs/website/methods/nonlinear-newton-and-backtracking.md" => [
             "damping",
@@ -257,11 +281,14 @@
             "center asymptotic",
             "surface closure",
             "subtractive-cancellation",
+            "../physics/boundary-conditions.md",
+            "mesa-reference/boundary-conditions.md",
         ],
         "docs/website/methods/verification-and-jacobian-audits.md" => [
             "local derivative validation",
             "block jacobian",
             "default newton progress",
+            "../physics/stellar-structure/coupled-problem.md",
         ],
         "docs/website/methods/mesa-reference/index.md" => [
             "file-backed parity",
@@ -287,6 +314,28 @@
         "docs/website/numerics/residuals.md" => [
             "first classical structure equations",
             "source-decomposed",
+            "Canonical guide: [Residual Assembly](../methods/residual-assembly.md)",
+            "../methods/residual-assembly.md",
+        ],
+        "docs/website/numerics/jacobians.md" => [
+            "Canonical guide: [Jacobian Construction](../methods/jacobian-construction.md)",
+            "verified split between analytic rows",
+            "../methods/jacobian-construction.md",
+        ],
+        "docs/website/numerics/linear-solvers.md" => [
+            "Canonical guide: [Linear Solves and Scaling](../methods/linear-solves-and-scaling.md)",
+            "linear-solver boundary",
+            "../methods/linear-solves-and-scaling.md",
+        ],
+        "docs/website/numerics/nonlinear-solvers.md" => [
+            "Canonical guide: [Nonlinear Newton and Backtracking](../methods/nonlinear-newton-and-backtracking.md)",
+            "8 accepted steps",
+            "289 rejected trials",
+            "../methods/nonlinear-newton-and-backtracking.md",
+        ],
+        "docs/website/numerics/diagnostics.md" => [
+            "Canonical guide: [Verification and Jacobian Audits](../methods/verification-and-jacobian-audits.md)",
+            "../methods/verification-and-jacobian-audits.md",
         ],
         "docs/website/myst.yml" => [
             "title: Physics",
@@ -316,6 +365,11 @@
             "Classical residual convergence basin is still provisional",
             "Surface closure remains provisional",
             "Evolution remains intentionally stubbed",
+        ],
+        "docs/website/contributing/documentation-style.md" => [
+            "Use plain ASTRA when you mean the project",
+            "Use `ASTRA` when you mean the Julia package",
+            "`ASTRA.pack_state(...)`",
         ],
     )
 

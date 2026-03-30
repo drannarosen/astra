@@ -10,7 +10,7 @@ $$
 \frac{dP}{dm} = -\frac{G m}{4 \pi r^4}
 $$
 
-Here `P` is pressure, `G` is the gravitational constant, `m` is enclosed mass, and `r` is the local radius. The negative sign means pressure must fall outward to support the overlying mass.
+Here $P$ is pressure, $G$ is the gravitational constant, $m$ is enclosed mass, and $r$ is the local radius. The negative sign means pressure must fall outward to support the overlying mass.
 
 ## Current ASTRA implementation
 

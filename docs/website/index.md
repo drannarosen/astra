@@ -1,46 +1,73 @@
 # ASTRA
 
-**ASTRA** is the **Adaptive STellar Research Architecture**: a Julia-first framework for stellar structure and evolution built around clarity, validation readiness, and controlled method development.
+**ASTRA** is the **Adaptive STellar Research Architecture**: a Julia-native framework for stellar structure and evolution designed around **clarity, modular physics, solver ownership, validation, and controlled method development**.
 
-This site has four jobs at once:
+ASTRA is built on a simple premise: modern stellar astrophysics needs more than a legacy black box. It needs an architecture that makes the physics explicit, keeps the numerics inspectable, and supports careful movement from classical baselines to more advanced formulations.
+
+ASTRA therefore begins with a deliberate goal: build a **trustworthy classical stellar-structure baseline** first, then use that baseline as the foundation for validation, comparison, and later extensions in time evolution, alternative formulations, and differentiable methods.
+
+This site is part handbook, part design record, and part scientific guide. It has four jobs at once:
 
 - orient new contributors,
-- explain the architecture and scientific scope,
+- explain the scientific and numerical architecture,
 - preserve design memory,
-- and teach the physics and numerics behind the code.
+- and teach the physics and methods behind the code.
 
 ## What ASTRA is for
 
-ASTRA is a forward-model laboratory. Its first responsibility is to support a clean classical stellar-structure lane that can later serve as the comparison surface for more experimental ideas, including Entropy-DAE.
+ASTRA is a **research framework** for building stellar structure and evolution in a way that is:
 
-ASTRA is intentionally **not** a MESA clone, not a giant physics warehouse, and not a rushed attempt to implement all of stellar evolution in one pass.
+- **modular**, so physics and numerics can evolve without collapsing into a monolith,
+- **validation-ready**, so each scientific step can be checked against known baselines,
+- **solver-aware**, so numerical methods are part of the design rather than hidden implementation detail,
+- and **future-facing**, so later work in differentiable methods and alternative formulations can grow from a trusted foundation.
 
-## How ASTRA differs from Stellax
+The first major milestone is a robust classical Henyey-style solver. That solver is not the endpoint. It is the reference surface against which more experimental approaches, including Entropy-DAE and differentiable workflows, can be developed and judged.
 
-- **Stellax** is the flagship differentiable framework where inference and gradients are central.
-- **ASTRA** is the Julia-first code where solver ownership, formulation clarity, and validation discipline come first.
+ASTRA is intentionally scoped for disciplined growth: a clean baseline first, then controlled expansion in physics, methods, and formulation.
 
-That makes ASTRA a companion code and a reference engine, not a replacement.
+## Why This Architecture Matters
 
-## How to use this site
+At the core of ASTRA is a strict separation of concerns:
+
+- [Physics](physics/index.md) explains what equations and closures define the star,
+- [Methods](methods/index.md) explains how those equations become a nonlinear solve,
+- [Validation](validation/philosophy.md) explains what is actually proven,
+- [Planning](planning/roadmap.md) explains how ASTRA moves from bootstrap to a validated classical lane and then to more advanced formulations.
+
+That separation is not cosmetic. It is what makes ASTRA understandable, testable, extensible, and eventually differentiable in a controlled scientific way.
+
+## How to Use This Site
 
 - Start with [Getting Started](getting-started/installation.md) if you want to install Julia, run the scaffold, and inspect the package layout.
 - Read [Architecture](architecture/overview.md) if you want to understand how ASTRA separates physics, numerics, and orchestration.
-- Read [Validation](validation/philosophy.md) if you want to know what the current scaffold proves and what it does not.
-- Read [Planning](planning/roadmap.md) if you want the scientific sequence from bootstrap to classical baseline and later method-comparison work.
-- Read [Development](development/development-guide.md) if you want to know what changed recently, what is blocked, and what is queued next.
+- Read [Physics](physics/index.md) and [Methods](methods/index.md) if you want the exact equations, residuals, Jacobians, and boundary-condition realization that the code is currently using.
+- Read [Validation](validation/philosophy.md) if you want to know what the current scaffold demonstrates, what remains provisional, and how scientific trust is being built.
+- Read [Planning](planning/roadmap.md) if you want the development sequence from bootstrap to classical baseline and then to more advanced formulations.
+- Read [Development](development/development-guide.md) if you want to see what is implemented, what is blocked, and what comes next.
 
-If you are new to the repo, read the site in that order. ASTRA's docs are meant to teach how to think about the codebase, not just where the files live.
+If you are new to the repository, read the site in that order. The ASTRA docs are meant to teach not just where the files live, but how to think about the codebase.
 
-## Current status
+## Current Status
 
-The current repository is a bootstrap milestone:
+The current repository is at the bootstrap stage:
 
 - package scaffold,
-- toy structure residual/Jacobian path,
+- classical toy residual and Jacobian path,
 - tests and examples,
-- MystMD handbook,
+- MyST documentation system,
 - formulation scaffolding,
-- explicit documentation of what is stubbed.
+- and explicit documentation of what is real, provisional, and stubbed.
 
-The classical baseline solver is the next serious scientific milestone.
+The next major scientific milestone is the **validated classical baseline solver**. That is the point where ASTRA begins to transition from architectural scaffold to trusted stellar-structure engine.
+
+## Long-Term Direction
+
+ASTRA is not trying to do everything at once. It is trying to do one thing correctly at a time while building toward a future where stellar astrophysics can be treated as a constrained system that is not only solved, but eventually analyzed, differentiated, and used for inference.
+
+That long-term direction includes:
+
+- stronger classical validation,
+- alternative formulations,
+- differentiable solver boundaries,
+- and the scientific infrastructure needed for inference-ready stellar modeling.

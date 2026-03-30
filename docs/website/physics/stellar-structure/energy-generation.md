@@ -10,7 +10,7 @@ $$
 \frac{dL}{dm} = \varepsilon_\mathrm{nuc}
 $$
 
-Here `L` is luminosity and `epsilon_nuc` is the specific nuclear energy generation rate in `erg g^-1 s^-1`. The equation says luminosity grows outward by integrating the local source term.
+Here $L$ is luminosity and $\varepsilon_\mathrm{nuc}$ is the specific nuclear energy generation rate in $\mathrm{erg\,g^{-1}\,s^{-1}}$. The equation says luminosity grows outward by integrating the local source term.
 ASTRA keeps the source symbol visible as `eps_nuc` in the discrete discussion below.
 
 ## Current ASTRA implementation
@@ -25,7 +25,7 @@ as implemented in `src/residuals.jl`. The source term comes from the toy nuclear
 
 ## Numerical realization in ASTRA
 
-The luminosity row is assembled in [Residual Assembly](../../methods/residual-assembly.md), and the local source derivatives are tracked in [Jacobian Construction](../../methods/jacobian-construction.md). The solver keeps luminosity in raw cgs `erg/s`; it is not rewritten as a solar-unit variable.
+The luminosity row is assembled in [Residual Assembly](../../methods/residual-assembly.md), and the local source derivatives are tracked in [Jacobian Construction](../../methods/jacobian-construction.md). The solver keeps luminosity in raw cgs $\mathrm{erg\,s^{-1}}$; it is not rewritten as a solar-unit variable.
 
 ## What is deferred
 

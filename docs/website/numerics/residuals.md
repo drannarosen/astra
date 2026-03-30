@@ -2,6 +2,10 @@
 
 ASTRA's current residual vector now carries the first classical structure equations on the approved `StellarModel` contract. It is no longer an analytic reference-profile comparison.
 
+Canonical guide: [Residual Assembly](../methods/residual-assembly.md).
+
+The continuous equations are summarized in [Physics: Stellar Structure](../physics/stellar-structure.md). This page remains as a shorter numerics-side note.
+
 The residual is assembled in explicit physical order:
 
 - center boundary rows first,

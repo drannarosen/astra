@@ -11,7 +11,7 @@ The current structured Jacobian has exact local partials for the analytic rows:
 - the interior geometry rows,
 - the interior luminosity rows.
 
-Those rows use explicit derivatives from the current toy EOS and nuclear closures.
+Those rows use explicit derivatives from the current toy EOS and nuclear closures. The relevant closure definitions live in [Physics: Ideal Gas Plus Radiation EOS](../physics/eos/ideal-gas-plus-radiation.md), [Physics: pp-Toy Heating](../physics/nuclear/pp-toy-heating.md), and [Physics: Radiative Gradient and Criterion Hook](../physics/convection/radiative-gradient-and-criterion-hook.md).
 
 ## Central differences
 
@@ -24,3 +24,5 @@ The row-family split is tracked by `jacobian_fidelity_audit`. That helper compar
 ## Why this matters
 
 The structured Jacobian is the difference between "the solver is trying something" and "the solver knows which row depends on which state block." It is also the place where future analytic coverage should be added first.
+
+The relevant physics owners for those derivatives are the [Equation of State](../physics/eos.md), [Opacity](../physics/opacity.md), [Nuclear Energy Generation](../physics/nuclear.md), and [Convection](../physics/convection.md) pages.

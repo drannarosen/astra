@@ -10,7 +10,7 @@ $$
 \frac{dr}{dm} = \frac{1}{4 \pi r^2 \rho}
 $$
 
-Here `r` is the radius, `m` is enclosed mass, and `rho` is the local mass density. The equation is purely geometric, but it couples immediately to the EOS because `rho` is solved from pressure and temperature.
+Here $r$ is the radius, $m$ is enclosed mass, and $\rho$ is the local mass density. The equation is purely geometric, but it couples immediately to the EOS because `rho` is solved from pressure and temperature.
 
 ## Current ASTRA implementation
 
