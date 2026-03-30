@@ -106,7 +106,7 @@ function default_microphysics()
     return MicrophysicsBundle(
         Microphysics.IdealGasRadiationEOS(),
         Microphysics.AnalyticalOpacity(),
-        Microphysics.ProtonProtonToyNuclear(),
+        Microphysics.AnalyticalNuclear(),
         Microphysics.SchwarzschildConvectionHook(),
     )
 end
