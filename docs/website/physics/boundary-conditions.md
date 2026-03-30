@@ -10,11 +10,11 @@ That is the physical reason boundary conditions matter. The numerical reason is 
 
 Near the center, symmetry requires the solution to stay regular rather than diverge. In practice that means the innermost radius and luminosity must behave like leading-order series quantities, not like generic interior unknowns. The center is therefore a special asymptotic limit, not merely "the first cell."
 
-At the surface, the continuous stellar-structure equations need a matching condition to some outer-layer or atmosphere model. Production stellar codes often use atmosphere integrations, optical-depth conditions, or tabulated surface relations. ASTRA now owns a staged outer atmosphere closure, but it is still a Phase 1 representative-cell approximation rather than a finished atmosphere module.
+At the surface, the continuous stellar-structure equations need a matching condition to some outer-layer or atmosphere model. Production stellar codes often use atmosphere integrations, optical-depth conditions, or tabulated surface relations. ASTRA now owns a staged outer atmosphere closure, and the current implementation uses a one-sided Phase 2 `T(\tau)` match-point reconstruction rather than a guessed boundary.
 
 ## Current ASTRA implementation
 
-ASTRA currently uses center asymptotic targets for radius and luminosity, plus an Eddington-grey outer atmosphere closure for radius, luminosity, temperature, and pressure. The center closure follows the leading-order series form, and the surface closure is intentionally lightweight but physically meaningful.
+ASTRA currently uses center asymptotic targets for radius and luminosity, plus a one-sided outer atmosphere closure for radius, luminosity, temperature, and pressure. The center closure follows the leading-order series form, and the surface closure is intentionally lightweight but physically meaningful.
 
 The current center targets are:
 
@@ -32,20 +32,20 @@ The numerical motivation for this choice is worth making explicit. A center row 
 
 ## Numerical realization in ASTRA
 
-The center rows are assembled in [Residual Assembly](../methods/residual-assembly.md) through the boundary helper layer, and the solver-side interpretation is described in [Boundary Condition Realization](../methods/boundary-condition-realization.md). The atmosphere page [Atmosphere and Photosphere](atmosphere-and-photosphere.md) explains the current Phase 1 outer closure in more detail.
+The center rows are assembled in [Residual Assembly](../methods/residual-assembly.md) through the boundary helper layer, and the solver-side interpretation is described in [Boundary Condition Realization](../methods/boundary-condition-realization.md). The atmosphere page [Atmosphere and Photosphere](atmosphere-and-photosphere.md) explains the current Phase 2 outer closure in more detail.
 
 ## What is deferred
 
-Phase 2 `T(\tau)` matching, real atmosphere tables, and a more explicit photospheric reconstruction are deferred. ASTRA currently needs the surface to be explicit, numerically stable, and scientifically legible, not yet astrophysically complete.
+Phase 3 richer atmosphere options and a more explicit benchmark campaign are deferred. ASTRA currently needs the surface to be explicit, numerically stable, and scientifically legible, not yet astrophysically complete.
 
-The approved next step is to keep the current outer radius and luminosity target rows while replacing the remaining representative-cell atmosphere approximation with a one-sided `T(\tau)` reconstruction. That keeps the atmosphere question separate from the larger future question of whether ASTRA should continue to target both outer `R` and `L` in the long run.
+The approved next step is to keep the current outer radius and luminosity target rows while keeping the one-sided `T(\tau)` reconstruction and its helper-layer transport and pressure scaling aligned. That keeps the atmosphere question separate from the larger future question of whether ASTRA should continue to target both outer `R` and `L` in the long run.
 
 ## Implementation checklist
 
 - [x] The center asymptotic targets for radius and luminosity are written explicitly.
 - [x] The page states that the center is a regularity problem, not an ordinary interior stencil.
-- [x] The surface closure is identified as a Phase 1 atmosphere approximation rather than a finished atmosphere model.
-- [x] The next atmosphere step is recorded as Phase 2 `T(\tau)` while preserving current outer `R/L` ownership.
+- [x] The surface closure is identified as a Phase 2 atmosphere reconstruction rather than a guessed boundary.
+- [x] The one-sided `T(\tau)` atmosphere reconstruction is recorded as current behavior.
 - [ ] The exact sign and indexing conventions for all boundary residual rows are cross-checked against the methods page and tests.
 
 ## MESA parity checklist
@@ -56,5 +56,5 @@ The approved next step is to keep the current outer radius and luminosity target
 ## Production-grade status checklist
 
 - [x] Replace the provisional surface density/temperature guesses with a physically justified outer closure.
-- [ ] Replace the Phase 1 representative-cell atmosphere with the approved one-sided `T(\tau)` reconstruction.
+- [x] The approved one-sided `T(\tau)` reconstruction is in place.
 - [ ] Demonstrate that the atmosphere closure supports robust convergence across more than the current narrow bootstrap basin.

@@ -38,7 +38,7 @@ The row ownership is deliberately simple. The center radius row is owned by geom
 
 ## Surface closure
 
-The surface rows now use a Phase 1 Eddington-grey atmosphere closure rather than hard guesses. They keep the problem square and numerically stable while giving the outer boundary a physically interpretable temperature and pressure scale.
+The surface rows now use a one-sided Phase 2 `T(\tau)` atmosphere closure rather than hard guesses. They keep the problem square and numerically stable while giving the outer boundary a physically interpretable temperature and pressure scale.
 
 ## Normative surface-boundary contract
 
@@ -46,14 +46,14 @@ For the current classical lane, the outer boundary is closed by four explicit re
 
 1. outer radius,
 2. outer luminosity,
-3. surface temperature matched to the Eddington effective temperature,
-4. surface pressure matched to the Eddington photospheric pressure scale.
+3. surface temperature matched to the shared outer match-point temperature,
+4. surface pressure matched to the shared outer match-point pressure scale.
 
-Those rows are intentionally staged. They are part of the canonical current solve, but they are still a representative-cell atmosphere approximation rather than a production atmosphere or photosphere specification.
+Those rows are intentionally staged. They are part of the canonical current solve, but they are still a one-sided `T(\tau)` atmosphere approximation rather than a production atmosphere or photosphere specification.
 
 For the physics-side explanation of the photosphere, tau `= 2/3`, and the planned `T(\tau)` path, see [Atmosphere and Photosphere](../physics/atmosphere-and-photosphere.md).
 
-The approved next step is more specific than that short phrase suggests. Phase 2 will preserve the current outer radius and luminosity target rows and will only harden the thermodynamic/photospheric reconstruction. In other words, the next implementation changes the atmosphere semantics, not the global bootstrap family definition.
+The approved next step is more specific than that short phrase suggests. Phase 2 preserves the current outer radius and luminosity target rows and routes the final transport row and pressure scaling through the same helper layer as the surface match-point reconstruction. In other words, the implementation changes the atmosphere semantics, not the global bootstrap family definition.
 
 ## Why this matters
 
@@ -64,11 +64,11 @@ The continuous boundary story is summarized in [Physics: Boundary Conditions](..
 ## Implementation checklist
 
 - [x] The center residual equations are written explicitly.
-- [x] The surface closure is identified as explicit but provisional.
+- [x] The surface closure is identified as explicit and one-sided.
 - [x] The page states that these rows are the current ASTRA equations, not only design goals.
 - [x] The current surface row formulas are written explicitly.
-- [x] The next design choice is recorded as preserving outer `R/L` while upgrading the atmosphere semantics.
-- [ ] The Phase 2 `T(\tau)` path should be documented once it is implemented.
+- [x] The outer transport row and surface pressure scale are recorded as sharing the Phase 2 helper layer.
+- [x] The Phase 2 `T(\tau)` path is documented as implemented.
 
 ## MESA parity checklist
 

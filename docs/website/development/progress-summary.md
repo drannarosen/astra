@@ -14,15 +14,15 @@ For each update, record:
 
 ## 2026-03-30
 
-### Phase 2 atmosphere design recorded
+### Phase 2 helper-layer transport realignment
 
-ASTRA now has an explicit approved design for the next atmosphere-hardening slice. The next implementation will keep the current outer radius and luminosity target rows, preserve the packed structure basis `[\ln R, L, \ln T, \ln \rho]`, and upgrade only the atmosphere-side thermodynamic reconstruction from the current representative-cell Eddington match to a one-sided Eddington `T(\tau)` match. The key design choice is that the next slice hardens atmosphere physics without simultaneously redesigning ASTRA's larger global model-family ownership.
+ASTRA's atmosphere slice now routes both the outer transport row and the surface pressure scale through the shared Phase 2 match-point helper layer. The current classical lane still keeps the outer radius and luminosity target rows, preserves the packed structure basis `[\ln R, L, \ln T, \ln \rho]`, and uses the one-sided Phase 2 Eddington `T(\tau)` match at the surface. The new coupling matters because the residual rows and the solver metrics now agree on the same outer match point.
 
 Why this mattered:
 
 - it separates the atmosphere question from the future global-closure question,
-- it records the next slice honestly on the website before implementation starts,
-- and it gives the Phase 2 implementation a stable scientific target.
+- it records the now-implemented helper-layer update honestly on the website,
+- and it gives the next validation work a stable scientific target.
 
 Verification run:
 
@@ -31,17 +31,17 @@ Verification run:
 
 Next step:
 
-- write and execute the TDD plan for the Phase 2 `T(\tau)` atmosphere implementation.
+- document the convergence-basin behavior once the Phase 2 atmosphere slice is exercised more broadly.
 
 ### Atmosphere boundary hardening
 
-ASTRA's classical lane now uses an Eddington-grey representative-cell atmosphere closure at the surface. The outer radius and luminosity target rows remain in place, but the surface temperature row is now tied to `T_eff`, the surface pressure row is tied to the photospheric pressure scale, and the final transport row is one-sided at the outer edge. The solver-side row weights were also realigned so the surface temperature row is dimensionless and the surface pressure row is weighted on a pressure scale rather than the old density guess.
+ASTRA's classical lane now uses a one-sided Phase 2 Eddington `T(\tau)` atmosphere closure at the surface. The outer radius and luminosity target rows remain in place, but the surface temperature row is now tied to the shared outer match helper, the surface pressure row is tied to the shared outer match helper, and the final transport row uses the same helper layer. The solver-side row weights were also realigned so the surface temperature row is dimensionless and the surface pressure row is weighted on the same outer match-point pressure scale.
 
 Why this mattered:
 
 - it replaces the provisional hard surface temperature/density guesses with a physically interpretable atmosphere closure,
 - it makes the outer transport row consistent with the same atmosphere semantics,
-- and it fixes the weighted acceptance metric so it judges the new pressure row in pressure units instead of the old density units.
+- and it fixes the weighted acceptance metric so it judges the new pressure row against the same outer match-point pressure scale instead of the old density units.
 
 Verification run:
 
@@ -51,13 +51,12 @@ Verification run:
 
 What this still does not prove:
 
-- the outer atmosphere treatment is still Phase 1 representative-cell physics rather than a full `T(\tau)` atmosphere,
 - the solver still has a large rejected-trial count even though it now makes accepted progress again,
-- and the docs/validation surfaces still need a Phase 2 atmosphere follow-up.
+- and the docs/validation surfaces still need a broader convergence-basin follow-up.
 
 Next step:
 
-- document the current atmosphere boundary, then later upgrade the outer closure to an explicit `T(\tau)` path.
+- record the current atmosphere boundary and solver-metric state as the baseline for convergence-basin work.
 
 ### Weighted solver metrics and safeguarded acceptance
 

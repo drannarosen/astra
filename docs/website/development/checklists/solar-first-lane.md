@@ -29,8 +29,9 @@ This checklist tracks ASTRA's first serious science lane:
 - [x] Pack/unpack limited to the structure solve-owned block
 - [x] Residual ordering encoded explicitly in tests
 - [x] Weighted Newton residual/correction metrics and correction limiting implemented without widening the public solve-owned state
-- [x] Phase 1 Eddington-grey atmosphere boundary implemented for the classical outer solve
+- [x] Phase 2 one-sided `T(\tau)` atmosphere boundary implemented for the classical outer solve
 - [x] Phase 2 atmosphere design choice recorded: preserve current outer `R/L` ownership while upgrading to a one-sided `T(\tau)` thermodynamic reconstruction
+- [x] Outer transport row and surface pressure scale routed through the shared Phase 2 helper layer
 
 ## Initialization lane
 
@@ -47,7 +48,7 @@ This checklist tracks ASTRA's first serious science lane:
 - [x] `eps_grav` gravothermal bookkeeping implemented in evolution ownership layer
 - [x] `eps_grav` consumes EOS-owned `chi_rho` / `chi_T` response terms in staged enriched regimes
 - [x] Staged `eps_nu` loss term wired into the luminosity source decomposition
-- [x] Surface closure upgraded from guessed thermodynamic values to Eddington-grey atmosphere matching
+- [x] Surface closure upgraded from guessed thermodynamic values to one-sided Phase 2 `T(\tau)` atmosphere matching
 - [x] Weak-screening analytical nuclear option implemented and tested
 - [x] Flag-gated degeneracy and Coulomb EOS enrichments implemented and tested
 - [ ] Real baseline MLT closure implemented
@@ -65,7 +66,7 @@ This checklist tracks ASTRA's first serious science lane:
 - [ ] Tier 2 PMS validation checks implemented
 - [ ] Tier 3 ZAMS validation checks implemented
 - [ ] Tier 4 compact solar target-vector validation implemented
-- [ ] Atmosphere Phase 2 `T(\tau)` upgrade implemented
+- [x] Atmosphere Phase 2 `T(\tau)` upgrade implemented
 - [ ] Atmosphere Phase 2 convergence-basin evidence recorded after implementation
 
 ## Explicitly deferred

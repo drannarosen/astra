@@ -128,6 +128,8 @@
             "`StellarModel`",
             "Next step",
             "First classical residual minimal slice",
+            "Phase 2 helper-layer transport realignment",
+            "one-sided Phase 2 Eddington",
         ],
         "docs/website/development/checklists.md" => [
             "developer-facing checklists",
@@ -142,6 +144,18 @@
             "eps_nu",
             "screening",
             "degeneracy",
+            "Atmosphere Phase 2 `T(\\tau)` upgrade implemented",
+            "shared Phase 2 helper layer",
+        ],
+        "docs/website/development/issues.md" => [
+            "Phase 2 one-sided `T(\\tau)` atmosphere boundary",
+            "shared helper-layer transport and pressure scaling",
+            "convergence basin",
+        ],
+        "docs/website/development/changelog.md" => [
+            "Phase 2 one-sided `T(\\tau)` atmosphere closure",
+            "shared Phase 2 match-point helper layer",
+            "staged one-sided `T(\\tau)` match-point reconstruction",
         ],
         "docs/website/physics/overview.md" => [
             "Structure equations",
@@ -224,14 +238,16 @@
             "Current ASTRA implementation",
             "Numerical realization in ASTRA",
             "What is deferred",
+            "Phase 2",
+            "helper-layer transport and pressure scaling",
         ],
         "docs/website/physics/atmosphere-and-photosphere.md" => [
             "photosphere",
             "tau = 2/3",
             "Eddington-grey",
-            "Phase 1",
             "Phase 2",
             "Phase 3",
+            "shared one-sided match-point helper layer",
         ],
         "docs/website/physics/stellar-structure/mass-conservation.md" => [
             "dr/dm",
@@ -342,6 +358,8 @@
             "../physics/boundary-conditions.md",
             "mesa-reference/boundary-conditions.md",
             "Normative center-boundary contract",
+            "shared outer match-point temperature",
+            "shared outer match-point pressure scale",
         ],
         "docs/website/methods/verification-and-jacobian-audits.md" => [
             "local derivative validation",

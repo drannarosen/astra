@@ -8,7 +8,7 @@ $$
 
 That choice is not arbitrary. It is the standard Eddington-grey reference point where the atmosphere is thin enough that a single surface match is a useful first approximation, but still deep enough that the outer layer is not yet free space.
 
-This page is ASTRA's canonical atmosphere reference for the classical lane. It explains what the photosphere means, what the current Eddington-grey closure does, and which atmosphere phases are staged for later work.
+This page is ASTRA's canonical atmosphere reference for the classical lane. It explains what the photosphere means, what the current one-sided Eddington `T(\tau)` closure does, and which atmosphere phases are staged for later work.
 
 ## Why atmospheres matter
 
@@ -36,49 +36,39 @@ $$
 P_\mathrm{ph} \approx \frac{2}{3}\frac{g_\mathrm{surf}}{\kappa_\mathrm{surf}}.
 $$
 
-Here `\kappa_\mathrm{surf}` is the local Rosseland-mean opacity at the outer cell. ASTRA's current atmosphere closure uses this pressure scale as a representative photospheric target, not as a full atmosphere integration.
+Here `\kappa_\mathrm{surf}` is the local Rosseland-mean opacity at the outer cell. ASTRA's current atmosphere closure uses this pressure scale as the match-point target for the one-sided outer reconstruction, not as a full atmosphere integration.
 
 ## Current ASTRA implementation
 
-ASTRA's current Phase 1 atmosphere implementation keeps the existing outer radius and luminosity target rows, but replaces the provisional outer thermodynamic guesses with atmosphere-derived targets:
+ASTRA's current Phase 2 atmosphere implementation keeps the existing outer radius and luminosity target rows, but now routes the surface thermodynamic targets, the final transport row, and the surface-pressure weighting through the shared one-sided match-point helper layer:
 
-- the outer cell temperature is matched in log form to `T_eff`,
-- the outer cell pressure is matched against `P_ph`,
-- the final transport row is one-sided and uses the photospheric target instead of an interior-style generic stencil.
+- the outer cell temperature is matched in log form to `outer_match_temperature_k(...)`,
+- the outer cell pressure is matched against `outer_match_pressure_dyn_cm2(...)`,
+- the final transport row is one-sided and uses the same Phase 2 helper layer rather than the old direct `T_\mathrm{eff}` and `P_\mathrm{ph}` reconstruction.
 
-This is a representative-cell approximation. It treats the outermost cell as the photospheric stand-in for now. That is scientifically stronger than a fixed surface-density guess, but it is still a bootstrap approximation rather than a final atmosphere module.
+This is a one-sided `T(\tau)` reconstruction. It keeps the outer face as the photospheric reference while treating the outermost cell as a deeper match point instead of the photosphere itself.
 
-Why this is a reasonable first slice:
+Why this is a reasonable slice:
 
 - it preserves ASTRA's current public structure-state contract,
 - it keeps luminosity linear in cgs `erg/s`,
-- it gives the outer boundary a physically interpretable temperature and pressure,
-- and it sets up a clean later upgrade to a real `T(\tau)` relation.
+- it gives the outer boundary a physically interpretable match-point temperature and pressure,
+- and it keeps the solver-side transport and pressure weighting on the same atmosphere semantics as the residual rows.
 
-## Planned phases
-
-### Phase 1: Eddington-grey representative-cell closure
-
-Status: implemented.
-
-- keep outer radius and luminosity target rows,
-- set the surface temperature target through `T_eff`,
-- set the surface pressure target through `P_ph`,
-- treat the outermost cell as the photospheric representative cell,
-- make the last transport row one-sided and atmosphere-aware.
+## Phase roadmap
 
 ### Phase 2: explicit `T(\tau)` photosphere match
 
-Planned next.
+Status: implemented.
 
-- add a more explicit optical-depth-based surface reconstruction,
-- use a one-sided `T(\tau)` relation instead of identifying the outer cell with the photosphere,
 - preserve the current outer `R` and `L` target rows in this slice,
 - keep the same public solve contract and packed basis `[\ln R, L, \ln T, \ln \rho]`,
 - treat the outer face as the photosphere at `tau = 2/3`,
 - reconstruct the outermost thermodynamic cell from a half-cell optical-depth estimate and hydrostatic column estimate.
+- route the outer transport row through the shared match-point helper layer,
+- route the surface pressure scaling through the same helper layer.
 
-This design choice is deliberate. Phase 2 is the next atmosphere-hardening slice, not a global model-family redesign. ASTRA may later revisit whether luminosity or radius should become emergent rather than targeted, but that is a separate project from the next atmosphere implementation.
+This design choice is deliberate. Phase 2 hardens atmosphere physics without simultaneously redesigning ASTRA's larger global model-family ownership. ASTRA may later revisit whether luminosity or radius should become emergent rather than targeted, but that is a separate project from the current atmosphere implementation.
 
 ### Phase 3: richer atmosphere options
 
@@ -98,26 +88,26 @@ The current implementation is intentionally staged and explicit about that stagi
 
 ## Current design choice for the next slice
 
-The next approved atmosphere slice is:
+The current approved atmosphere slice is:
 
 - keep the current outer radius target row,
 - keep the current outer luminosity target row,
-- stop identifying the outermost thermodynamic cell with the photosphere,
-- use Eddington `T(\tau)` to define a deeper one-sided outer-cell match point,
-- and keep richer atmosphere options and global-closure redesign out of scope for that implementation.
+- keep the outer transport row and surface pressure scale aligned with the shared match-point helpers,
+- keep richer atmosphere options and global-closure redesign out of scope for this implementation.
 
-The reasoning is simple. ASTRA's current outer `R` and `L` rows still define the present bootstrap family, so changing them now would mix atmosphere hardening with a larger closure redesign. The better immediate move is to improve the atmosphere semantics first, then revisit the global closure in a dedicated later project.
+The reasoning is simple. ASTRA's current outer `R` and `L` rows still define the present bootstrap family, so changing them now would mix atmosphere hardening with a larger closure redesign. The better move is to keep the current ownership while making the atmosphere semantics and solver metrics consistent.
 
 ## Atmosphere roadmap checklist
 
 - [x] The photosphere is defined in the Eddington-grey sense as a `tau = 2/3` reference layer.
 - [x] The effective temperature relation `T_eff = (L / (4 pi sigma R^2))^(1/4)` is written explicitly.
 - [x] The photospheric pressure estimate `P_ph ~ (2/3) g / kappa` is written explicitly.
-- [x] ASTRA's current Phase 1 representative-cell implementation is described honestly.
-- [x] The Phase 2 `T(\tau)` upgrade path is named explicitly.
+- [x] ASTRA's current Phase 2 one-sided `T(\tau)` implementation is described honestly.
+- [x] The Phase 2 `T(\tau)` upgrade path is recorded as implemented.
 - [x] The Phase 3 richer-atmosphere path is named explicitly.
 - [x] The page distinguishes current implementation from planned atmosphere work.
 - [x] The approved Phase 2 choice to preserve outer `R` and `L` in that slice is recorded explicitly.
-- [x] The planned one-sided outer-cell reconstruction is recorded explicitly.
-- [ ] Add a source-backed `T(\tau)` comparison note once Phase 2 lands.
+- [x] The shared outer transport / pressure-scale helper layer is recorded explicitly.
+- [x] The solver-side surface-pressure weighting is tied to the same match-point helper layer.
+- [ ] Add a source-backed `T(\tau)` comparison note for the implemented Phase 2 closure.
 - [ ] Add a benchmark artifact showing how the atmosphere closure changes the classical convergence basin.
