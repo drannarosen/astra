@@ -37,7 +37,7 @@ The current structured Jacobian has exact local partials for the analytic rows:
 - the interior geometry rows,
 - the interior luminosity rows.
 
-Those rows use explicit derivatives from the current toy EOS and nuclear closures. The relevant closure definitions live in [Physics: Ideal Gas Plus Radiation EOS](../physics/eos/ideal-gas-plus-radiation.md), [Physics: pp-Toy Heating](../physics/nuclear/pp-toy-heating.md), and [Physics: Radiative Gradient and Criterion Hook](../physics/convection/radiative-gradient-and-criterion-hook.md).
+Those rows use explicit derivatives from the staged analytical EOS and local helper derivatives from the staged analytical opacity and nuclear closures. The relevant closure definitions live in [Physics: Equation of State](../physics/eos.md), [Physics: Opacity](../physics/opacity.md), [Physics: Nuclear Energy Generation](../physics/nuclear.md), and [Physics: Radiative Gradient and Criterion Hook](../physics/convection/radiative-gradient-and-criterion-hook.md).
 
 For example, if a local kernel naturally provides $\partial f / \partial T$ and $\partial f / \partial \rho$, the packed-state Jacobian should use
 
@@ -49,7 +49,7 @@ $$
 
 That is why ASTRA's analytic luminosity-row partials carry explicit factors of $T$ and $\rho$ in the current code.
 
-The current analytic coverage is intentionally modest but meaningful. ASTRA chose the rows where the ownership story is already clean enough to make analytic derivatives educational rather than fragile. That makes the Jacobian a contributor surface, not just a black-box matrix builder.
+The current analytic coverage is intentionally modest but meaningful. ASTRA chose the rows where the ownership story is already clean enough to make analytic derivatives educational rather than fragile, while letting the opacity and nuclear closures use explicit ASTRA-owned local derivative helpers. That makes the Jacobian a contributor surface, not just a black-box matrix builder.
 
 ## Central differences
 

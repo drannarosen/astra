@@ -44,7 +44,7 @@ Here, $L_k$ and $L_{k+1}$ are the shell's inner and outer face luminosities, whi
 
 ASTRA writes this row as a luminosity difference across a shell because luminosity is face-centered while the source term is cell-centered on the staggered mesh.
 
-As implemented in `src/numerics/residuals.jl`, the source term comes from the toy nuclear closure in `src/numerics/structure_equations.jl`, so this page should be read as the exact placeholder source ASTRA actually uses today.
+As implemented in `src/numerics/residuals.jl`, the source term comes from the staged analytical nuclear closure in `src/numerics/structure_equations.jl`, so this page should be read as the exact source ASTRA actually uses today.
 
 In other words:
 
@@ -57,7 +57,7 @@ The luminosity row is assembled in [Residual Assembly](../../methods/residual-as
 
 ## What is deferred
 
-Real reaction networks, composition evolution, neutrino losses, and gravothermal energy terms are deferred. The current closure is a bootstrap source term, not a production energy-balance model.
+Real reaction networks, composition evolution, neutrino losses, and gravothermal energy terms are deferred. The current closure is a bootstrap source term, not a production energy-balance model. The public closure payload still excludes abundance time derivatives even though the reference Stellax source tracks them internally.
 
 ## Implementation checklist
 

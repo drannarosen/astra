@@ -10,9 +10,9 @@ $$
 \nabla_\mathrm{rad} = \frac{3 \kappa L P}{16 \pi a c G m T^4}
 $$
 
-where `kappa` comes from the toy opacity law, `L` is face-centered luminosity, `P` is EOS pressure, `m` is enclosed mass, and `T` is cell temperature.
+where `kappa` comes from the staged analytical opacity closure, `L` is face-centered luminosity, `P` is EOS pressure, `m` is enclosed mass, and `T` is cell temperature.
 
-The criterion hook compares `nabla_rad` against `nabla_ad`, and in the current ideal-gas-plus-radiation EOS `nabla_ad = 0.4`.
+The criterion hook compares `nabla_rad` against `nabla_ad`, and in the current staged gas-plus-radiation EOS `nabla_ad` is computed from the local gas-pressure fraction rather than fixed to `0.4`.
 
 ## Derivative payloads ASTRA uses
 

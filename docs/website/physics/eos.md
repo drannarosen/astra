@@ -1,14 +1,14 @@
 # Equation of State
 
-The equation of state closes the stellar-structure problem by turning density, temperature, and composition into pressure and thermodynamic response. In ASTRA's bootstrap lane, that closure is intentionally simple and fully explicit.
+The equation of state closes the stellar-structure problem by turning density, temperature, and composition into pressure and thermodynamic response. In ASTRA's bootstrap lane, that closure is now a staged analytical gas-plus-radiation model with explicit local derivatives and explicit deferred physics.
 
 ## Current ASTRA implementation
 
-ASTRA currently uses an ideal gas plus radiation EOS:
+ASTRA currently uses an analytical gas plus radiation EOS:
 
 `P = rho k_B T / (mu m_u) + a T^4 / 3`
 
-The same closure also supplies a fixed adiabatic gradient and the pressure derivatives that the Jacobian needs. That is enough for the classical residual to ask the EOS for the quantities it owns without pretending the thermodynamics are production grade.
+The same closure also supplies a beta-dependent adiabatic gradient, a beta-based specific heat at constant pressure, and the pressure derivatives that the Jacobian needs. The public closure payload remains intentionally narrow: pressure, gas-pressure fraction, adiabatic gradient, and specific heat. Degeneracy and Coulomb corrections are carried only as disabled flags in this slice, so the documented default path is still fully explicit.
 
 ## Numerical realization in ASTRA
 
@@ -16,15 +16,15 @@ The EOS is evaluated in the residual through [Residual Assembly](../methods/resi
 
 ## What is deferred
 
-Real EOS tables, partial ionization, degeneracy, Coulomb corrections, and composition-rich thermodynamics are deferred. This page is the place to explain the closure ASTRA actually has now, not the closure we will want later.
+Real EOS tables, partial ionization, entropy-authoritative inversion, and composition-rich thermodynamics are deferred. Degeneracy and Coulomb terms are not active in the default bootstrap lane yet, even though the staged closure carries those flags for future validation. This page is the place to explain the closure ASTRA actually has now, not the closure we will want later.
 
 ## Implementation checklist
 
-- [x] The current EOS closure is stated explicitly.
+- [x] The current analytical gas-plus-radiation EOS is stated explicitly.
 - [x] The page says pressure is derived from state, not solve-owned directly.
-- [ ] The exact thermodynamic derivative basis needed by every current Jacobian row is summarized and linked to tests.
+- [x] The current beta-based thermodynamic payload is summarized at the level ASTRA actually consumes.
 
 ## Validation checklist
 
 - [ ] Pressure and derivative formulas are benchmarked against an independent reference for representative states.
-- [ ] The adiabatic-gradient placeholder is replaced or justified quantitatively before this page can claim production-grade thermodynamics.
+- [ ] Degeneracy and Coulomb terms remain disabled until derivative validation justifies enabling them in the bootstrap lane.

@@ -34,11 +34,11 @@ That reading habit makes it much easier to debug ownership mistakes later, becau
 
 ## Limits of the current slice
 
-This first classical residual still uses placeholder closures:
+This first classical residual still uses staged bootstrap closures:
 
-- ideal-gas-plus-radiation EOS,
-- toy Kramers opacity,
-- toy pp heating,
+- analytical gas-plus-radiation EOS,
+- analytical opacity components,
+- analytical PP-plus-CNO heating,
 - radiative transport only,
 - and a provisional surface closure.
 

@@ -1,6 +1,6 @@
-# Ideal Gas Plus Radiation EOS
+# Analytical Gas and Radiation EOS
 
-ASTRA's current EOS is a pressure decomposition, not a table lookup: gas pressure plus radiation pressure, with smooth analytic derivatives for the Newton solve.
+ASTRA's current EOS is a staged analytical pressure decomposition, not a table lookup: gas pressure plus radiation pressure, with explicit local derivatives for the Newton solve.
 
 ## Current formula
 
@@ -36,8 +36,8 @@ The EOS pressure is used directly in the hydrostatic row and in the transport he
 
 The method-side realization is documented in [Residual Assembly](../../methods/residual-assembly.md) and [Jacobian Construction](../../methods/jacobian-construction.md), where the EOS sensitivities enter the hydrostatic and transport rows.
 
-The EOS also supplies `adiabatic_gradient = 0.4` and a specific heat value, but this page is only documenting the current bootstrap closure, not a general thermodynamic package.
+The EOS also supplies a beta-dependent `adiabatic_gradient` and a beta-based specific heat at constant pressure. Coulomb and degeneracy flags exist on the closure type, but both remain disabled in the default bootstrap path and are therefore not part of the active thermodynamic payload described here.
 
 ## What is deferred
 
-Real EOS tables, partial ionization, degeneracy, Coulomb corrections, and composition-rich thermodynamics are deferred. This page documents the placeholder closure ASTRA actually solves with today, not the closure we want for a production stellar model.
+Real EOS tables, partial ionization, entropy-authoritative inversion, and composition-rich thermodynamics are deferred. Degeneracy and Coulomb corrections remain disabled in the default path. This page documents the staged analytical closure ASTRA actually solves with today, not the closure we want for a production stellar model.

@@ -44,7 +44,7 @@ $$
 
 Here, $\log T_k$ and $\log P_k$ are neighboring cell values, while $\nabla_k$ is the local transport gradient evaluated for cell $k$.
 
-This is the `transport` row in `src/numerics/residuals.jl`. The gradient `nabla_k` comes from the helper in `src/numerics/structure_equations.jl`, which combines the toy opacity law, the EOS pressure, the luminosity, and the local enclosed mass.
+This is the `transport` row in `src/numerics/residuals.jl`. The gradient `nabla_k` comes from the helper in `src/numerics/structure_equations.jl`, which combines the staged analytical opacity closure, the staged gas-plus-radiation EOS pressure, the luminosity, and the local enclosed mass.
 
 ## Numerical realization in ASTRA
 

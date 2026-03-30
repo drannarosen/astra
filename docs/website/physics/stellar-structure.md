@@ -69,7 +69,7 @@ The continuous equations are not closed until ASTRA specifies at least:
 - an energy-source model supplying $\varepsilon_\mathrm{nuc}$ and eventually $\varepsilon_\mathrm{grav}$ and $\varepsilon_\nu$,
 - a transport prescription supplying $\nabla$.
 
-In the current classical lane, ASTRA uses an ideal-gas-plus-radiation EOS, a toy Kramers opacity, a toy pp-like nuclear source, and a radiative transport gradient. Those choices are intentionally small enough that contributors can inspect every term end to end. The point of the current lane is not production microphysics richness. It is explicit ownership.
+In the current classical lane, ASTRA uses a staged analytical gas-plus-radiation EOS, an analytical opacity closure, an analytical PP-plus-CNO nuclear-heating closure, and a radiative transport gradient. Those choices are intentionally small enough that contributors can inspect every term end to end. The point of the current lane is not production microphysics richness. It is explicit ownership.
 
 ## Continuous equations versus ASTRA residual equations
 
@@ -96,11 +96,11 @@ Without boundary conditions at the center and surface, the differential equation
 That means the code is already solving the right *kind* of nonlinear system, but still with intentionally simple closures:
 
 - shell-volume geometry in the mass row
-- ideal-gas-plus-radiation pressure in the hydrostatic row
-- toy pp-like heating in the luminosity row
+- analytical gas-plus-radiation pressure in the hydrostatic row
+- analytical PP-plus-CNO heating in the luminosity row
 - radiative-gradient transport in the temperature row
 
-The full classical source balance is broader than the current bootstrap implementation. In standard stellar structure, the luminosity equation includes nuclear heating, gravothermal release, and neutrino losses. ASTRA currently implements only the nuclear term in the residual, while documenting the full energy budget explicitly so later extensions have a clear owner.
+The full classical source balance is broader than the current bootstrap implementation. In standard stellar structure, the luminosity equation includes nuclear heating, gravothermal release, and neutrino losses. ASTRA currently implements only the nuclear term in the residual, while documenting the full energy budget explicitly so later extensions have a clear owner. Composition evolution is still frozen in the current bootstrap lane, so the analytical source closure does not yet publish abundance time derivatives.
 
 ## Numerical realization in ASTRA
 

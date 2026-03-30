@@ -28,11 +28,11 @@ That is why ASTRA treats stellar structure as a boundary-value problem rather th
 
 Here, constitutive physics means the local closure laws that tell the structure equations how matter and radiation behave.
 
-The structure equations are not closed until we choose an equation of state, an opacity law, a nuclear heating law, and a transport closure. ASTRA's bootstrap lane currently uses placeholder physics:
+The structure equations are not closed until we choose an equation of state, an opacity law, a nuclear heating law, and a transport closure. ASTRA's bootstrap lane currently uses staged analytical physics:
 
-- [Equation of State](eos.md): ideal gas plus radiation
-- [Opacity](opacity.md): toy Kramers-like opacity
-- [Nuclear Energy Generation](nuclear.md): toy pp-inspired heating
+- [Equation of State](eos.md): staged analytical gas plus radiation
+- [Opacity](opacity.md): analytical Kramers + H-minus + electron scattering
+- [Nuclear Energy Generation](nuclear.md): analytical PP + CNO heating
 - [Convection](convection.md): criterion hook only
 
 These pages explain the physics and state plainly what ASTRA actually computes today.
@@ -79,7 +79,7 @@ The methods pages describe how this physics becomes code:
 
 ## What is deferred
 
-Real EOS tables, real opacity tables, real MLT, composition transport, and evolutionary algorithms are all deferred. This page is a map of the classical baseline only, so future contributors can tell the difference between an implemented closure and a planned one.
+Real EOS tables, opacity tables, real MLT, composition transport, and evolutionary algorithms are all deferred. Screening-enabled burning, degeneracy, Coulomb corrections, `eps_grav`, and `eps_nu` are also still outside the active bootstrap path. This page is a map of the classical baseline only, so future contributors can tell the difference between an implemented closure and a planned one.
 
 ## Physics handbook checklist
 
@@ -94,7 +94,7 @@ This section is ASTRA's internal QA surface for the Physics overview: what is co
 
 ### Current implementation coverage
 
-- [x] Placeholder EOS, opacity, nuclear, and convection closures are stated explicitly.
+- [x] The staged analytical EOS, opacity, nuclear, and convection closures are stated explicitly.
 - [x] Current boundary-condition treatment is stated explicitly.
 - [x] The current solve-variable basis is documented explicitly.
 - [ ] Every linked closure page currently documents implementation status with equal completeness.

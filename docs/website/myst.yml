@@ -40,13 +40,16 @@ project:
             - file: physics/stellar-structure/coupled-problem.md
         - file: physics/eos.md
           children:
-            - file: physics/eos/ideal-gas-plus-radiation.md
+            - file: physics/eos/analytical-eos.md
+              title: Analytical Gas and Radiation Details
         - file: physics/opacity.md
           children:
-            - file: physics/opacity/kramers-opacity.md
+            - file: physics/opacity/analytical-opacity.md
+              title: Analytical Opacity Components
         - file: physics/nuclear.md
           children:
-            - file: physics/nuclear/pp-toy-heating.md
+            - file: physics/nuclear/analytical-burning.md
+              title: Analytical Nuclear Heating
         - file: physics/convection.md
           children:
             - file: physics/convection/radiative-gradient-and-criterion-hook.md
