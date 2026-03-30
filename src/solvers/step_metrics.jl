@@ -1,4 +1,5 @@
 const _ASTRA_MODULE = Base.parentmodule(@__MODULE__)
+const ARMIJO_SUFFICIENT_DECREASE = 1.0e-2
 
 _safe_scale(value::Real) = max(abs(Float64(value)), eps(Float64))
 
@@ -106,6 +107,53 @@ function weighted_residual_merit(
 )
     return weighted_residual_merit(residual, residual_row_weights(problem, model))
 end
+
+function weighted_merit_slope(
+    residual::AbstractVector{<:Real},
+    jacobian_times_step::AbstractVector{<:Real},
+    row_weights::AbstractVector{<:Real},
+)
+    weighted_residual = Float64.(row_weights) .* Float64.(residual)
+    weighted_jstep = Float64.(row_weights) .* Float64.(jacobian_times_step)
+    return dot(weighted_residual, weighted_jstep)
+end
+
+function linearized_weighted_residual_merit(
+    residual::AbstractVector{<:Real},
+    jacobian_times_step::AbstractVector{<:Real},
+    row_weights::AbstractVector{<:Real};
+    damping::Real = 1.0,
+)
+    weighted_residual = Float64.(row_weights) .* Float64.(residual)
+    weighted_jstep = Float64.(row_weights) .* Float64.(jacobian_times_step)
+    return 0.5 * sum(abs2, weighted_residual .+ Float64(damping) .* weighted_jstep)
+end
+
+function predicted_merit_decrease(
+    residual::AbstractVector{<:Real},
+    jacobian_times_step::AbstractVector{<:Real},
+    row_weights::AbstractVector{<:Real};
+    damping::Real = 1.0,
+)
+    base_merit = weighted_residual_merit(residual, row_weights)
+    predicted_merit = linearized_weighted_residual_merit(
+        residual,
+        jacobian_times_step,
+        row_weights;
+        damping = damping,
+    )
+    return base_merit - predicted_merit
+end
+
+actual_merit_decrease(base_merit::Real, trial_merit::Real) = Float64(base_merit) - Float64(trial_merit)
+
+function merit_decrease_ratio(predicted_decrease::Real, actual_decrease::Real)
+    Float64(predicted_decrease) > 0.0 || return NaN
+    return Float64(actual_decrease) / Float64(predicted_decrease)
+end
+
+armijo_target_merit(base_merit::Real, damping::Real, slope::Real) =
+    Float64(base_merit) + ARMIJO_SUFFICIENT_DECREASE * Float64(damping) * Float64(slope)
 
 function weighted_residual_norm(
     residual::AbstractVector{<:Real},
