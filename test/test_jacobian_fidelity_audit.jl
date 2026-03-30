@@ -70,4 +70,5 @@
     @test jacobian[outer_row, surface_luminosity_column] ≈ fd_jacobian[outer_row, surface_luminosity_column] atol = 1.0e-6 rtol = 1.0e-3
     @test jacobian[outer_row, outer_temperature_column] ≈ fd_jacobian[outer_row, outer_temperature_column] atol = 1.0e-6 rtol = 1.0e-3
     @test jacobian[outer_row, outer_density_column] ≈ fd_jacobian[outer_row, outer_density_column] atol = 1.0e-6 rtol = 1.0e-3
+    @test audit.transport.max_abs_error <= 1.0e-3
 end

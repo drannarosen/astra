@@ -337,6 +337,8 @@ function structure_jacobian(
             step = step,
         )
         if k == n - 1
+            outer_transport_row_builder =
+                (problem, trial_model) -> outer_transport_row(problem, trial_model, k)
             _fill_block_jacobian!(
                 jacobian,
                 first(row_range) + 3,
@@ -347,7 +349,7 @@ function structure_jacobian(
                 problem,
                 model,
                 Float64[local_block[4]],
-                (problem, trial_model) -> outer_transport_row(problem, trial_model, k);
+                outer_transport_row_builder;
                 step = step,
             )
         end

@@ -44,6 +44,12 @@
     @test row_weights[first(row_range) + 2] ≈ inv(luminosity_scale)
     @test row_weights[first(row_range) + 3] ≈ 1.0
 
+    surface_rows = ASTRA.structure_surface_row_range(problem.grid.n_cells)
+    surface_pressure_dyn_cm2 = ASTRA.cell_eos_state(problem, model, problem.grid.n_cells).pressure_dyn_cm2
+    outer_match_pressure_dyn_cm2 = ASTRA.outer_match_pressure_dyn_cm2(problem, model)
+    surface_pressure_scale = max(abs(surface_pressure_dyn_cm2), abs(outer_match_pressure_dyn_cm2))
+    @test row_weights[surface_rows[4]] ≈ inv(surface_pressure_scale)
+
     weighted_norm = ASTRA.Solvers.weighted_residual_norm(problem, model, residual)
     @test isfinite(weighted_norm)
     @test weighted_norm >= 0.0
