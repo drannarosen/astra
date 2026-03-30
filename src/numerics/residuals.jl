@@ -38,15 +38,20 @@ end
 
 function outer_transport_row(problem::StructureProblem, model::StellarModel, k::Int)
     state = model.structure
-    temperature_match_k = outer_match_temperature_k(problem, model)
-    pressure_match_dyn_cm2 = outer_match_pressure_dyn_cm2(problem, model)
+    radius_surface_cm = exp(state.log_radius_face_cm[end])
+    luminosity_surface_erg_s = state.luminosity_face_erg_s[end]
+    temperature_face_k = surface_effective_temperature_k(radius_surface_cm, luminosity_surface_erg_s)
+    surface_gravity_cgs_value = surface_gravity_cgs(problem.parameters.mass_g, radius_surface_cm)
+    opacity_outer_cm2_g = cell_opacity_state(problem, model, problem.grid.n_cells).opacity_cm2_g
+    pressure_face_dyn_cm2 =
+        eddington_photospheric_pressure_dyn_cm2(surface_gravity_cgs_value, opacity_outer_cm2_g)
     pressure_outer_cell_dyn_cm2 = cell_eos_state(problem, model, k).pressure_dyn_cm2
     nabla_transport = radiative_temperature_gradient(problem, model, k)
 
-    return positive_log(temperature_match_k) - state.log_temperature_cell_k[k] +
+    return positive_log(temperature_face_k) - state.log_temperature_cell_k[k] +
         nabla_transport *
         (
-            log(clip_positive(pressure_match_dyn_cm2)) -
+            log(clip_positive(pressure_face_dyn_cm2)) -
             log(clip_positive(pressure_outer_cell_dyn_cm2))
         )
 end
