@@ -355,6 +355,41 @@ end
 toy_reference_state(problem::StructureProblem) = _problem_aware_initial_state(problem)
 
 """
+    with_previous_thermodynamic_state(model; kwargs...)
+
+Return a copy of `model` whose evolution metadata carries previous
+thermodynamic profiles for the internal analytical gravothermal helper lane.
+"""
+function with_previous_thermodynamic_state(
+    model::StellarModel;
+    previous_log_temperature_cell_k::AbstractVector{<:Real},
+    previous_log_density_cell_g_cm3::AbstractVector{<:Real},
+    timestep_s::Real = model.evolution.timestep_s,
+    previous_timestep_s::Real = model.evolution.previous_timestep_s,
+    accepted_steps::Int = model.evolution.accepted_steps,
+    rejected_steps::Int = model.evolution.rejected_steps,
+    age_s::Real = model.evolution.age_s,
+)
+    n = model.structure.grid.n_cells
+    length(previous_log_temperature_cell_k) == n || throw(
+        ArgumentError("previous_log_temperature_cell_k must have n_cells entries."),
+    )
+    length(previous_log_density_cell_g_cm3) == n || throw(
+        ArgumentError("previous_log_density_cell_g_cm3 must have n_cells entries."),
+    )
+    evolution = EvolutionState(
+        age_s,
+        timestep_s,
+        previous_timestep_s,
+        accepted_steps,
+        rejected_steps,
+        Float64.(previous_log_temperature_cell_k),
+        Float64.(previous_log_density_cell_g_cm3),
+    )
+    return StellarModel(model.structure, model.composition, evolution)
+end
+
+"""
     initialize_state(parameters, composition, grid)
     initialize_state(problem)
 

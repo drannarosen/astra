@@ -41,13 +41,19 @@ using ..ASTRA: BOLTZMANN_CONSTANT_CGS,
     HYDROGEN_MASS_CGS,
     RADIATION_CONSTANT_CGS,
     clip_positive,
-    Composition
+    Composition,
+    EvolutionState,
+    StellarModel,
+    StructureProblem
 
 include("microphysics/eos.jl")
+include("microphysics/energy_sources.jl")
 include("microphysics/opacity.jl")
 include("microphysics/nuclear.jl")
 include("microphysics/convection.jl")
 end
+
+using .Microphysics: energy_source_terms
 
 include("numerics/boundary_conditions.jl")
 include("numerics/structure_equations.jl")

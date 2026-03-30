@@ -165,6 +165,9 @@ end
     EvolutionState(age_s, timestep_s, previous_timestep_s, accepted_steps, rejected_steps)
 
 Persistent evolution-metadata block for ASTRA's bootstrap stellar model.
+The optional previous thermodynamic profiles are used by the internal
+analytical energy-source lane to recover gravothermal terms without widening
+the public solve-owned state contract.
 """
 struct EvolutionState
     age_s::Float64
@@ -172,6 +175,57 @@ struct EvolutionState
     previous_timestep_s::Float64
     accepted_steps::Int
     rejected_steps::Int
+    previous_log_temperature_cell_k::Union{Nothing,Vector{Float64}}
+    previous_log_density_cell_g_cm3::Union{Nothing,Vector{Float64}}
+
+    function EvolutionState(
+        age_s::Real,
+        timestep_s::Real,
+        previous_timestep_s::Real,
+        accepted_steps::Int,
+        rejected_steps::Int,
+    )
+        return new(
+            Float64(age_s),
+            Float64(timestep_s),
+            Float64(previous_timestep_s),
+            accepted_steps,
+            rejected_steps,
+            nothing,
+            nothing,
+        )
+    end
+
+    function EvolutionState(
+        age_s::Real,
+        timestep_s::Real,
+        previous_timestep_s::Real,
+        accepted_steps::Int,
+        rejected_steps::Int,
+        previous_log_temperature_cell_k::Union{Nothing,Vector{Float64}},
+        previous_log_density_cell_g_cm3::Union{Nothing,Vector{Float64}},
+    )
+        if xor(
+            previous_log_temperature_cell_k === nothing,
+            previous_log_density_cell_g_cm3 === nothing,
+        )
+            throw(ArgumentError("Previous thermodynamic profiles must be provided together."))
+        end
+        if previous_log_temperature_cell_k !== nothing &&
+           previous_log_density_cell_g_cm3 !== nothing &&
+           length(previous_log_temperature_cell_k) != length(previous_log_density_cell_g_cm3)
+            throw(ArgumentError("Previous thermodynamic profiles must have matching lengths."))
+        end
+        return new(
+            Float64(age_s),
+            Float64(timestep_s),
+            Float64(previous_timestep_s),
+            accepted_steps,
+            rejected_steps,
+            previous_log_temperature_cell_k,
+            previous_log_density_cell_g_cm3,
+        )
+    end
 end
 
 """
