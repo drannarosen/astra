@@ -42,6 +42,7 @@ include("foundation/types.jl")
 include("foundation/grid.jl")
 include("foundation/state.jl")
 include("numerics/atmosphere.jl")
+include("validation/armijo_merit_validation.jl")
 
 module Microphysics
 using ..ASTRA: BOLTZMANN_CONSTANT_CGS,

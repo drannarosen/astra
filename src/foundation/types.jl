@@ -342,3 +342,27 @@ struct SolveResult{S,D}
     state::S
     diagnostics::D
 end
+
+"""
+    ArmijoMeritValidationPayload(...)
+
+Diagnostic payload extracted from a completed Armijo-controlled structure solve.
+This validation artifact does not alter solver ownership or behavior.
+"""
+struct ArmijoMeritValidationPayload
+    fixture_label::String
+    seed_label::String
+    n_cells::Int
+    converged::Bool
+    accepted_step_count::Int
+    rejected_trial_count::Int
+    final_residual_norm::Float64
+    final_weighted_residual_norm::Float64
+    final_merit::Float64
+    predicted_decrease_history::Vector{Float64}
+    actual_decrease_history::Vector{Float64}
+    decrease_ratio_history::Vector{Float64}
+    accepted_dominant_family::Union{Nothing,Symbol}
+    best_rejected_trial::Union{Nothing,TrialMeritSummary}
+    used_regularized_fallback::Bool
+end

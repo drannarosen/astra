@@ -29,6 +29,7 @@ using ASTRA
     include("test_merit_globalization_acceptance.jl")
     include("test_armijo_merit_diagnostics.jl")
     include("test_armijo_merit_acceptance.jl")
+    include("test_armijo_merit_validation_payload.jl")
     include("test_center_asymptotic_scaling.jl")
     include("test_weighted_solver_metrics.jl")
     include("test_atmosphere_boundary_helpers.jl")
