@@ -120,6 +120,14 @@ end
           result.diagnostics.accepted_step_count
     @test length(result.diagnostics.weighted_max_correction_history) ==
           result.diagnostics.accepted_step_count
+    @test length(result.diagnostics.predicted_decrease_history) ==
+          result.diagnostics.accepted_step_count
+    @test length(result.diagnostics.actual_decrease_history) ==
+          result.diagnostics.accepted_step_count
+    @test length(result.diagnostics.decrease_ratio_history) ==
+          result.diagnostics.accepted_step_count
+    @test length(result.diagnostics.accepted_trial_history) ==
+          result.diagnostics.accepted_step_count
     @test all(0.0 < damping <= problem.solver.damping for damping in result.diagnostics.damping_history)
     @test all(
         0.0 <= correction <= 1.0 + 1.0e-12 for
@@ -129,6 +137,28 @@ end
         0.0 <= correction <= 1.0 + 1.0e-12 for
         correction in result.diagnostics.weighted_max_correction_history
     )
+
+    if !isempty(result.diagnostics.accepted_trial_history)
+        accepted_trial = result.diagnostics.accepted_trial_history[end]
+        @test accepted_trial.predicted_decrease > 0.0
+        @test accepted_trial.actual_decrease > 0.0
+        @test isfinite(accepted_trial.decrease_ratio)
+        @test isfinite(accepted_trial.armijo_target)
+        @test accepted_trial.row_family_merit.total ≈ accepted_trial.merit_value rtol = 1e-12
+        @test accepted_trial.row_family_merit.dominant_family in
+              (:center, :geometry, :hydrostatic, :luminosity, :transport, :surface)
+    end
+
+    if result.diagnostics.rejected_trial_count > 0
+        @test result.diagnostics.best_rejected_trial !== nothing
+        rejected_trial = result.diagnostics.best_rejected_trial
+        @test rejected_trial.predicted_decrease > 0.0 || isnan(rejected_trial.decrease_ratio)
+        @test rejected_trial.row_family_merit.total ≈ rejected_trial.merit_value rtol = 1e-12
+        @test rejected_trial.row_family_merit.dominant_family in
+              (:center, :geometry, :hydrostatic, :luminosity, :transport, :surface)
+    else
+        @test isnothing(result.diagnostics.best_rejected_trial)
+    end
 
     if !result.diagnostics.converged && result.diagnostics.accepted_step_count == 0
         @test result.diagnostics.rejected_trial_count > 0

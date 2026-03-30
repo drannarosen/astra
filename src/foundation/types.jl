@@ -284,6 +284,23 @@ struct RowFamilyMeritSummary
 end
 
 """
+    TrialMeritSummary(...)
+
+Frozen-weight merit attribution for one damped Newton trial.
+"""
+struct TrialMeritSummary
+    damping::Float64
+    raw_residual_norm::Float64
+    weighted_residual_norm::Float64
+    merit_value::Float64
+    armijo_target::Float64
+    predicted_decrease::Float64
+    actual_decrease::Float64
+    decrease_ratio::Float64
+    row_family_merit::RowFamilyMeritSummary
+end
+
+"""
     StructureDiagnostics(...)
 
 Summary diagnostics returned by ASTRA's bootstrap solve.
@@ -296,9 +313,14 @@ struct StructureDiagnostics
     weighted_residual_history::Vector{Float64}
     merit_value::Float64
     merit_history::Vector{Float64}
+    predicted_decrease_history::Vector{Float64}
+    actual_decrease_history::Vector{Float64}
+    decrease_ratio_history::Vector{Float64}
     damping_history::Vector{Float64}
     weighted_correction_norm_history::Vector{Float64}
     weighted_max_correction_history::Vector{Float64}
+    accepted_trial_history::Vector{TrialMeritSummary}
+    best_rejected_trial::Union{Nothing,TrialMeritSummary}
     accepted_step_count::Int
     rejected_trial_count::Int
     converged::Bool

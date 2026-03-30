@@ -1,3 +1,5 @@
+const _ASTRA_MODULE = Base.parentmodule(@__MODULE__)
+
 function _regularization_ladder(problem::StructureProblem)
     regularization = Float64(problem.solver.linear_regularization)
     ladder = Float64[]
@@ -9,10 +11,28 @@ function _regularization_ladder(problem::StructureProblem)
     return ladder
 end
 
+function _best_rejected_trial(
+    best::Union{Nothing,_ASTRA_MODULE.TrialMeritSummary},
+    candidate::Union{Nothing,_ASTRA_MODULE.TrialMeritSummary},
+)
+    candidate === nothing && return best
+    best === nothing && return candidate
+
+    candidate_finite = isfinite(candidate.merit_value)
+    best_finite = isfinite(best.merit_value)
+    if candidate_finite && !best_finite
+        return candidate
+    elseif candidate_finite == best_finite && candidate.merit_value < best.merit_value
+        return candidate
+    end
+    return best
+end
+
 function _accepted_trial_step(
     problem::StructureProblem,
     model::StellarModel,
     residual::AbstractVector{<:Real},
+    jacobian,
     update::AbstractVector{<:Real},
 )
     base_vector = pack_state(model.structure)
@@ -21,8 +41,11 @@ function _accepted_trial_step(
     base_weighted_norm = weighted_residual_norm(residual, base_row_weights)
     base_merit = weighted_residual_merit(residual, base_row_weights)
     limited_update = limit_weighted_correction(problem, model, update)
+    jacobian_times_step = jacobian * limited_update.update
+    base_slope = weighted_merit_slope(residual, jacobian_times_step, base_row_weights)
     damping = problem.solver.damping
     rejected_trials = 0
+    best_rejected_trial = nothing
     notes = String[]
 
     if limited_update.factor < 1.0
@@ -41,6 +64,31 @@ function _accepted_trial_step(
         next_raw_norm = residual_norm(next_residual)
         next_weighted_norm = weighted_residual_norm(next_residual, base_row_weights)
         next_merit = weighted_residual_merit(next_residual, base_row_weights)
+        predicted_decrease = predicted_merit_decrease(
+            residual,
+            jacobian_times_step,
+            base_row_weights;
+            damping = damping,
+        )
+        actual_decrease = actual_merit_decrease(base_merit, next_merit)
+        decrease_ratio = merit_decrease_ratio(predicted_decrease, actual_decrease)
+        armijo_target = armijo_target_merit(base_merit, damping, base_slope)
+        trial_summary = _ASTRA_MODULE.TrialMeritSummary(
+            damping,
+            next_raw_norm,
+            next_weighted_norm,
+            next_merit,
+            armijo_target,
+            predicted_decrease,
+            actual_decrease,
+            decrease_ratio,
+            row_family_merit_summary(
+                problem,
+                next_model,
+                next_residual;
+                row_weights = base_row_weights,
+            ),
+        )
 
         if isfinite(next_merit) &&
            next_merit < base_merit &&
@@ -66,11 +114,17 @@ function _accepted_trial_step(
                 damping_history = Float64[damping],
                 weighted_residual_norm = next_weighted_norm,
                 merit_value = next_merit,
+                predicted_decrease = predicted_decrease,
+                actual_decrease = actual_decrease,
+                decrease_ratio = decrease_ratio,
                 weighted_correction_norm = weighted_correction_norm(problem, model, damped_update),
                 weighted_max_correction = weighted_max_correction(problem, model, damped_update),
+                accepted_trial = trial_summary,
+                best_rejected_trial = best_rejected_trial,
             )
         end
 
+        best_rejected_trial = _best_rejected_trial(best_rejected_trial, trial_summary)
         rejected_trials += 1
         damping *= 0.5
     end
@@ -84,8 +138,13 @@ function _accepted_trial_step(
         damping_history = Float64[],
         weighted_residual_norm = base_weighted_norm,
         merit_value = base_merit,
+        predicted_decrease = NaN,
+        actual_decrease = NaN,
+        decrease_ratio = NaN,
         weighted_correction_norm = limited_update.weighted_correction_norm,
         weighted_max_correction = limited_update.weighted_max_correction,
+        accepted_trial = nothing,
+        best_rejected_trial = best_rejected_trial,
     )
 end
 
@@ -99,9 +158,14 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
     residual_history = Float64[initial_residual_norm]
     weighted_residual_history = Float64[initial_weighted_residual_norm]
     merit_history = Float64[initial_merit_value]
+    predicted_decrease_history = Float64[]
+    actual_decrease_history = Float64[]
+    decrease_ratio_history = Float64[]
     damping_history = Float64[]
     weighted_correction_norm_history = Float64[]
     weighted_max_correction_history = Float64[]
+    accepted_trial_history = _ASTRA_MODULE.TrialMeritSummary[]
+    best_rejected_trial = nothing
     accepted_step_count = 0
     rejected_trial_count = 0
     notes = String[
@@ -123,9 +187,14 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 weighted_residual_history,
                 current_merit_value,
                 merit_history,
+                predicted_decrease_history,
+                actual_decrease_history,
+                decrease_ratio_history,
                 damping_history,
                 weighted_correction_norm_history,
                 weighted_max_correction_history,
+                accepted_trial_history,
+                best_rejected_trial,
                 accepted_step_count,
                 rejected_trial_count,
                 accepted_step_count,
@@ -151,9 +220,13 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
 
         accepted = false
         if update !== nothing && all(isfinite, update)
-            trial_step = _accepted_trial_step(problem, model, residual, update)
+            trial_step = _accepted_trial_step(problem, model, residual, jacobian, update)
             append!(notes, trial_step.notes)
             rejected_trial_count += trial_step.rejected_trials
+            best_rejected_trial = _best_rejected_trial(
+                best_rejected_trial,
+                trial_step.best_rejected_trial,
+            )
             if trial_step.accepted
                 accepted_step_count += 1
                 append!(damping_history, trial_step.damping_history)
@@ -162,11 +235,15 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 push!(residual_history, residual_norm(residual))
                 push!(weighted_residual_history, trial_step.weighted_residual_norm)
                 push!(merit_history, trial_step.merit_value)
+                push!(predicted_decrease_history, trial_step.predicted_decrease)
+                push!(actual_decrease_history, trial_step.actual_decrease)
+                push!(decrease_ratio_history, trial_step.decrease_ratio)
                 push!(
                     weighted_correction_norm_history,
                     trial_step.weighted_correction_norm,
                 )
                 push!(weighted_max_correction_history, trial_step.weighted_max_correction)
+                push!(accepted_trial_history, trial_step.accepted_trial)
                 accepted = true
             end
         elseif update !== nothing
@@ -205,9 +282,19 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 continue
             end
 
-            trial_step = _accepted_trial_step(problem, model, residual, regularized_update)
+            trial_step = _accepted_trial_step(
+                problem,
+                model,
+                residual,
+                jacobian,
+                regularized_update,
+            )
             append!(notes, trial_step.notes)
             rejected_trial_count += trial_step.rejected_trials
+            best_rejected_trial = _best_rejected_trial(
+                best_rejected_trial,
+                trial_step.best_rejected_trial,
+            )
             if trial_step.accepted
                 accepted_step_count += 1
                 append!(damping_history, trial_step.damping_history)
@@ -216,11 +303,15 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 push!(residual_history, residual_norm(residual))
                 push!(weighted_residual_history, trial_step.weighted_residual_norm)
                 push!(merit_history, trial_step.merit_value)
+                push!(predicted_decrease_history, trial_step.predicted_decrease)
+                push!(actual_decrease_history, trial_step.actual_decrease)
+                push!(decrease_ratio_history, trial_step.decrease_ratio)
                 push!(
                     weighted_correction_norm_history,
                     trial_step.weighted_correction_norm,
                 )
                 push!(weighted_max_correction_history, trial_step.weighted_max_correction)
+                push!(accepted_trial_history, trial_step.accepted_trial)
                 accepted = true
                 break
             end
@@ -239,9 +330,14 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 weighted_residual_history,
                 current_merit_value,
                 merit_history,
+                predicted_decrease_history,
+                actual_decrease_history,
+                decrease_ratio_history,
                 damping_history,
                 weighted_correction_norm_history,
                 weighted_max_correction_history,
+                accepted_trial_history,
+                best_rejected_trial,
                 accepted_step_count,
                 rejected_trial_count,
                 accepted_step_count,
@@ -266,9 +362,14 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
         weighted_residual_history,
         current_merit_value,
         merit_history,
+        predicted_decrease_history,
+        actual_decrease_history,
+        decrease_ratio_history,
         damping_history,
         weighted_correction_norm_history,
         weighted_max_correction_history,
+        accepted_trial_history,
+        best_rejected_trial,
         accepted_step_count,
         rejected_trial_count,
         accepted_step_count,
