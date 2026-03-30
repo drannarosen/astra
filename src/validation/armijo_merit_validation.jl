@@ -52,7 +52,7 @@ function _armijo_merit_validation_payload_path(
     output_dir::AbstractString,
     fixture_label::AbstractString,
 )
-    return joinpath(output_dir, "$(fixture_label).txt")
+    return joinpath(output_dir, "$(fixture_label).toml")
 end
 
 function _format_armijo_merit_validation_scalar(value)

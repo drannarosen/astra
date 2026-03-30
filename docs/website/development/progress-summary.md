@@ -14,6 +14,24 @@ For each update, record:
 
 ## 2026-03-30
 
+### Armijo merit validation evidence
+
+ASTRA now has a dated artifact bundle and interpretation note for the current Armijo merit validation sweep at `artifacts/validation/2026-03-30-armijo-merit-validation/` and `docs/website/development/armijo-merit-validation-2026-03-30.md`. The bundle covers the 6, 8, 12, 16, and 24 cell ladder plus the default-12 fixture and a deterministic perturbation family; every recorded payload is still `converged = false`, every accepted and best-rejected dominant family is `transport`, and regularized fallback appears in every payload.
+
+Why this mattered:
+
+- it turns the validation sweep into durable evidence instead of a terminal transcript,
+- it makes the current bottleneck explicit enough to compare transport-row hardening against adaptive regularization later,
+- and it gives the next numerical move a dated reference point that is tied directly to committed artifacts.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. scripts/run_armijo_merit_validation.jl artifacts/validation/2026-03-30-armijo-merit-validation`
+
+Next step:
+
+- harden the transport/outer-boundary row family before revisiting adaptive regularization.
+
 ### Armijo merit globalization
 
 ASTRA's classical Newton controller now uses Armijo sufficient decrease on the frozen-weight merit function rather than accepting any step with lower merit. The diagnostics surface also now reports predicted-versus-actual decrease, accepted-step row-family attribution, and the best rejected trial, while keeping the current correction limiter, raw-residual safeguard, and regularization ladder unchanged.
