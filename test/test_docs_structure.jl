@@ -12,12 +12,36 @@
         "docs/website/architecture/solver-architecture.md",
         "docs/website/architecture/differentiability-strategy.md",
         "docs/website/architecture/formulation-interface.md",
+        "docs/website/physics/index.md",
         "docs/website/physics/stellar-structure.md",
         "docs/website/physics/eos.md",
         "docs/website/physics/opacity.md",
         "docs/website/physics/nuclear.md",
         "docs/website/physics/convection.md",
         "docs/website/physics/boundary-conditions.md",
+        "docs/website/physics/stellar-structure/mass-conservation.md",
+        "docs/website/physics/stellar-structure/hydrostatic-equilibrium.md",
+        "docs/website/physics/stellar-structure/energy-generation.md",
+        "docs/website/physics/stellar-structure/energy-transport.md",
+        "docs/website/physics/stellar-structure/coupled-problem.md",
+        "docs/website/physics/eos/ideal-gas-plus-radiation.md",
+        "docs/website/physics/opacity/kramers-opacity.md",
+        "docs/website/physics/nuclear/pp-toy-heating.md",
+        "docs/website/physics/convection/radiative-gradient-and-criterion-hook.md",
+        "docs/website/methods/index.md",
+        "docs/website/methods/from-equations-to-residual.md",
+        "docs/website/methods/staggered-mesh-and-state-layout.md",
+        "docs/website/methods/residual-assembly.md",
+        "docs/website/methods/jacobian-construction.md",
+        "docs/website/methods/linear-solves-and-scaling.md",
+        "docs/website/methods/nonlinear-newton-and-backtracking.md",
+        "docs/website/methods/initial-model-and-seeding.md",
+        "docs/website/methods/boundary-condition-realization.md",
+        "docs/website/methods/verification-and-jacobian-audits.md",
+        "docs/website/methods/mesa-reference/index.md",
+        "docs/website/methods/mesa-reference/solver-scaling.md",
+        "docs/website/methods/mesa-reference/boundary-conditions.md",
+        "docs/website/methods/mesa-reference/mesh-and-variables.md",
         "docs/website/numerics/residuals.md",
         "docs/website/numerics/jacobians.md",
         "docs/website/numerics/nonlinear-solvers.md",
@@ -128,6 +152,14 @@
             "criterion hook",
             "not yet a full transport theory",
         ],
+        "docs/website/myst.yml" => [
+            "title: Physics",
+            "title: Methods",
+            "physics/index.md",
+            "physics/stellar-structure/mass-conservation.md",
+            "methods/index.md",
+            "methods/mesa-reference/index.md",
+        ],
         "docs/website/development/changelog.md" => [
             "first classical residual slice",
             "surface closure remains provisional",
@@ -153,6 +185,11 @@
 
     for (path, needles) in contract_docs
         content = read(joinpath(root, path), String)
+        if path == "docs/website/myst.yml"
+            @test occursin("title: Physics", content)
+            @test occursin("title: Methods", content)
+            @test !occursin("title: Numerics", content)
+        end
         @test all(needle -> occursin(needle, content), needles)
     end
 end

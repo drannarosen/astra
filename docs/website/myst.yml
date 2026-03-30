@@ -28,22 +28,46 @@ project:
         - file: architecture/differentiability-strategy.md
         - file: architecture/formulation-interface.md
       title: Architecture
-    - children:
+    - title: Physics
+      children:
+        - file: physics/index.md
         - file: physics/stellar-structure.md
+          children:
+            - file: physics/stellar-structure/mass-conservation.md
+            - file: physics/stellar-structure/hydrostatic-equilibrium.md
+            - file: physics/stellar-structure/energy-generation.md
+            - file: physics/stellar-structure/energy-transport.md
+            - file: physics/stellar-structure/coupled-problem.md
         - file: physics/eos.md
+          children:
+            - file: physics/eos/ideal-gas-plus-radiation.md
         - file: physics/opacity.md
+          children:
+            - file: physics/opacity/kramers-opacity.md
         - file: physics/nuclear.md
+          children:
+            - file: physics/nuclear/pp-toy-heating.md
         - file: physics/convection.md
+          children:
+            - file: physics/convection/radiative-gradient-and-criterion-hook.md
         - file: physics/boundary-conditions.md
-      title: Physics
-    - children:
-        - file: numerics/residuals.md
-        - file: numerics/jacobians.md
-        - file: numerics/nonlinear-solvers.md
-        - file: numerics/linear-solvers.md
-        - file: numerics/timestepping.md
-        - file: numerics/diagnostics.md
-      title: Numerics
+    - title: Methods
+      children:
+        - file: methods/index.md
+        - file: methods/from-equations-to-residual.md
+        - file: methods/staggered-mesh-and-state-layout.md
+        - file: methods/residual-assembly.md
+        - file: methods/jacobian-construction.md
+        - file: methods/linear-solves-and-scaling.md
+        - file: methods/nonlinear-newton-and-backtracking.md
+        - file: methods/initial-model-and-seeding.md
+        - file: methods/boundary-condition-realization.md
+        - file: methods/verification-and-jacobian-audits.md
+        - file: methods/mesa-reference/index.md
+          children:
+            - file: methods/mesa-reference/solver-scaling.md
+            - file: methods/mesa-reference/boundary-conditions.md
+            - file: methods/mesa-reference/mesh-and-variables.md
     - children:
         - file: formulations/classical-baseline.md
         - file: formulations/entropy-dae.md
