@@ -21,6 +21,10 @@
     eos_state = problem.microphysics.eos(density_g_cm3, temperature_k, composition)
     degenerate_eos = ASTRA.Microphysics.AnalyticalGasRadiationEOS(include_degeneracy = true)
     coulomb_eos = ASTRA.Microphysics.AnalyticalGasRadiationEOS(include_coulomb = true)
+    extreme_eos = ASTRA.Microphysics.AnalyticalGasRadiationEOS(
+        include_degeneracy = true,
+        include_coulomb = true,
+    )
     opacity_state = problem.microphysics.opacity(density_g_cm3, temperature_k, composition)
     nuclear_state = problem.microphysics.nuclear(density_g_cm3, temperature_k, composition)
     screened_nuclear = ASTRA.Microphysics.AnalyticalNuclear(include_screening = true)
@@ -68,6 +72,19 @@
         coulomb_eos,
         density_g_cm3,
         temperature_k,
+        composition,
+    )
+    extreme_state = extreme_eos(1.0e8, 3.0e5, composition)
+    extreme_density_analytic = ASTRA.Microphysics.pressure_density_derivative(
+        extreme_eos,
+        1.0e8,
+        3.0e5,
+        composition,
+    )
+    extreme_temperature_analytic = ASTRA.Microphysics.pressure_temperature_derivative(
+        extreme_eos,
+        1.0e8,
+        3.0e5,
         composition,
     )
 
@@ -146,6 +163,11 @@
     @test isfinite(degenerate_temperature_analytic)
     @test isfinite(coulomb_density_analytic)
     @test isfinite(coulomb_temperature_analytic)
+    @test extreme_state.pressure_dyn_cm2 > 0.0
+    @test isfinite(extreme_state.chi_rho)
+    @test isfinite(extreme_state.chi_T)
+    @test isfinite(extreme_density_analytic)
+    @test isfinite(extreme_temperature_analytic)
     @test isfinite(screened_nuclear_density_fd)
     @test isfinite(screened_nuclear_density_analytic)
     @test isapprox(

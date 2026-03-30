@@ -9,6 +9,12 @@
     degenerate_state = degenerate(1.0e6, 1.0e7, composition)
     degenerate_base_state = eos(1.0e6, 1.0e7, composition)
     coulomb_state = coulomb(1.0e2, 1.0e7, composition)
+    coulomb_base_state = eos(1.0e2, 1.0e7, composition)
+    extreme_flagged = ASTRA.Microphysics.AnalyticalGasRadiationEOS(
+        include_degeneracy = true,
+        include_coulomb = true,
+    )
+    extreme_state = extreme_flagged(1.0e8, 3.0e5, composition)
 
     @test state.pressure_dyn_cm2 > 0.0
     @test 0.0 < state.gas_pressure_fraction <= 1.0
@@ -24,10 +30,14 @@
     @test isfinite(outer_state.chi_T)
     @test degenerate_state.pressure_dyn_cm2 > degenerate_base_state.pressure_dyn_cm2
     @test isfinite(coulomb_state.pressure_dyn_cm2)
+    @test coulomb_state.pressure_dyn_cm2 < coulomb_base_state.pressure_dyn_cm2
     @test isfinite(degenerate_state.chi_rho)
     @test isfinite(degenerate_state.chi_T)
     @test isfinite(coulomb_state.chi_rho)
     @test isfinite(coulomb_state.chi_T)
+    @test extreme_state.pressure_dyn_cm2 > 0.0
+    @test isfinite(extreme_state.chi_rho)
+    @test isfinite(extreme_state.chi_T)
 
     dPdT = ASTRA.Microphysics.pressure_temperature_derivative(
         eos,
@@ -88,10 +98,36 @@
         1.0e7,
         composition,
     )
+    coulomb_fd_temperature =
+        (
+            coulomb(1.0e2, 1.0e7 + 1.0, composition).pressure_dyn_cm2 -
+            coulomb(1.0e2, 1.0e7 - 1.0, composition).pressure_dyn_cm2
+        ) / 2.0
+    coulomb_fd_density =
+        (
+            coulomb(1.0e2 + 1.0e-4, 1.0e7, composition).pressure_dyn_cm2 -
+            coulomb(1.0e2 - 1.0e-4, 1.0e7, composition).pressure_dyn_cm2
+        ) / (2.0e-4)
+    extreme_dPdT = ASTRA.Microphysics.pressure_temperature_derivative(
+        extreme_flagged,
+        1.0e8,
+        3.0e5,
+        composition,
+    )
+    extreme_dPdρ = ASTRA.Microphysics.pressure_density_derivative(
+        extreme_flagged,
+        1.0e8,
+        3.0e5,
+        composition,
+    )
     @test isapprox(dPdT, fd_temperature; rtol = 1.0e-4, atol = 1.0e-8)
     @test isapprox(dPdρ, fd_density; rtol = 1.0e-4, atol = 1.0e-8)
     @test isapprox(outer_dPdT, outer_fd_temperature; rtol = 1.0e-4, atol = 1.0e-8)
     @test isapprox(outer_dPdρ, outer_fd_density; rtol = 1.0e-4, atol = 1.0e-8)
     @test isfinite(coulomb_dPdT)
     @test isfinite(coulomb_dPdρ)
+    @test isapprox(coulomb_dPdT, coulomb_fd_temperature; rtol = 1.0e-4, atol = 1.0e-8)
+    @test isapprox(coulomb_dPdρ, coulomb_fd_density; rtol = 1.0e-4, atol = 1.0e-8)
+    @test isfinite(extreme_dPdT)
+    @test isfinite(extreme_dPdρ)
 end
