@@ -1,3 +1,22 @@
 # Staggered Mesh and State Layout
 
-This page will explain how ASTRA assigns variables to faces and cells, why the state is staggered, and how that layout supports the classical residuals. It is a placeholder for the exact ownership map and packing order.
+ASTRA uses a staggered mesh so geometric quantities live on faces and thermodynamic state lives in cells. That gives the classical residual a clean ownership split and keeps the packed state close to the physics.
+
+## Face-centered and cell-centered ownership
+
+The solve-owned structure state is:
+
+- face-centered `log(radius_face_cm)`,
+- face-centered `luminosity_face_erg_s`,
+- cell-centered `log(temperature_cell_k)`,
+- cell-centered `log(density_cell_g_cm3)`.
+
+That face/cell split is the core of the layout. Radius and luminosity naturally live on faces because they are boundary flux or geometry quantities. Temperature and density live at cell centers because they are local thermodynamic state.
+
+## Packed state
+
+`pack_state(state)` concatenates those four blocks into one packed state vector, and `unpack_state(template, values)` reverses the process. The packed state is the object Newton sees; the structured `StellarModel` is the object the rest of ASTRA reasons about.
+
+## Why this layout exists
+
+The staggered layout keeps the residual rows local: geometry couples adjacent faces and a cell density, hydrostatic balance uses adjacent cell pressures and one face radius, luminosity uses one cell source term, and transport uses adjacent cell temperatures and pressures. That locality is what makes the Jacobian block structure readable.

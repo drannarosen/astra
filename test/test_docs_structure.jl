@@ -213,6 +213,56 @@
             "Jacobian",
             "placeholder closures",
         ],
+        "docs/website/methods/index.md" => [
+            "solve pipeline",
+            "Physics",
+            "Methods",
+        ],
+        "docs/website/methods/from-equations-to-residual.md" => [
+            "unknown vector",
+            "residual vector",
+            "log(radius",
+        ],
+        "docs/website/methods/staggered-mesh-and-state-layout.md" => [
+            "face-centered",
+            "cell-centered",
+            "packed state",
+        ],
+        "docs/website/methods/residual-assembly.md" => [
+            "center rows",
+            "interior blocks",
+            "surface rows",
+        ],
+        "docs/website/methods/jacobian-construction.md" => [
+            "analytic rows",
+            "central differences",
+            "jacobian_fidelity_audit",
+        ],
+        "docs/website/methods/linear-solves-and-scaling.md" => [
+            "erg/s",
+            "column scaling",
+            "regularized normal equations",
+        ],
+        "docs/website/methods/nonlinear-newton-and-backtracking.md" => [
+            "damping",
+            "accepted steps",
+            "rejected trials",
+        ],
+        "docs/website/methods/initial-model-and-seeding.md" => [
+            "geometry-consistent",
+            "source-matched",
+            "surface-anchored",
+        ],
+        "docs/website/methods/boundary-condition-realization.md" => [
+            "center asymptotic",
+            "surface closure",
+            "subtractive-cancellation",
+        ],
+        "docs/website/methods/verification-and-jacobian-audits.md" => [
+            "local derivative validation",
+            "block jacobian",
+            "default newton progress",
+        ],
         "docs/website/numerics/residuals.md" => [
             "first classical structure equations",
             "source-decomposed",
