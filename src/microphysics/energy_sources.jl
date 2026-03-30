@@ -80,14 +80,12 @@ function _history_gravothermal_rate(
     dlog_temperature_dt = (current_log_temperature - prev_temperature[k]) / dt_s
     dlog_density_dt = (current_log_density - prev_density[k]) / dt_s
     eos_state = problem.microphysics.eos(density_g_cm3, temperature_k, composition)
-    chi_density = eos_state.gas_pressure_fraction
-    chi_temperature = 4.0 - 3.0 * chi_density
     eps_grav = eps_grav_from_cp(
         temperature_k = temperature_k,
         specific_heat_erg_g_k = eos_state.specific_heat_erg_g_k,
         adiabatic_gradient = eos_state.adiabatic_gradient,
-        chi_temperature = chi_temperature,
-        chi_density = chi_density,
+        chi_temperature = eos_state.chi_T,
+        chi_density = eos_state.chi_rho,
         dlog_temperature_dt = dlog_temperature_dt,
         dlog_density_dt = dlog_density_dt,
     )

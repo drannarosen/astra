@@ -52,3 +52,58 @@
     @test eps_nu_cool > 0.0
     @test eps_nu_cool < eps_nu_mid < eps_nu_hot
 end
+
+@testset "eps_grav uses EOS thermodynamic response terms" begin
+    base_problem = ASTRA.build_toy_problem(n_cells = 6)
+    flagged_eos = ASTRA.Microphysics.AnalyticalGasRadiationEOS(
+        include_degeneracy = true,
+        include_coulomb = true,
+    )
+    problem = ASTRA.StructureProblem(
+        base_problem.formulation,
+        base_problem.parameters,
+        base_problem.composition,
+        base_problem.grid,
+        ASTRA.MicrophysicsBundle(
+            flagged_eos,
+            base_problem.microphysics.opacity,
+            base_problem.microphysics.nuclear,
+            base_problem.microphysics.convection,
+        ),
+        base_problem.solver,
+    )
+    model = initialize_state(problem)
+    history = ASTRA.with_previous_thermodynamic_state(
+        model;
+        previous_log_temperature_cell_k = model.structure.log_temperature_cell_k .- log(1.02),
+        previous_log_density_cell_g_cm3 = model.structure.log_density_cell_g_cm3 .+ log(1.01),
+        timestep_s = 2.0e11,
+        previous_timestep_s = 1.8e11,
+        accepted_steps = 1,
+    )
+
+    k = 2
+    density_g_cm3 = exp(history.structure.log_density_cell_g_cm3[k])
+    temperature_k = exp(history.structure.log_temperature_cell_k[k])
+    composition = ASTRA.Composition(0.70, 0.28, 0.02)
+    eos_state = flagged_eos(density_g_cm3, temperature_k, composition)
+    expected_eps_grav = ASTRA.Microphysics.eps_grav_from_cp(
+        temperature_k = temperature_k,
+        specific_heat_erg_g_k = eos_state.specific_heat_erg_g_k,
+        adiabatic_gradient = eos_state.adiabatic_gradient,
+        chi_temperature = eos_state.chi_T,
+        chi_density = eos_state.chi_rho,
+        dlog_temperature_dt = (
+            history.structure.log_temperature_cell_k[k] -
+            history.evolution.previous_log_temperature_cell_k[k]
+        ) / history.evolution.timestep_s,
+        dlog_density_dt = (
+            history.structure.log_density_cell_g_cm3[k] -
+            history.evolution.previous_log_density_cell_g_cm3[k]
+        ) / history.evolution.timestep_s,
+    )
+    sources = ASTRA.energy_source_terms(problem, history, k)
+
+    @test sources.eps_grav_owner == :evolution_history
+    @test sources.eps_grav_erg_g_s ≈ expected_eps_grav rtol = 1.0e-12 atol = 1.0e-12
+end
