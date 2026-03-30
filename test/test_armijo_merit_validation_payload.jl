@@ -23,8 +23,12 @@
     @test payload.decrease_ratio_history == result.diagnostics.decrease_ratio_history
     @test payload.accepted_dominant_family in
           Union{Nothing,Symbol}[(nothing), :center, :geometry, :hydrostatic, :luminosity, :interior_transport, :outer_transport, :surface]
+    @test payload.accepted_transport_hotspot === nothing ||
+          payload.accepted_transport_hotspot.location in (:interior, :outer)
     @test payload.best_rejected_trial === nothing ||
           payload.best_rejected_trial.row_family_merit.dominant_family in
           (:center, :geometry, :hydrostatic, :luminosity, :interior_transport, :outer_transport, :surface)
+    @test payload.best_rejected_transport_hotspot === nothing ||
+          payload.best_rejected_transport_hotspot.location in (:interior, :outer)
     @test payload.used_regularized_fallback isa Bool
 end

@@ -20,6 +20,9 @@ function build_armijo_merit_validation_payload(
     accepted_dominant_family = isempty(diagnostics.accepted_trial_history) ?
         nothing :
         diagnostics.accepted_trial_history[end].row_family_merit.dominant_family
+    accepted_transport_hotspot = isempty(diagnostics.accepted_trial_history) ?
+        nothing :
+        diagnostics.accepted_trial_history[end].transport_hotspot
     used_regularized_fallback = any(
         note -> begin
             lowered = lowercase(note)
@@ -43,7 +46,9 @@ function build_armijo_merit_validation_payload(
         copy(diagnostics.actual_decrease_history),
         copy(diagnostics.decrease_ratio_history),
         accepted_dominant_family,
+        accepted_transport_hotspot,
         diagnostics.best_rejected_trial,
+        isnothing(diagnostics.best_rejected_trial) ? nothing : diagnostics.best_rejected_trial.transport_hotspot,
         used_regularized_fallback,
     )
 end
@@ -126,6 +131,24 @@ function _write_armijo_merit_validation_trial_summary(
     )
 end
 
+function _write_armijo_merit_validation_transport_hotspot_summary(
+    io::IO,
+    prefix::AbstractString,
+    hotspot::TransportHotspotSummary,
+)
+    println(io, prefix * ".present = ", _format_armijo_merit_validation_scalar(hotspot.present))
+    println(io, prefix * ".cell_index = ", hotspot.cell_index)
+    println(io, prefix * ".location = ", _format_armijo_merit_validation_scalar(hotspot.location))
+    println(io, prefix * ".row_index = ", hotspot.row_index)
+    println(io, prefix * ".raw_residual = ", repr(hotspot.raw_residual))
+    println(io, prefix * ".row_weight = ", repr(hotspot.row_weight))
+    println(io, prefix * ".weighted_contribution = ", repr(hotspot.weighted_contribution))
+    println(io, prefix * ".delta_log_temperature = ", repr(hotspot.delta_log_temperature))
+    println(io, prefix * ".delta_log_pressure = ", repr(hotspot.delta_log_pressure))
+    println(io, prefix * ".nabla_transport = ", repr(hotspot.nabla_transport))
+    println(io, prefix * ".gradient_term = ", repr(hotspot.gradient_term))
+end
+
 function _write_armijo_merit_validation_payload(
     io::IO,
     payload::ArmijoMeritValidationPayload,
@@ -170,6 +193,15 @@ function _write_armijo_merit_validation_payload(
             _armijo_merit_validation_transport_family(payload.accepted_dominant_family),
         ),
     )
+    if payload.accepted_transport_hotspot === nothing
+        println(io, "accepted_transport_hotspot.present = false")
+    else
+        _write_armijo_merit_validation_transport_hotspot_summary(
+            io,
+            "accepted_transport_hotspot",
+            payload.accepted_transport_hotspot,
+        )
+    end
 
     if payload.best_rejected_trial === nothing
         println(io, "best_rejected_trial.present = false")
@@ -185,6 +217,15 @@ function _write_armijo_merit_validation_payload(
             ),
         ),
     )
+    if payload.best_rejected_transport_hotspot === nothing
+        println(io, "best_rejected_transport_hotspot.present = false")
+    else
+        _write_armijo_merit_validation_transport_hotspot_summary(
+            io,
+            "best_rejected_transport_hotspot",
+            payload.best_rejected_transport_hotspot,
+        )
+    end
 
     println(
         io,
@@ -250,6 +291,18 @@ function _write_armijo_merit_validation_manifest_entry(io::IO, payload, payload_
     )
     println(
         io,
+        "accepted_transport_hotspot_location = ",
+        _format_armijo_merit_validation_scalar(
+            isnothing(payload.accepted_transport_hotspot) ? nothing : payload.accepted_transport_hotspot.location,
+        ),
+    )
+    println(
+        io,
+        "accepted_transport_hotspot_cell_index = ",
+        isnothing(payload.accepted_transport_hotspot) ? "nothing" : string(payload.accepted_transport_hotspot.cell_index),
+    )
+    println(
+        io,
         "best_rejected_dominant_family = ",
         _format_armijo_merit_validation_scalar(
             _armijo_merit_validation_best_rejected_family(payload),
@@ -263,6 +316,18 @@ function _write_armijo_merit_validation_manifest_entry(io::IO, payload, payload_
                 _armijo_merit_validation_best_rejected_family(payload),
             ),
         ),
+    )
+    println(
+        io,
+        "best_rejected_transport_hotspot_location = ",
+        _format_armijo_merit_validation_scalar(
+            isnothing(payload.best_rejected_transport_hotspot) ? nothing : payload.best_rejected_transport_hotspot.location,
+        ),
+    )
+    println(
+        io,
+        "best_rejected_transport_hotspot_cell_index = ",
+        isnothing(payload.best_rejected_transport_hotspot) ? "nothing" : string(payload.best_rejected_transport_hotspot.cell_index),
     )
     println(
         io,

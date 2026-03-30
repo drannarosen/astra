@@ -387,6 +387,8 @@ struct ArmijoMeritValidationPayload
     actual_decrease_history::Vector{Float64}
     decrease_ratio_history::Vector{Float64}
     accepted_dominant_family::Union{Nothing,Symbol}
+    accepted_transport_hotspot::Union{Nothing,TransportHotspotSummary}
     best_rejected_trial::Union{Nothing,TrialMeritSummary}
+    best_rejected_transport_hotspot::Union{Nothing,TransportHotspotSummary}
     used_regularized_fallback::Bool
 end

@@ -35,6 +35,7 @@ using ASTRA
     include("test_transport_validation_artifacts.jl")
     include("test_transport_row_terms.jl")
     include("test_transport_hotspot_diagnostics.jl")
+    include("test_transport_hotspot_artifacts.jl")
     include("test_transport_row_weights.jl")
     include("test_outer_boundary_domain_guard.jl")
     include("test_center_asymptotic_scaling.jl")
