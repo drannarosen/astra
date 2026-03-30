@@ -2,6 +2,8 @@
 
 This page is the canonical specification for ASTRA's current solver-side step metrics and for the longer-term globalization direction.
 
+For the broader future-facing argument about why ASTRA wants a merit-function backbone, how that differs from simply copying MESA's richer controller ecology, and why that still scales to an eventual all-phases stellar-evolution ambition, see [Planning: Solver Maturity and Globalization Roadmap](../planning/solver-maturity-and-globalization-roadmap.md).
+
 The key distinction is simple:
 
 - the **physical residual** says which stellar-structure equations ASTRA is enforcing,

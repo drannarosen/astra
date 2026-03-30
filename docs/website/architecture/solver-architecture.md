@@ -70,6 +70,8 @@ Approved direction:
 - more structured Jacobian-aware linear algebra when the operator contract stabilizes,
 - and rescue paths treated as diagnostics-worthy fallback behavior, not as scientific success criteria.
 
+For the longer-horizon rationale behind that direction, including why ASTRA wants a merit-based backbone instead of prematurely inheriting MESA-scale controller complexity, see [Planning: Solver Maturity and Globalization Roadmap](../planning/solver-maturity-and-globalization-roadmap.md).
+
 ## Diagnostics and failure reporting
 
 The diagnostics layer is not decorative. It records raw residual norms, weighted residual norms, damping history, weighted correction histories, accepted steps, rejected trials, formulation identity, and explicit notes about the solve boundary.
