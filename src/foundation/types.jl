@@ -267,30 +267,6 @@ struct StructureProblem{F,M}
 end
 
 """
-    StructureDiagnostics(...)
-
-Summary diagnostics returned by ASTRA's bootstrap solve.
-"""
-struct StructureDiagnostics
-    residual_norm::Float64
-    initial_residual_norm::Float64
-    residual_history::Vector{Float64}
-    weighted_residual_norm::Float64
-    weighted_residual_history::Vector{Float64}
-    damping_history::Vector{Float64}
-    weighted_correction_norm_history::Vector{Float64}
-    weighted_max_correction_history::Vector{Float64}
-    accepted_step_count::Int
-    rejected_trial_count::Int
-    converged::Bool
-    iterations::Int
-    center_pressure_dyn_cm2::Float64
-    surface_luminosity_erg_s::Float64
-    formulation::Symbol
-    notes::Vector{String}
-end
-
-"""
     RowFamilyMeritSummary(...)
 
 Grouped frozen-weight merit contributions for the current classical residual
@@ -305,6 +281,34 @@ struct RowFamilyMeritSummary
     surface::Float64
     total::Float64
     dominant_family::Symbol
+end
+
+"""
+    StructureDiagnostics(...)
+
+Summary diagnostics returned by ASTRA's bootstrap solve.
+"""
+struct StructureDiagnostics
+    residual_norm::Float64
+    initial_residual_norm::Float64
+    residual_history::Vector{Float64}
+    weighted_residual_norm::Float64
+    weighted_residual_history::Vector{Float64}
+    merit_value::Float64
+    merit_history::Vector{Float64}
+    damping_history::Vector{Float64}
+    weighted_correction_norm_history::Vector{Float64}
+    weighted_max_correction_history::Vector{Float64}
+    accepted_step_count::Int
+    rejected_trial_count::Int
+    converged::Bool
+    iterations::Int
+    center_pressure_dyn_cm2::Float64
+    surface_luminosity_erg_s::Float64
+    formulation::Symbol
+    initial_row_family_merit::RowFamilyMeritSummary
+    final_row_family_merit::RowFamilyMeritSummary
+    notes::Vector{String}
 end
 
 """

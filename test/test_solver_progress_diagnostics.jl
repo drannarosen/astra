@@ -72,6 +72,10 @@ end
     problem = ASTRA.build_toy_problem(n_cells = 12)
     guess = initialize_state(problem)
     initial_residual = ASTRA.residual_norm(ASTRA.assemble_structure_residual(problem, guess))
+    initial_merit = ASTRA.Solvers.weighted_residual_merit(
+        ASTRA.assemble_structure_residual(problem, guess),
+        ASTRA.Solvers.residual_row_weights(problem, guess),
+    )
     surface_rows = ASTRA.structure_surface_row_range(problem.grid.n_cells)
     surface_weights = ASTRA.Solvers.residual_row_weights(problem, guess)[surface_rows]
     surface_pressure_dyn_cm2 = ASTRA.cell_eos_state(problem, guess, problem.grid.n_cells).pressure_dyn_cm2
@@ -90,6 +94,7 @@ end
     @test result.diagnostics.initial_residual_norm ≈ initial_residual
     @test !isempty(result.diagnostics.residual_history)
     @test !isempty(result.diagnostics.weighted_residual_history)
+    @test !isempty(result.diagnostics.merit_history)
     @test first(result.diagnostics.residual_history) ≈ initial_residual
     @test last(result.diagnostics.residual_history) ≈ result.diagnostics.residual_norm
     @test first(result.diagnostics.weighted_residual_history) ≈
@@ -99,6 +104,15 @@ end
               ASTRA.assemble_structure_residual(problem, guess),
           )
     @test last(result.diagnostics.weighted_residual_history) == result.diagnostics.weighted_residual_norm
+    @test first(result.diagnostics.merit_history) ≈ initial_merit
+    @test last(result.diagnostics.merit_history) ≈ result.diagnostics.merit_value
+    @test result.diagnostics.initial_row_family_merit.total ≈
+          first(result.diagnostics.merit_history)
+    @test result.diagnostics.final_row_family_merit.total ≈ result.diagnostics.merit_value
+    @test result.diagnostics.initial_row_family_merit.dominant_family in
+          (:center, :geometry, :hydrostatic, :luminosity, :transport, :surface)
+    @test result.diagnostics.final_row_family_merit.dominant_family in
+          (:center, :geometry, :hydrostatic, :luminosity, :transport, :surface)
     @test result.diagnostics.accepted_step_count >= 0
     @test result.diagnostics.rejected_trial_count >= 0
     @test length(result.diagnostics.damping_history) == result.diagnostics.accepted_step_count
@@ -140,15 +154,20 @@ end
           capped_result.diagnostics.iterations + 1
     @test length(capped_result.diagnostics.weighted_residual_history) ==
           capped_result.diagnostics.iterations + 1
+    @test length(capped_result.diagnostics.merit_history) ==
+          capped_result.diagnostics.iterations + 1
     @test capped_result.diagnostics.initial_residual_norm ≈ capped_initial_residual
     @test first(capped_result.diagnostics.residual_history) ≈ capped_initial_residual
     @test last(capped_result.diagnostics.residual_history) ≈
           capped_result.diagnostics.residual_norm
     @test last(capped_result.diagnostics.weighted_residual_history) ≈
           capped_result.diagnostics.weighted_residual_norm
+    @test last(capped_result.diagnostics.merit_history) ≈ capped_result.diagnostics.merit_value
 
     mismatch_problem, mismatch_state, mismatch_result = _weighted_history_consistency_fixture()
     @test mismatch_result.diagnostics.accepted_step_count > 0
     @test mismatch_result.diagnostics.weighted_residual_history[end] ==
           mismatch_result.diagnostics.weighted_residual_norm
+    @test mismatch_result.diagnostics.merit_history[end] ==
+          mismatch_result.diagnostics.merit_value
 end

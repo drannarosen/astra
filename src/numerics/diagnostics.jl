@@ -17,6 +17,8 @@ function build_diagnostics(
     residual_history::AbstractVector{<:Real},
     weighted_residual_norm_value::Real,
     weighted_residual_history::AbstractVector{<:Real},
+    merit_value::Real,
+    merit_history::AbstractVector{<:Real},
     damping_history::AbstractVector{<:Real},
     weighted_correction_norm_history::AbstractVector{<:Real},
     weighted_max_correction_history::AbstractVector{<:Real},
@@ -24,6 +26,8 @@ function build_diagnostics(
     rejected_trial_count::Integer,
     iterations::Integer,
     converged::Bool,
+    initial_row_family_merit::RowFamilyMeritSummary,
+    final_row_family_merit::RowFamilyMeritSummary,
     extra_notes::AbstractVector{<:AbstractString} = String[],
 )
     state = model.structure
@@ -39,6 +43,7 @@ function build_diagnostics(
         "Atmosphere boundary note: surface temperature is matched in log form to T_eff and the surface pressure row is weighted on a pressure scale, not the old density guess.",
         "Solver acceptance and convergence now use weighted residual metrics; raw residual histories are still reported for scientific honesty.",
         "Weighted residual histories report the frozen acceptance metric used for globalization decisions.",
+        "Diagnostics now also report the frozen-weight merit history and initial/final grouped row-family merit summaries.",
     ]
     append!(notes, String.(extra_notes))
 
@@ -48,6 +53,8 @@ function build_diagnostics(
         Float64.(residual_history),
         Float64(weighted_residual_norm_value),
         Float64.(weighted_residual_history),
+        Float64(merit_value),
+        Float64.(merit_history),
         Float64.(damping_history),
         Float64.(weighted_correction_norm_history),
         Float64.(weighted_max_correction_history),
@@ -58,6 +65,8 @@ function build_diagnostics(
         eos_state.pressure_dyn_cm2,
         state.luminosity_face_erg_s[end],
         formulation_symbol(problem),
+        initial_row_family_merit,
+        final_row_family_merit,
         notes,
     )
 end

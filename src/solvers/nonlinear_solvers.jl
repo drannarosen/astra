@@ -90,8 +90,11 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
     residual = assemble_structure_residual(problem, model)
     initial_residual_norm = residual_norm(residual)
     initial_weighted_residual_norm = weighted_residual_norm(problem, model, residual)
+    initial_merit_value = weighted_residual_merit(problem, model, residual)
+    initial_row_family_merit = row_family_merit_summary(problem, model, residual)
     residual_history = Float64[initial_residual_norm]
     weighted_residual_history = Float64[initial_weighted_residual_norm]
+    merit_history = Float64[initial_merit_value]
     damping_history = Float64[]
     weighted_correction_norm_history = Float64[]
     weighted_max_correction_history = Float64[]
@@ -104,6 +107,7 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
 
     for _ in 1:problem.solver.max_newton_iterations
         current_weighted_residual_norm = last(weighted_residual_history)
+        current_merit_value = last(merit_history)
         if converged_residual(problem, model, residual)
             diagnostics = build_diagnostics(
                 problem,
@@ -113,6 +117,8 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 residual_history,
                 current_weighted_residual_norm,
                 weighted_residual_history,
+                current_merit_value,
+                merit_history,
                 damping_history,
                 weighted_correction_norm_history,
                 weighted_max_correction_history,
@@ -120,6 +126,8 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 rejected_trial_count,
                 accepted_step_count,
                 true,
+                initial_row_family_merit,
+                row_family_merit_summary(problem, model, residual),
                 notes,
             )
             return SolveResult(model, diagnostics)
@@ -149,6 +157,7 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 residual = trial_step.residual
                 push!(residual_history, residual_norm(residual))
                 push!(weighted_residual_history, trial_step.weighted_residual_norm)
+                push!(merit_history, weighted_residual_merit(problem, model, residual))
                 push!(
                     weighted_correction_norm_history,
                     trial_step.weighted_correction_norm,
@@ -202,6 +211,7 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 residual = trial_step.residual
                 push!(residual_history, residual_norm(residual))
                 push!(weighted_residual_history, trial_step.weighted_residual_norm)
+                push!(merit_history, weighted_residual_merit(problem, model, residual))
                 push!(
                     weighted_correction_norm_history,
                     trial_step.weighted_correction_norm,
@@ -214,6 +224,7 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
 
         if !accepted
             current_weighted_residual_norm = last(weighted_residual_history)
+            current_merit_value = last(merit_history)
             diagnostics = build_diagnostics(
                 problem,
                 model,
@@ -222,6 +233,8 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 residual_history,
                 current_weighted_residual_norm,
                 weighted_residual_history,
+                current_merit_value,
+                merit_history,
                 damping_history,
                 weighted_correction_norm_history,
                 weighted_max_correction_history,
@@ -229,6 +242,8 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 rejected_trial_count,
                 accepted_step_count,
                 false,
+                initial_row_family_merit,
+                row_family_merit_summary(problem, model, residual),
                 notes,
             )
             return SolveResult(model, diagnostics)
@@ -236,6 +251,7 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
     end
 
     current_weighted_residual_norm = last(weighted_residual_history)
+    current_merit_value = last(merit_history)
     diagnostics = build_diagnostics(
         problem,
         model,
@@ -244,6 +260,8 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
         residual_history,
         current_weighted_residual_norm,
         weighted_residual_history,
+        current_merit_value,
+        merit_history,
         damping_history,
         weighted_correction_norm_history,
         weighted_max_correction_history,
@@ -251,6 +269,8 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
         rejected_trial_count,
         accepted_step_count,
         false,
+        initial_row_family_merit,
+        row_family_merit_summary(problem, model, residual),
         notes,
     )
     return SolveResult(model, diagnostics)
