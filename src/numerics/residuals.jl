@@ -27,12 +27,36 @@ function interior_structure_block(problem::StructureProblem, model::StellarModel
         (4.0 * π * clip_positive(r_right_cm)^4)
     luminosity =
         state.luminosity_face_erg_s[k + 1] - state.luminosity_face_erg_s[k] - dm_g * energy_rate_k_erg_g_s
-    transport =
+    transport = k == problem.grid.n_cells - 1 ? outer_transport_row(problem, model, k) : (
         state.log_temperature_cell_k[k + 1] - state.log_temperature_cell_k[k] +
         nabla_transport *
         (log(clip_positive(pressure_kp1_dyn_cm2)) - log(clip_positive(pressure_k_dyn_cm2)))
+    )
 
     return Float64[geometry, hydrostatic, luminosity, transport]
+end
+
+function outer_transport_row(problem::StructureProblem, model::StellarModel, k::Int)
+    state = model.structure
+    radius_surface_cm = exp(state.log_radius_face_cm[end])
+    luminosity_surface_erg_s = state.luminosity_face_erg_s[end]
+    temperature_photosphere_k = surface_effective_temperature_k(
+        radius_surface_cm,
+        luminosity_surface_erg_s,
+    )
+    pressure_photospheric_dyn_cm2 = eddington_photospheric_pressure_dyn_cm2(
+        surface_gravity_cgs(problem.parameters.mass_g, radius_surface_cm),
+        cell_opacity_state(problem, model, problem.grid.n_cells).opacity_cm2_g,
+    )
+    pressure_outer_cell_dyn_cm2 = cell_eos_state(problem, model, k).pressure_dyn_cm2
+    nabla_transport = radiative_temperature_gradient(problem, model, k)
+
+    return positive_log(temperature_photosphere_k) - state.log_temperature_cell_k[k] +
+        nabla_transport *
+        (
+            log(clip_positive(pressure_photospheric_dyn_cm2)) -
+            log(clip_positive(pressure_outer_cell_dyn_cm2))
+        )
 end
 
 function assemble_structure_residual(problem::StructureProblem, model::StellarModel)

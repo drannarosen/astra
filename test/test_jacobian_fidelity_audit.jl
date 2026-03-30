@@ -17,6 +17,11 @@
     row = first(ASTRA.interior_structure_row_range(1)) + 2
     log_temperature_column = 2 * (n + 1) + 1
     log_density_column = 2 * (n + 1) + n + 1
+    outer_row = first(ASTRA.interior_structure_row_range(n - 1)) + 3
+    surface_radius_column = n + 1
+    surface_luminosity_column = 2 * (n + 1)
+    outer_temperature_column = 2 * (n + 1) + (n - 1)
+    outer_density_column = 2 * (n + 1) + n + (n - 1)
     step = 1.0e-6
 
     function perturb_structure(model, column, delta)
@@ -59,4 +64,10 @@
     @test isfinite(audit.luminosity.max_rel_error)
     @test jacobian[row, log_temperature_column] ≈ -dm_g * dε_total_dlnT atol = 1.0e-6 rtol = 1.0e-4
     @test jacobian[row, log_density_column] ≈ -dm_g * dε_total_dlnρ atol = 1.0e-6 rtol = 1.0e-4
+
+    fd_jacobian = ASTRA.finite_difference_jacobian(problem, model; step = 1.0e-6)
+    @test jacobian[outer_row, surface_radius_column] ≈ fd_jacobian[outer_row, surface_radius_column] atol = 1.0e-6 rtol = 1.0e-3
+    @test jacobian[outer_row, surface_luminosity_column] ≈ fd_jacobian[outer_row, surface_luminosity_column] atol = 1.0e-6 rtol = 1.0e-3
+    @test jacobian[outer_row, outer_temperature_column] ≈ fd_jacobian[outer_row, outer_temperature_column] atol = 1.0e-6 rtol = 1.0e-3
+    @test jacobian[outer_row, outer_density_column] ≈ fd_jacobian[outer_row, outer_density_column] atol = 1.0e-6 rtol = 1.0e-3
 end

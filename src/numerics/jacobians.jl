@@ -336,6 +336,21 @@ function structure_jacobian(
             (problem, trial_model) -> block_builder(problem, trial_model)[[2, 4]];
             step = step,
         )
+        if k == n - 1
+            _fill_block_jacobian!(
+                jacobian,
+                first(row_range) + 3,
+                Int[
+                    _radius_face_index(problem.grid, n + 1),
+                    _luminosity_face_index(problem.grid, n + 1),
+                ],
+                problem,
+                model,
+                Float64[local_block[4]],
+                (problem, trial_model) -> outer_transport_row(problem, trial_model, k);
+                step = step,
+            )
+        end
     end
 
     surface_rows = structure_surface_row_range(n)
