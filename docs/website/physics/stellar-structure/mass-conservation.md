@@ -20,7 +20,7 @@ $$
 \mathrm{shell\_volume}(r_k, r_{k+1}) - \frac{dm_k}{\rho_k} = 0
 $$
 
-In code, that is the `geometry` row in `src/residuals.jl`:
+In code, that is the `geometry` row in `src/numerics/residuals.jl`:
 
 ```julia
 shell_volume_cm3(r_left_cm, r_right_cm) - dm_g / clip_positive(density_k_g_cm3)

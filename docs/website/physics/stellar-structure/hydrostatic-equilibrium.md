@@ -20,7 +20,7 @@ $$
 P_{k+1} - P_k + \frac{G m_{k+1} dm_k}{4 \pi r_{k+1}^4} = 0
 $$
 
-That is the `hydrostatic` row in `src/residuals.jl`. Pressure is not a solve-owned variable; it is supplied by the EOS closure in `src/structure_equations.jl`.
+That is the `hydrostatic` row in `src/numerics/residuals.jl`. Pressure is not a solve-owned variable; it is supplied by the EOS closure in `src/numerics/structure_equations.jl`.
 
 ## Numerical realization in ASTRA
 

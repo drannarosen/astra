@@ -42,7 +42,7 @@ $$
 \log T_{k+1} - \log T_k + \nabla_k \left(\log P_{k+1} - \log P_k\right) = 0
 $$
 
-This is the `transport` row in `src/residuals.jl`. The gradient `nabla_k` comes from the helper in `src/structure_equations.jl`, which combines the toy opacity law, the EOS pressure, the luminosity, and the local enclosed mass.
+This is the `transport` row in `src/numerics/residuals.jl`. The gradient `nabla_k` comes from the helper in `src/numerics/structure_equations.jl`, which combines the toy opacity law, the EOS pressure, the luminosity, and the local enclosed mass.
 
 ## Numerical realization in ASTRA
 

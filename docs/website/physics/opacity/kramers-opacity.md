@@ -32,7 +32,7 @@ These are the `opacity_temperature_derivative(...)` and `opacity_density_derivat
 
 ## How it enters ASTRA
 
-Opacity feeds the radiative-gradient helper in `src/structure_equations.jl`. That helper multiplies opacity, luminosity, pressure, and the local geometric factors to produce the transport gradient used by the residual. The local derivatives matter because the Jacobian audit checks the same helper in density and temperature directions.
+Opacity feeds the radiative-gradient helper in `src/numerics/structure_equations.jl`. That helper multiplies opacity, luminosity, pressure, and the local geometric factors to produce the transport gradient used by the residual. The local derivatives matter because the Jacobian audit checks the same helper in density and temperature directions.
 
 The discrete method-side realization is documented in [Residual Assembly](../../methods/residual-assembly.md), and the current derivative path is summarized in [Jacobian Construction](../../methods/jacobian-construction.md).
 

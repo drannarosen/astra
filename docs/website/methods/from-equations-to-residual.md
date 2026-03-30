@@ -25,7 +25,7 @@ or, in the literal packed storage order,
 
 That is the unknown vector the Newton solve updates. The `log(radius` and `log(temperature` choices are there for positivity and conditioning; luminosity stays linear in raw `erg/s` because it crosses zero at the center and is still a physical flux variable.
 
-The code-level owner of that contract is `ASTRA.pack_state(...)` in `src/state.jl`. The methods contract is stricter than a prose summary: if the packed order changes, the residual assembly, Jacobian assembly, and every docs page that reasons about state ownership must change in the same slice.
+The code-level owner of that contract is `ASTRA.pack_state(...)` in `src/foundation/state.jl`. The methods contract is stricter than a prose summary: if the packed order changes, the residual assembly, Jacobian assembly, and every docs page that reasons about state ownership must change in the same slice.
 
 ## Normative packed-state contract
 

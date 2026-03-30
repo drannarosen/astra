@@ -4,7 +4,7 @@ ASTRA's current convection story is intentionally narrow: it computes a radiativ
 
 ## Current formula
 
-The helper in `src/structure_equations.jl` computes
+The helper in `src/numerics/structure_equations.jl` computes
 
 $$
 \nabla_\mathrm{rad} = \frac{3 \kappa L P}{16 \pi a c G m T^4}

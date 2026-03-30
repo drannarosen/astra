@@ -55,7 +55,7 @@ The most important interpretation detail is that these are residual equations, n
 
 ## What each interior block means
 
-The row family mirrors the current `src/residuals.jl` implementation:
+The row family mirrors the current `src/numerics/residuals.jl` implementation:
 
 - geometry compares shell volume to `dm / rho`,
 - hydrostatic balance compares adjacent-cell pressure plus gravity,

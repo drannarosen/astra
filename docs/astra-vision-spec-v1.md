@@ -200,11 +200,11 @@ ASTRA should feel like:
 
 Top-level module that assembles the public API.
 
-### `src/constants.jl`
+### `src/foundation/constants.jl`
 
 Physical constants and standard astrophysical reference values.
 
-### `src/types.jl`
+### `src/foundation/types.jl`
 
 Core immutable structs and type definitions:
 
@@ -215,11 +215,11 @@ Core immutable structs and type definitions:
 * solver options
 * diagnostics containers
 
-### `src/grid.jl`
+### `src/foundation/grid.jl`
 
 Mesh generation and grid utilities.
 
-### `src/state.jl`
+### `src/foundation/state.jl`
 
 Definition of the stellar state and pack/unpack utilities.
 
@@ -234,15 +234,15 @@ Subdirectory containing:
 
 Each module must expose a narrow, explicit interface.
 
-### `src/boundary_conditions.jl`
+### `src/numerics/boundary_conditions.jl`
 
 Surface/central boundary conditions.
 
-### `src/residuals.jl`
+### `src/numerics/residuals.jl`
 
 Residual evaluation for the coupled stellar system.
 
-### `src/jacobians.jl`
+### `src/numerics/jacobians.jl`
 
 Jacobian assembly and Jacobian checks.
 
@@ -269,7 +269,7 @@ Subdirectory containing:
 * `update.jl`
 * `controllers.jl`
 
-### `src/diagnostics.jl`
+### `src/numerics/diagnostics.jl`
 
 Residual norms, physical consistency checks, runtime summaries.
 

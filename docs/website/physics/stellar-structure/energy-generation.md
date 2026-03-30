@@ -38,7 +38,7 @@ $$
 L_{k+1} - L_k - dm_k \, \varepsilon_{\mathrm{nuc},k} = 0
 $$
 
-as implemented in `src/residuals.jl`. The source term comes from the toy nuclear closure in `src/structure_equations.jl`, so this page should be read as the exact placeholder source ASTRA actually uses today.
+as implemented in `src/numerics/residuals.jl`. The source term comes from the toy nuclear closure in `src/numerics/structure_equations.jl`, so this page should be read as the exact placeholder source ASTRA actually uses today.
 
 In other words:
 

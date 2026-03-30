@@ -29,12 +29,12 @@ export StellarParameters,
     cell_nuclear_state,
     radiative_temperature_gradient
 
-include("constants.jl")
-include("units.jl")
-include("config.jl")
-include("types.jl")
-include("grid.jl")
-include("state.jl")
+include("foundation/constants.jl")
+include("foundation/units.jl")
+include("foundation/config.jl")
+include("foundation/types.jl")
+include("foundation/grid.jl")
+include("foundation/state.jl")
 
 module Microphysics
 using ..ASTRA: BOLTZMANN_CONSTANT_CGS,
@@ -49,10 +49,10 @@ include("microphysics/nuclear.jl")
 include("microphysics/convection.jl")
 end
 
-include("boundary_conditions.jl")
-include("structure_equations.jl")
-include("residuals.jl")
-include("jacobians.jl")
+include("numerics/boundary_conditions.jl")
+include("numerics/structure_equations.jl")
+include("numerics/residuals.jl")
+include("numerics/jacobians.jl")
 
 module Formulations
 include("formulations/abstract_formulation.jl")
@@ -62,7 +62,7 @@ end
 
 using .Formulations: AbstractFormulation, ClassicalHenyeyFormulation, EntropyDAEFormulation
 
-include("diagnostics.jl")
+include("numerics/diagnostics.jl")
 include("io.jl")
 
 module Solvers
