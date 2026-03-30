@@ -11,7 +11,7 @@
     @test all(isfinite, result.diagnostics.residual_history)
     @test isfinite(result.diagnostics.residual_norm)
     @test all(diff(result.diagnostics.residual_history) .< 0.0)
-    @test result.diagnostics.residual_norm <= 1.01 * initial_residual
+    @test result.diagnostics.residual_norm < initial_residual
     @test any(
         note -> occursin("accepted", lowercase(note)) ||
             occursin("rejected", lowercase(note)),

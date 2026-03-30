@@ -52,7 +52,7 @@
 
     @test audit.center.max_rel_error <= 2.0e-7
     @test audit.geometry.max_rel_error <= 1.0e-5
-    @test audit.luminosity.max_rel_error <= 2.0e-3
+    @test audit.luminosity.max_rel_error <= 1.0e-3
     @test audit.hydrostatic.max_rel_error <= 1.0e-6
     @test audit.transport.max_rel_error <= 1.0e-6
     @test isfinite(audit.luminosity.max_abs_error)

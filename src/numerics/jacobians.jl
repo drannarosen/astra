@@ -6,6 +6,8 @@ _temperature_cell_index(grid::StellarGrid, k::Int) = 2 * (grid.n_cells + 1) + k
 
 _density_cell_index(grid::StellarGrid, k::Int) = 2 * (grid.n_cells + 1) + grid.n_cells + k
 
+const AUDIT_LUMINOSITY_STEP_FLOOR = 1.0e25
+
 function _center_columns(grid::StellarGrid)
     return Int[
         _radius_face_index(grid, 1),
@@ -35,9 +37,14 @@ function _center_radius_row_partials(problem::StructureProblem, model::StellarMo
     return partials
 end
 
-function _center_luminosity_row_partials(problem::StructureProblem, model::StellarModel)
+function _center_luminosity_row_partials(
+    problem::StructureProblem,
+    model::StellarModel;
+    step::Real = problem.solver.finite_difference_step,
+)
     enclosed_mass_g = problem.grid.m_face_g[1]
-    dε_dlnT, dε_dlnρ = _centered_energy_source_log_derivatives(problem, model, 1)
+    dε_dlnT, dε_dlnρ =
+        _centered_energy_source_log_derivatives(problem, model, 1; step = step)
 
     partials = zeros(Float64, length(_center_columns(problem.grid)))
     partials[2] = 1.0
@@ -59,9 +66,15 @@ function _geometry_row_partials(problem::StructureProblem, model::StellarModel, 
     return partials
 end
 
-function _luminosity_row_partials(problem::StructureProblem, model::StellarModel, k::Int)
+function _luminosity_row_partials(
+    problem::StructureProblem,
+    model::StellarModel,
+    k::Int;
+    step::Real = problem.solver.finite_difference_step,
+)
     dm_g = problem.grid.dm_cell_g[k]
-    dε_dlnT, dε_dlnρ = _centered_energy_source_log_derivatives(problem, model, k)
+    dε_dlnT, dε_dlnρ =
+        _centered_energy_source_log_derivatives(problem, model, k; step = step)
 
     partials = zeros(Float64, length(_interior_columns(problem.grid, k)))
     partials[3] = -1.0
@@ -132,6 +145,9 @@ function _local_central_difference(
 
     for (j, column) in pairs(columns)
         column_step = jacobian_column_step(base_vector, column, step)
+        if _luminosity_face_index(problem.grid, 0) < column <= _luminosity_face_index(problem.grid, problem.grid.n_cells)
+            column_step = max(column_step, AUDIT_LUMINOSITY_STEP_FLOOR)
+        end
 
         perturbed_plus = copy(base_vector)
         perturbed_plus[column] += column_step
@@ -288,7 +304,7 @@ function structure_jacobian(
         jacobian,
         center_rows[2],
         center_columns,
-        _center_luminosity_row_partials(problem, model),
+        _center_luminosity_row_partials(problem, model; step = step),
     )
 
     for k in 1:(n - 1)
@@ -306,7 +322,7 @@ function structure_jacobian(
             jacobian,
             first(row_range) + 2,
             local_columns,
-            _luminosity_row_partials(problem, model, k),
+            _luminosity_row_partials(problem, model, k; step = step),
         )
         _fill_block_jacobian!(
             jacobian,
