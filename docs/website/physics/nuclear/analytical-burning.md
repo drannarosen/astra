@@ -4,7 +4,7 @@ ASTRA's current nuclear source is a staged analytical heating law with PP and CN
 
 ## Current formula
 
-The current energy rate is the sum of analytical PP-chain and CNO-cycle terms, with optional triple-alpha compiled in but disabled by default. The returned quantity is still an energy rate in `erg g^-1 s^-1`. In ASTRA this is the exact `energy_rate_erg_g_s` payload from `src/microphysics/nuclear.jl`.
+The current energy rate is the sum of analytical PP-chain and CNO-cycle terms, with optional triple-alpha compiled in but disabled by default. Weak screening can also be enabled as a flag-gated analytical enhancement for the PP and CNO branches. The returned quantity is still an energy rate in `erg g^-1 s^-1`. In ASTRA this is the exact `energy_rate_erg_g_s` payload from `src/microphysics/nuclear.jl`.
 
 ## Derivatives ASTRA uses
 
@@ -22,4 +22,4 @@ The row-level realization is documented in [Residual Assembly](../../methods/res
 
 ## What is deferred
 
-Real reaction networks, neutrino losses, composition evolution, and detailed screening physics are deferred. Screening and triple-alpha remain disabled in the default path. This page documents the bootstrap source ASTRA actually uses today, not a full abundance-evolution or reaction-network package.
+Real reaction networks, neutrino losses, composition evolution, and detailed screening physics are deferred. Screening and triple-alpha remain flag-gated in the default path. This page documents the bootstrap source ASTRA actually uses today, not a full abundance-evolution or reaction-network package.

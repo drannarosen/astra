@@ -40,8 +40,11 @@ This checklist tracks ASTRA's first serious science lane:
 
 - [x] EOS contract upgraded from toy closure toward classical baseline use
 - [x] Opacity contract upgraded from toy closure toward classical baseline use
-- [ ] Source-decomposed energy equation implemented
-- [ ] Gravothermal bookkeeping implemented in evolution ownership layer
+- [x] Source-decomposed energy equation implemented
+- [x] `eps_grav` gravothermal bookkeeping implemented in evolution ownership layer
+- [x] Staged `eps_nu` loss term wired into the luminosity source decomposition
+- [x] Weak-screening analytical nuclear option implemented and tested
+- [x] Flag-gated degeneracy and Coulomb EOS enrichments implemented and tested
 - [ ] Real baseline MLT closure implemented
 
 ## Evolution lane
@@ -63,6 +66,7 @@ This checklist tracks ASTRA's first serious science lane:
 - [ ] `alpha_MLT` calibration workflow
 - [ ] isotope-vector composition state
 - [ ] composition transport flux operators
+- [ ] default-on promotion for screening, triple-alpha, degeneracy, and Coulomb terms
 - [ ] high-mass / protostellar seed family
 - [ ] profile-level solar validation
 - [ ] Entropy-DAE comparison lane

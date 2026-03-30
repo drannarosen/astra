@@ -12,7 +12,14 @@ $$
 
 where `rho` is density, `T` is temperature, `mu` is the mean molecular weight from composition, `m_u` is the hydrogen mass constant used in ASTRA, `k_B` is Boltzmann's constant, and `a` is the radiation constant.
 
-This is the exact pressure decomposition ASTRA uses today in `src/microphysics/eos.jl`.
+This is the exact default pressure decomposition ASTRA uses today in `src/microphysics/eos.jl`.
+
+Flag-gated enrichments also exist in the same closure:
+
+- Paczynski-style electron-pressure interpolation when `include_degeneracy = true`,
+- Debye-Huckel Coulomb pressure correction when `include_coulomb = true`.
+
+Those enrichments are validated as local analytical options, not promoted to the default path.
 
 ## Derivatives ASTRA uses
 
@@ -30,14 +37,16 @@ $$
 
 In code, these are the `pressure_temperature_derivative(...)` and `pressure_density_derivative(...)` helpers in `src/microphysics/eos.jl`.
 
+The staged closure now also returns `chi_rho` and `chi_T`, because ASTRA's evolution-owned gravothermal helper needs those thermodynamic response terms when `eps_grav` is evaluated from the cp-form identity.
+
 ## How it enters ASTRA
 
 The EOS pressure is used directly in the hydrostatic row and in the transport helper. ASTRA does not store pressure as a separate solve-owned variable; it evaluates the EOS from the local cell state whenever a residual or derivative needs it.
 
 The method-side realization is documented in [Residual Assembly](../../methods/residual-assembly.md) and [Jacobian Construction](../../methods/jacobian-construction.md), where the EOS sensitivities enter the hydrostatic and transport rows.
 
-The EOS also supplies a beta-dependent `adiabatic_gradient` and a beta-based specific heat at constant pressure. Coulomb and degeneracy flags exist on the closure type, but both remain disabled in the default bootstrap path and are therefore not part of the active thermodynamic payload described here.
+The EOS also supplies a beta-dependent `adiabatic_gradient` and a beta-based specific heat at constant pressure. The flagged Paczynski and Debye-Huckel branches are real analytical options now, but both remain disabled in the default bootstrap path and are therefore not part of the active thermodynamic payload described here.
 
 ## What is deferred
 
-Real EOS tables, partial ionization, entropy-authoritative inversion, and composition-rich thermodynamics are deferred. Degeneracy and Coulomb corrections remain disabled in the default path. This page documents the staged analytical closure ASTRA actually solves with today, not the closure we want for a production stellar model.
+Real EOS tables, partial ionization, entropy-authoritative inversion, and composition-rich thermodynamics are deferred. Degeneracy and Coulomb corrections remain flag-gated in the default path. This page documents the staged analytical closure ASTRA actually solves with today, not the closure we want for a production stellar model.

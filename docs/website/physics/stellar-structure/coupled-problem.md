@@ -30,7 +30,7 @@ ASTRA assembles the system as one residual vector with center rows, interior blo
 - analytical PP-plus-CNO heating
 - radiative-gradient transport hook
 
-That means ASTRA is solving the correct *shape* of the classical problem, but not yet with production microphysics. The coupled-system structure is already there, but the microphysics is still bootstrap-level and the luminosity row currently implements only the nuclear source term. Gravothermal release, neutrino losses, screening-enabled burning, and composition evolution remain deferred.
+That means ASTRA is solving the correct *shape* of the classical problem, but not yet with production microphysics. The coupled-system structure is already there, and the luminosity row now owns an assembled `eps_nuc + eps_grav - eps_nu` source term. Gravothermal release is evolution-owned because it depends on previous accepted thermodynamic history, while screening-enabled burning and richer EOS corrections remain flag-gated rather than default-on. Composition evolution remains deferred.
 
 ## Numerical realization in ASTRA
 
@@ -53,7 +53,7 @@ The current page is intentionally narrow. It does not claim a finished solar mod
 
 - [x] ASTRA assembles one residual vector with center, interior, and surface rows.
 - [x] ASTRA currently uses staged analytical EOS, opacity, nuclear, and transport closures.
-- [x] ASTRA currently implements only `eps_nuc` in the luminosity row.
+- [x] ASTRA currently implements a source-decomposed luminosity row with evolution-owned `eps_grav` and staged `eps_nu`.
 - [x] The coupled-system structure is present even though the microphysics is still bootstrap-level.
 
 ### Validation and comparison status

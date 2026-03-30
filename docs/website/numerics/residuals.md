@@ -19,7 +19,7 @@ Within the interior, ASTRA currently carries:
 3. luminosity or energy conservation,
 4. temperature-gradient or transport closure.
 
-The energy row now starts the intended source-decomposed pattern by calling a nuclear-heating closure through the residual helper layer. Gravothermal and loss terms are still deferred, so this is only the first step toward the full source-decomposed contract.
+The energy row now carries the intended source-decomposed pattern through the residual helper layer. It assembles `eps_nuc + eps_grav - eps_nu`, with `eps_grav` supplied from an evolution-owned history helper and `eps_nu` supplied as a staged analytical loss term.
 
 ## How to read the residual
 
