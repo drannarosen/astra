@@ -47,6 +47,7 @@ ASTRA is a Julia-first forward-model laboratory for stellar structure and evolut
 
 ## Contributor expectations
 
+- Do not create git worktrees unless the user explicitly asks for one or approves it first; otherwise work in the current checkout.
 - Favor readable Julia over clever abstractions.
 - Keep solver ownership explicit.
 - Preserve ASTRA’s forward-model identity relative to Stellax.
