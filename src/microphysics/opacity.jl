@@ -35,6 +35,14 @@ function _h_minus_opacity_component(
     temperature_k::Float64,
     composition::Composition,
 )
+    log10_temperature = log10(temperature_k)
+    weight_on = 0.5 * (1.0 + tanh((log10_temperature - log10(4000.0)) / 0.2))
+    weight_off = 0.5 * (1.0 + tanh((log10(15000.0) - log10_temperature) / 0.3))
+    window_weight = weight_on * weight_off
+    if window_weight <= 1.0e-12
+        return 0.0
+    end
+
     mu = mean_molecular_weight(composition)
     gas_pressure_dyn_cm2 =
         density_g_cm3 * BOLTZMANN_CONSTANT_CGS * temperature_k / (mu * HYDROGEN_MASS_CGS)
@@ -54,10 +62,7 @@ function _h_minus_opacity_component(
     free_free_component =
         3.7e-38 * electron_pressure_dyn_cm2 * hydrogen_pressure_dyn_cm2 * temperature_k^(-3.5)
 
-    log10_temperature = log10(temperature_k)
-    weight_on = 0.5 * (1.0 + tanh((log10_temperature - log10(4000.0)) / 0.2))
-    weight_off = 0.5 * (1.0 + tanh((log10(15000.0) - log10_temperature) / 0.3))
-    return weight_on * weight_off * (bound_free_component + free_free_component)
+    return window_weight * (bound_free_component + free_free_component)
 end
 
 function _electron_scattering_component(
@@ -107,10 +112,9 @@ function _centered_opacity_temperature_derivative(
     temperature_k::Float64,
     composition::Composition,
 )
-    step_k = 1.0
+    step_k = min(max(1.0e-6 * temperature_k, 1.0e-6), 0.5 * temperature_k)
     opacity_plus = opacity(density_g_cm3, temperature_k + step_k, composition).opacity_cm2_g
-    opacity_minus =
-        opacity(density_g_cm3, clip_positive(temperature_k - step_k), composition).opacity_cm2_g
+    opacity_minus = opacity(density_g_cm3, temperature_k - step_k, composition).opacity_cm2_g
     return (opacity_plus - opacity_minus) / (2.0 * step_k)
 end
 
@@ -120,10 +124,9 @@ function _centered_opacity_density_derivative(
     temperature_k::Float64,
     composition::Composition,
 )
-    step_g_cm3 = 1.0e-6
+    step_g_cm3 = min(max(1.0e-6 * density_g_cm3, 1.0e-12), 0.5 * density_g_cm3)
     opacity_plus = opacity(density_g_cm3 + step_g_cm3, temperature_k, composition).opacity_cm2_g
-    opacity_minus =
-        opacity(clip_positive(density_g_cm3 - step_g_cm3), temperature_k, composition).opacity_cm2_g
+    opacity_minus = opacity(density_g_cm3 - step_g_cm3, temperature_k, composition).opacity_cm2_g
     return (opacity_plus - opacity_minus) / (2.0 * step_g_cm3)
 end
 
