@@ -27,5 +27,6 @@ using ASTRA
     include("test_default_newton_progress.jl")
     include("test_center_asymptotic_scaling.jl")
     include("test_weighted_solver_metrics.jl")
+    include("test_atmosphere_boundary_helpers.jl")
     include("test_docs_structure.jl")
 end

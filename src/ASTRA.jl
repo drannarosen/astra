@@ -27,7 +27,10 @@ export StellarParameters,
     cell_eos_state,
     cell_opacity_state,
     cell_nuclear_state,
-    radiative_temperature_gradient
+    radiative_temperature_gradient,
+    surface_effective_temperature_k,
+    surface_gravity_cgs,
+    eddington_photospheric_pressure_dyn_cm2
 
 include("foundation/constants.jl")
 include("foundation/units.jl")
@@ -35,6 +38,7 @@ include("foundation/config.jl")
 include("foundation/types.jl")
 include("foundation/grid.jl")
 include("foundation/state.jl")
+include("numerics/atmosphere.jl")
 
 module Microphysics
 using ..ASTRA: BOLTZMANN_CONSTANT_CGS,
