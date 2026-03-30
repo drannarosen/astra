@@ -39,9 +39,25 @@ end
     problem = ASTRA.build_toy_problem(n_cells = 12)
     guess = initialize_state(problem)
     initial_residual = ASTRA.residual_norm(ASTRA.assemble_structure_residual(problem, guess))
+    surface_rows = ASTRA.structure_surface_row_range(problem.grid.n_cells)
+    surface_weights = ASTRA.Solvers.residual_row_weights(problem, guess)[surface_rows]
+    surface_radius_cm = exp(guess.structure.log_radius_face_cm[end])
+    surface_pressure_dyn_cm2 = ASTRA.cell_eos_state(problem, guess, problem.grid.n_cells).pressure_dyn_cm2
+    surface_photospheric_pressure_dyn_cm2 = ASTRA.eddington_photospheric_pressure_dyn_cm2(
+        ASTRA.surface_gravity_cgs(problem.parameters.mass_g, surface_radius_cm),
+        ASTRA.cell_opacity_state(problem, guess, problem.grid.n_cells).opacity_cm2_g,
+    )
 
     result = solve_structure(problem; state = guess)
 
+    @test surface_weights[3] == 1.0
+    @test surface_weights[4] ≈
+          1.0 /
+          max(
+              abs(surface_pressure_dyn_cm2),
+              abs(surface_photospheric_pressure_dyn_cm2),
+              eps(Float64),
+          )
     @test result.diagnostics.initial_residual_norm ≈ initial_residual
     @test !isempty(result.diagnostics.residual_history)
     @test !isempty(result.diagnostics.weighted_residual_history)

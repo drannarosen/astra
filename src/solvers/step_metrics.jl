@@ -1,3 +1,5 @@
+const _ASTRA_MODULE = Base.parentmodule(@__MODULE__)
+
 _safe_scale(value::Real) = max(abs(Float64(value)), eps(Float64))
 
 _scale_weight(value::Real) = 1.0 / _safe_scale(value)
@@ -14,6 +16,20 @@ function _luminosity_reference_scale(
         abs(luminosity_face_erg_s[k]),
         abs(surface_target_erg_s),
         abs(center_floor_erg_s),
+    )
+end
+
+function _surface_pressure_reference_scale(problem::StructureProblem, model::StellarModel)
+    n = problem.grid.n_cells
+    radius_surface_cm = exp(model.structure.log_radius_face_cm[end])
+    pressure_surface_dyn_cm2 = cell_eos_state(problem, model, n).pressure_dyn_cm2
+    pressure_photospheric_dyn_cm2 = _ASTRA_MODULE.eddington_photospheric_pressure_dyn_cm2(
+        _ASTRA_MODULE.surface_gravity_cgs(problem.parameters.mass_g, radius_surface_cm),
+        _ASTRA_MODULE.cell_opacity_state(problem, model, n).opacity_cm2_g,
+    )
+    return max(
+        abs(pressure_surface_dyn_cm2),
+        abs(pressure_photospheric_dyn_cm2),
     )
 end
 
@@ -67,8 +83,8 @@ function residual_row_weights(problem::StructureProblem, model::StellarModel)
     surface_rows = structure_surface_row_range(n)
     weights[surface_rows[1]] = _scale_weight(problem.parameters.radius_guess_cm)
     weights[surface_rows[2]] = _scale_weight(problem.parameters.luminosity_guess_erg_s)
-    weights[surface_rows[3]] = _scale_weight(problem.parameters.surface_temperature_guess_k)
-    weights[surface_rows[4]] = _scale_weight(SURFACE_DENSITY_GUESS_G_CM3)
+    weights[surface_rows[3]] = 1.0
+    weights[surface_rows[4]] = _scale_weight(_surface_pressure_reference_scale(problem, model))
     return weights
 end
 

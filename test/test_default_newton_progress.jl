@@ -22,6 +22,10 @@
     @test result.diagnostics.weighted_residual_norm <= 0.999 * initial_weighted_residual
     @test result.diagnostics.residual_norm <= initial_residual
     @test any(
+        note -> occursin("atmosphere boundary", lowercase(note)),
+        result.diagnostics.notes,
+    )
+    @test any(
         note -> occursin("accepted", lowercase(note)) ||
             occursin("backtracking", lowercase(note)) ||
             occursin("weighted", lowercase(note)),

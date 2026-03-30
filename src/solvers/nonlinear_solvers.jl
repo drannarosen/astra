@@ -148,7 +148,7 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 model = trial_step.model
                 residual = trial_step.residual
                 push!(residual_history, residual_norm(residual))
-                push!(weighted_residual_history, trial_step.weighted_residual_norm)
+                push!(weighted_residual_history, weighted_residual_norm(problem, model, residual))
                 push!(
                     weighted_correction_norm_history,
                     trial_step.weighted_correction_norm,
@@ -201,7 +201,7 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 model = trial_step.model
                 residual = trial_step.residual
                 push!(residual_history, residual_norm(residual))
-                push!(weighted_residual_history, trial_step.weighted_residual_norm)
+                push!(weighted_residual_history, weighted_residual_norm(problem, model, residual))
                 push!(
                     weighted_correction_norm_history,
                     trial_step.weighted_correction_norm,
