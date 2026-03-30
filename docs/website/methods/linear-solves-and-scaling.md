@@ -4,6 +4,8 @@ ASTRA keeps solve-owned luminosity in raw `erg/s` and uses column scaling for co
 
 The first layer of conditioning comes from the variable basis itself: radius, temperature, and density are solved in logarithmic form, while luminosity stays linear because it crosses zero at the center. The second layer comes from explicit solver-side scaling of the packed columns.
 
+The current classical lane now has a third conditioning layer as well: explicit weighted residual and correction metrics that control trial-step acceptance without changing the physical residual definition. Those solver metrics are specified in [Nonlinear Step Metrics and Globalization](nonlinear-step-metrics-and-globalization.md).
+
 This page is the canonical specification for the current linearized-solve scaling policy.
 
 That policy is one of the clearest examples of ASTRA's "meaning first, conditioning second" philosophy. The physical variable remains luminosity in cgs units. The numerical machinery is allowed to rescale the linear solve so the Newton step is better behaved, but it is not allowed to quietly redefine the physics variable into something with different ownership or interpretation.
@@ -28,7 +30,7 @@ For the current classical lane, ASTRA's linear solve should satisfy these rules:
 
 The same distinction matters for local derivatives. ASTRA's closures may be written in physical variables, but the linear solve should still see derivatives with respect to $\log r$, $\log T$, and $\log \rho$ because those are the packed unknowns.
 
-For the closest file-backed MESA comparison, see [MESA Reference: Solver Scaling](mesa-reference/solver-scaling.md). The physics-side reason luminosity needs special care appears in [Physics: Energy Generation](../physics/stellar-structure/energy-generation.md).
+For the closest file-backed MESA comparison, see [MESA Reference: Solver Scaling](mesa-reference/solver-scaling.md). The physics-side reason luminosity needs special care appears in [Physics: Energy Generation](../physics/stellar-structure/energy-generation.md). The current ASTRA step-metric policy that sits on top of this column scaling is documented in [Nonlinear Step Metrics and Globalization](nonlinear-step-metrics-and-globalization.md).
 
 ## Linear solve
 
@@ -51,7 +53,7 @@ For the physical role of luminosity in the structure equations, see [Energy Gene
 - [x] The page states that luminosity remains a linear solve variable in `erg/s`.
 - [x] The page distinguishes solve conditioning from variable ownership.
 - [x] The current dense direct solve and regularized fallback are named explicitly.
-- [ ] The residual-side scaling policy is documented with the same explicitness as the column-scaling policy.
+- [x] The residual-side scaling policy is documented with the same explicitness as the column-scaling policy.
 
 ## MESA parity checklist
 

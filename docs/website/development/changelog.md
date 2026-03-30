@@ -2,6 +2,24 @@
 
 This page records significant ASTRA repository changes in a compact, contributor-facing form.
 
+## 2026-03-30
+
+### Added
+
+- explicit weighted residual and correction metrics for the classical Newton controller
+- weighted residual and correction histories in solve diagnostics
+- a canonical Methods page for nonlinear step metrics and the future merit-based globalization direction
+
+### Changed
+
+- trial steps are now limited by weighted correction RMS and max-correction envelopes before backtracking
+- nonlinear acceptance now requires weighted residual improvement plus a raw-residual safeguard
+- the handbook now distinguishes solver metrics from physical residual meaning more explicitly
+
+### Notes
+
+The current controller is stronger and more transparent than the older raw-norm-only slice, but it is still not a full merit-function or trust-region globalization scheme. The weighting policy remains part of the current bootstrap numerical contract rather than a proven final design.
+
 ## 2026-03-29
 
 ### Added

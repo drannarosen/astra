@@ -54,19 +54,25 @@ Current implementation:
 
 - dense linearized Newton systems,
 - column scaling on the solve-owned state,
+- explicit weighted residual and correction metrics for step control,
 - and fallback regularized normal-equation solves when the direct path struggles.
 
 Column scaling is a conditioning choice, not a change in physical ownership. ASTRA keeps solve-owned luminosity in cgs `erg/s`, so scaling exists to improve numerical behavior, not to redefine the state.
 
+The weighted residual and correction metrics are the next layer of the same policy. They are solver-owned numerical control surfaces, not a redefinition of the residual or of the packed structure variables. The current controller accepts a trial step only if the weighted residual metric decreases and the raw residual norm does not increase.
+
+The canonical Methods explanation for that controller now lives in [Nonlinear Step Metrics and Globalization](../methods/nonlinear-step-metrics-and-globalization.md).
+
 Approved direction:
 
 - better-conditioned state scaling as the classical lane matures,
+- a merit-function globalization layer built on the same weighted residual metric,
 - more structured Jacobian-aware linear algebra when the operator contract stabilizes,
 - and rescue paths treated as diagnostics-worthy fallback behavior, not as scientific success criteria.
 
 ## Diagnostics and failure reporting
 
-The diagnostics layer is not decorative. It records residual norms, damping history, accepted steps, rejected trials, formulation identity, and explicit notes about the solve boundary.
+The diagnostics layer is not decorative. It records raw residual norms, weighted residual norms, damping history, weighted correction histories, accepted steps, rejected trials, formulation identity, and explicit notes about the solve boundary.
 
 That matters because early ASTRA needs truthful failure reporting as much as it needs successful solves. A solver architecture that cannot explain what happened is not ready to guide later scientific work.
 

@@ -28,6 +28,7 @@ This checklist tracks ASTRA's first serious science lane:
 - [x] Top-level model container introduced in code
 - [x] Pack/unpack limited to the structure solve-owned block
 - [x] Residual ordering encoded explicitly in tests
+- [x] Weighted Newton residual/correction metrics and correction limiting implemented without widening the public solve-owned state
 
 ## Initialization lane
 

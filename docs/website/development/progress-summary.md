@@ -12,6 +12,34 @@ For each update, record:
 - the verification that was run,
 - and the next intended step.
 
+## 2026-03-30
+
+### Weighted solver metrics and safeguarded acceptance
+
+ASTRA's classical solver now carries explicit row weights, explicit correction weights, weighted correction limiting, weighted residual histories, and weighted correction histories. The nonlinear controller now accepts a step only if the weighted residual metric decreases and the raw residual norm does not increase.
+
+Why this mattered:
+
+- it makes solver control explicit instead of burying conditioning in an accidental mix of units,
+- it keeps luminosity linear in physical `erg/s` while still giving Newton a dimensionless correction metric,
+- and it exposed an important design detail early: a weighted-only acceptance rule was too permissive, so the accepted slice freezes the current iterate's weighting during trial comparison and keeps a raw-residual safeguard for scientific honesty.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_weighted_solver_metrics.jl")'`
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_default_newton_progress.jl"); include("test/test_solver_progress_diagnostics.jl")'`
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_jacobian_fidelity_audit.jl"); include("test/test_convergence_basin.jl")'`
+
+What this still does not prove:
+
+- the classical solve is still not converged on the default fixture,
+- the weighting policy is still only benchmarked on the current toy-problem family,
+- and ASTRA still does not have a full merit-function line search or trust-region controller.
+
+Next step:
+
+- document the weighted-metrics slice and then decide whether the next numerical move should be better weighting policy, stronger predicted-versus-actual decrease diagnostics, or a first merit-function globalization prototype.
+
 ## 2026-03-29
 
 ### State/model contract refactor

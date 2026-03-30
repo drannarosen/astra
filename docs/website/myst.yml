@@ -62,6 +62,7 @@ project:
         - file: methods/residual-assembly.md
         - file: methods/jacobian-construction.md
         - file: methods/linear-solves-and-scaling.md
+        - file: methods/nonlinear-step-metrics-and-globalization.md
         - file: methods/nonlinear-newton-and-backtracking.md
         - file: methods/initial-model-and-seeding.md
         - file: methods/boundary-condition-realization.md
