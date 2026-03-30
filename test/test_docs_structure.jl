@@ -136,12 +136,17 @@
             "First classical residual minimal slice",
             "Phase 2 atmosphere contract recorded",
             "outer transport row remains one-sided to the photospheric face",
+            "transport hotspot",
+            "cell index",
         ],
         "docs/website/development/transport-outer-boundary-hardening-2026-03-30.md" => [
             "boundary ownership",
             "Boundary validity checks",
             "outer transport",
             "interior transport",
+            "transport hotspot",
+            "cell index",
+            "surface-adjacent",
         ],
         "docs/website/development/armijo-merit-validation-2026-03-30.md" => [
             "accepted step count",

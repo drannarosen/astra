@@ -14,6 +14,30 @@ For each update, record:
 
 ## 2026-03-30
 
+### Transport hotspot diagnostics
+
+ASTRA's refreshed `2026-03-30-transport-hotspot-diagnostics` artifact bundle now records one explicit transport hotspot per payload: the transport row with the largest weighted contribution, together with its location and cell index. That turns the earlier blended family evidence into a row-level diagnosis. In the default-12 payload, the accepted transport hotspot is the surface-adjacent interior row at cell index `10`, with weighted contribution `-1.0085188425976508`. The smallest ladders still peak on the outer row, at cell index `5` for `cells-6` and `7` for `cells-8`.
+
+Why this mattered:
+
+- it sharpens the diagnosis beyond the earlier `interior_transport` versus `outer_transport` family split,
+- it points the current bottleneck toward a surface-adjacent interior transport row rather than the one-sided outer row alone,
+- and it gives the next transport-hardening slice a concrete target with both hotspot location and cell index evidence.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. scripts/run_armijo_merit_validation.jl artifacts/validation/2026-03-30-transport-hotspot-diagnostics`
+
+What this still does not prove:
+
+- the solve is still `converged = false` across the bundle,
+- the hotspot evidence still does not isolate whether the near-surface interior row is failing because of transport-row physics, surface attachment semantics, or local nonlinearity,
+- and regularized fallback is still present everywhere.
+
+Next step:
+
+- harden the surface-adjacent interior transport row and its interface to the surface closure before widening scope into another generic conditioning pass.
+
 ### MESA scaling audit and transport-hardening plan
 
 ASTRA's methods pages now record a more precise file-backed MESA scaling comparison and a matching next-step implementation plan at `docs/plans/2026-03-30-transport-outer-boundary-hardening-implementation-plan.md`. The important correction is that MESA's useful pattern is layered conditioning, not merely "use `x_scale`": the local source shows per-variable scaling, equation-local normalization, and correction-domain guards. The corresponding ASTRA next move is to split interior and outer transport diagnostics, harden transport-local solver metrics, and add a narrow outer-boundary domain guard before widening scope into adaptive regularization.
