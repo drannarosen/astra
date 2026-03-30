@@ -30,6 +30,7 @@ This checklist tracks ASTRA's first serious science lane:
 - [x] Residual ordering encoded explicitly in tests
 - [x] Weighted Newton residual/correction metrics and correction limiting implemented without widening the public solve-owned state
 - [x] Phase 1 Eddington-grey atmosphere boundary implemented for the classical outer solve
+- [x] Phase 2 atmosphere design choice recorded: preserve current outer `R/L` ownership while upgrading to a one-sided `T(\tau)` thermodynamic reconstruction
 
 ## Initialization lane
 
@@ -65,6 +66,7 @@ This checklist tracks ASTRA's first serious science lane:
 - [ ] Tier 3 ZAMS validation checks implemented
 - [ ] Tier 4 compact solar target-vector validation implemented
 - [ ] Atmosphere Phase 2 `T(\tau)` upgrade implemented
+- [ ] Atmosphere Phase 2 convergence-basin evidence recorded after implementation
 
 ## Explicitly deferred
 

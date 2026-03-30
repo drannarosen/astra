@@ -14,6 +14,25 @@ For each update, record:
 
 ## 2026-03-30
 
+### Phase 2 atmosphere design recorded
+
+ASTRA now has an explicit approved design for the next atmosphere-hardening slice. The next implementation will keep the current outer radius and luminosity target rows, preserve the packed structure basis `[\ln R, L, \ln T, \ln \rho]`, and upgrade only the atmosphere-side thermodynamic reconstruction from the current representative-cell Eddington match to a one-sided Eddington `T(\tau)` match. The key design choice is that the next slice hardens atmosphere physics without simultaneously redesigning ASTRA's larger global model-family ownership.
+
+Why this mattered:
+
+- it separates the atmosphere question from the future global-closure question,
+- it records the next slice honestly on the website before implementation starts,
+- and it gives the Phase 2 implementation a stable scientific target.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_docs_structure.jl")'`
+- `cd /Users/anna/projects/julia-dev/astra/docs/website && myst build --site --html --strict`
+
+Next step:
+
+- write and execute the TDD plan for the Phase 2 `T(\tau)` atmosphere implementation.
+
 ### Atmosphere boundary hardening
 
 ASTRA's classical lane now uses an Eddington-grey representative-cell atmosphere closure at the surface. The outer radius and luminosity target rows remain in place, but the surface temperature row is now tied to `T_eff`, the surface pressure row is tied to the photospheric pressure scale, and the final transport row is one-sided at the outer edge. The solver-side row weights were also realigned so the surface temperature row is dimensionless and the surface pressure row is weighted on a pressure scale rather than the old density guess.

@@ -38,11 +38,14 @@ The center rows are assembled in [Residual Assembly](../methods/residual-assembl
 
 Phase 2 `T(\tau)` matching, real atmosphere tables, and a more explicit photospheric reconstruction are deferred. ASTRA currently needs the surface to be explicit, numerically stable, and scientifically legible, not yet astrophysically complete.
 
+The approved next step is to keep the current outer radius and luminosity target rows while replacing the remaining representative-cell atmosphere approximation with a one-sided `T(\tau)` reconstruction. That keeps the atmosphere question separate from the larger future question of whether ASTRA should continue to target both outer `R` and `L` in the long run.
+
 ## Implementation checklist
 
 - [x] The center asymptotic targets for radius and luminosity are written explicitly.
 - [x] The page states that the center is a regularity problem, not an ordinary interior stencil.
 - [x] The surface closure is identified as a Phase 1 atmosphere approximation rather than a finished atmosphere model.
+- [x] The next atmosphere step is recorded as Phase 2 `T(\tau)` while preserving current outer `R/L` ownership.
 - [ ] The exact sign and indexing conventions for all boundary residual rows are cross-checked against the methods page and tests.
 
 ## MESA parity checklist
@@ -53,4 +56,5 @@ Phase 2 `T(\tau)` matching, real atmosphere tables, and a more explicit photosph
 ## Production-grade status checklist
 
 - [x] Replace the provisional surface density/temperature guesses with a physically justified outer closure.
+- [ ] Replace the Phase 1 representative-cell atmosphere with the approved one-sided `T(\tau)` reconstruction.
 - [ ] Demonstrate that the atmosphere closure supports robust convergence across more than the current narrow bootstrap basin.

@@ -53,6 +53,8 @@ Those rows are intentionally staged. They are part of the canonical current solv
 
 For the physics-side explanation of the photosphere, tau `= 2/3`, and the planned `T(\tau)` path, see [Atmosphere and Photosphere](../physics/atmosphere-and-photosphere.md).
 
+The approved next step is more specific than that short phrase suggests. Phase 2 will preserve the current outer radius and luminosity target rows and will only harden the thermodynamic/photospheric reconstruction. In other words, the next implementation changes the atmosphere semantics, not the global bootstrap family definition.
+
 ## Why this matters
 
 The page exists so future readers can see the boundary conditions as explicit discrete residuals. That makes the center asymptotic choice and the surface closure tradeoff visible instead of hidden inside the solver.
@@ -65,6 +67,7 @@ The continuous boundary story is summarized in [Physics: Boundary Conditions](..
 - [x] The surface closure is identified as explicit but provisional.
 - [x] The page states that these rows are the current ASTRA equations, not only design goals.
 - [x] The current surface row formulas are written explicitly.
+- [x] The next design choice is recorded as preserving outer `R/L` while upgrading the atmosphere semantics.
 - [ ] The Phase 2 `T(\tau)` path should be documented once it is implemented.
 
 ## MESA parity checklist

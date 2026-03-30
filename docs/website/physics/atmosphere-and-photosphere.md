@@ -73,7 +73,12 @@ Planned next.
 
 - add a more explicit optical-depth-based surface reconstruction,
 - use a one-sided `T(\tau)` relation instead of identifying the outer cell with the photosphere,
-- keep the same public solve contract if possible.
+- preserve the current outer `R` and `L` target rows in this slice,
+- keep the same public solve contract and packed basis `[\ln R, L, \ln T, \ln \rho]`,
+- treat the outer face as the photosphere at `tau = 2/3`,
+- reconstruct the outermost thermodynamic cell from a half-cell optical-depth estimate and hydrostatic column estimate.
+
+This design choice is deliberate. Phase 2 is the next atmosphere-hardening slice, not a global model-family redesign. ASTRA may later revisit whether luminosity or radius should become emergent rather than targeted, but that is a separate project from the next atmosphere implementation.
 
 ### Phase 3: richer atmosphere options
 
@@ -91,6 +96,18 @@ This is not a claim that the photosphere is a fully resolved transport layer.
 
 The current implementation is intentionally staged and explicit about that staging.
 
+## Current design choice for the next slice
+
+The next approved atmosphere slice is:
+
+- keep the current outer radius target row,
+- keep the current outer luminosity target row,
+- stop identifying the outermost thermodynamic cell with the photosphere,
+- use Eddington `T(\tau)` to define a deeper one-sided outer-cell match point,
+- and keep richer atmosphere options and global-closure redesign out of scope for that implementation.
+
+The reasoning is simple. ASTRA's current outer `R` and `L` rows still define the present bootstrap family, so changing them now would mix atmosphere hardening with a larger closure redesign. The better immediate move is to improve the atmosphere semantics first, then revisit the global closure in a dedicated later project.
+
 ## Atmosphere roadmap checklist
 
 - [x] The photosphere is defined in the Eddington-grey sense as a `tau = 2/3` reference layer.
@@ -100,5 +117,7 @@ The current implementation is intentionally staged and explicit about that stagi
 - [x] The Phase 2 `T(\tau)` upgrade path is named explicitly.
 - [x] The Phase 3 richer-atmosphere path is named explicitly.
 - [x] The page distinguishes current implementation from planned atmosphere work.
+- [x] The approved Phase 2 choice to preserve outer `R` and `L` in that slice is recorded explicitly.
+- [x] The planned one-sided outer-cell reconstruction is recorded explicitly.
 - [ ] Add a source-backed `T(\tau)` comparison note once Phase 2 lands.
 - [ ] Add a benchmark artifact showing how the atmosphere closure changes the classical convergence basin.
