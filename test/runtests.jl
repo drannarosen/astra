@@ -11,6 +11,7 @@ using ASTRA
     include("test_analytical_opacity.jl")
     include("test_analytical_nuclear.jl")
     include("test_analytical_eos.jl")
+    include("test_analytical_energy_sources.jl")
     include("test_structure_equations.jl")
     include("test_boundary_conditions.jl")
     include("test_residual_scaffold.jl")

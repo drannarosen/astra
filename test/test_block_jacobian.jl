@@ -8,5 +8,7 @@
     @test size(jacobian) == size(fd_jacobian)
     @test all(isfinite, jacobian)
     @test all(isfinite, fd_jacobian)
+    # The luminosity block will later include eps_grav and eps_nu through the
+    # energy-source assembly helper, so keep the full block comparison explicit.
     @test isapprox(jacobian, fd_jacobian; rtol = 5.0e-4, atol = 1.0e-6)
 end

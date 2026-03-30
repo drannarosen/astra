@@ -9,4 +9,11 @@
 
     block = ASTRA.interior_structure_block(problem, model, 1)
     @test residual[3:6] == block
+
+    sources = ASTRA.energy_source_terms(problem, model, 1)
+    dm_g = problem.grid.dm_cell_g[1]
+    @test block[3] ≈
+        model.structure.luminosity_face_erg_s[2] -
+        model.structure.luminosity_face_erg_s[1] -
+        dm_g * sources.eps_total_erg_g_s
 end
