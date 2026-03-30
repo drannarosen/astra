@@ -30,7 +30,7 @@ project:
       title: Architecture
     - title: Physics
       children:
-        - file: physics/index.md
+        - file: physics/overview.md
         - file: physics/stellar-structure.md
           children:
             - file: physics/stellar-structure/mass-conservation.md

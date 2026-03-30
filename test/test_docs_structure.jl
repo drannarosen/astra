@@ -12,7 +12,7 @@
         "docs/website/architecture/solver-architecture.md",
         "docs/website/architecture/differentiability-strategy.md",
         "docs/website/architecture/formulation-interface.md",
-        "docs/website/physics/index.md",
+        "docs/website/physics/overview.md",
         "docs/website/physics/stellar-structure.md",
         "docs/website/physics/eos.md",
         "docs/website/physics/opacity.md",
@@ -137,7 +137,7 @@
             "Tier 0 structural sanity checks implemented",
             "Entropy-DAE comparison lane",
         ],
-        "docs/website/physics/index.md" => [
+        "docs/website/physics/overview.md" => [
             "Structure equations",
             "Constitutive physics",
             "Boundary conditions",
@@ -239,7 +239,7 @@
             "solve pipeline",
             "Physics",
             "Methods",
-            "../physics/index.md",
+            "../physics/overview.md",
             "mesa-reference/index.md",
             "specification-grade",
         ],
@@ -363,7 +363,7 @@
         "docs/website/myst.yml" => [
             "title: Physics",
             "title: Methods",
-            "physics/index.md",
+            "physics/overview.md",
             "physics/stellar-structure/mass-conservation.md",
             "methods/index.md",
             "methods/mesa-reference/index.md",
@@ -407,7 +407,7 @@
     end
 
     checklist_contracts = Dict(
-        "docs/website/physics/index.md" => "Physics handbook checklist",
+        "docs/website/physics/overview.md" => "Physics handbook checklist",
         "docs/website/physics/stellar-structure.md" => "Implementation checklist",
         "docs/website/physics/stellar-structure/energy-generation.md" => "Deferred-scope checklist",
         "docs/website/physics/boundary-conditions.md" => "Production-grade status checklist",

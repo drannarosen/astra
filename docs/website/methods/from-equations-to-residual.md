@@ -2,7 +2,7 @@
 
 This page shows how ASTRA turns the continuous classical equations into a residual vector. The important bridge is between the `Physics` pages and the solver-side `Methods` pages, especially [Physics: Stellar Structure](../physics/stellar-structure.md).
 
-The physics side of that bridge lives in [Stellar Structure](../physics/stellar-structure.md) and the closure hub pages under [Physics](../physics/index.md).
+The physics side of that bridge lives in [Stellar Structure](../physics/stellar-structure.md) and the closure hub pages under [Physics](../physics/overview.md).
 
 For many contributors, this is the page where stellar structure stops feeling like four textbook equations and starts feeling like a nonlinear solve. The key idea is simple: ASTRA does not solve for "the right profile" directly. It solves for a packed state vector whose residual should become zero when the discrete equations and boundary conditions are all satisfied at once.
 
