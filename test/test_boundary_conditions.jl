@@ -64,17 +64,14 @@
     surface_radius_cm = exp(surface_model.structure.log_radius_face_cm[end])
     surface_luminosity_erg_s = surface_model.structure.luminosity_face_erg_s[end]
     outer_temperature_k = exp(surface_model.structure.log_temperature_cell_k[end])
-    outer_density_g_cm3 = exp(surface_model.structure.log_density_cell_g_cm3[end])
-    teff_k = ASTRA.surface_effective_temperature_k(surface_radius_cm, surface_luminosity_erg_s)
-    g_surface_cgs = ASTRA.surface_gravity_cgs(problem.parameters.mass_g, surface_radius_cm)
-    outer_opacity_state = ASTRA.cell_opacity_state(problem, surface_model, problem.grid.n_cells)
+    outer_match_temperature_k = ASTRA.outer_match_temperature_k(problem, surface_model)
     outer_eos_state = ASTRA.cell_eos_state(problem, surface_model, problem.grid.n_cells)
-    p_ph_dyn_cm2 = ASTRA.eddington_photospheric_pressure_dyn_cm2(
-        g_surface_cgs,
-        outer_opacity_state.opacity_cm2_g,
-    )
+    p_match_dyn_cm2 = ASTRA.outer_match_pressure_dyn_cm2(problem, surface_model)
 
-    @test surface_residual[3] ≈ log(outer_temperature_k) - log(teff_k)
-    @test surface_residual[4] ≈ outer_eos_state.pressure_dyn_cm2 - p_ph_dyn_cm2
-    @test surface_residual[4] != outer_density_g_cm3 - 1.0e-7
+    @test surface_residual[3] ≈ log(outer_temperature_k) - log(outer_match_temperature_k)
+    @test surface_residual[4] ≈ outer_eos_state.pressure_dyn_cm2 - p_match_dyn_cm2
+    @test outer_match_temperature_k > ASTRA.surface_effective_temperature_k(
+        surface_radius_cm,
+        surface_luminosity_erg_s,
+    )
 end

@@ -26,21 +26,14 @@ function surface_boundary_residual(problem::StructureProblem, model::StellarMode
     radius_surface_cm = exp(state.log_radius_face_cm[end])
     temperature_surface_k = exp(state.log_temperature_cell_k[n])
     luminosity_surface_erg_s = state.luminosity_face_erg_s[end]
-    temperature_effective_k = surface_effective_temperature_k(
-        radius_surface_cm,
-        luminosity_surface_erg_s,
-    )
     pressure_surface_dyn_cm2 = cell_eos_state(problem, model, n).pressure_dyn_cm2
-    opacity_surface_state = cell_opacity_state(problem, model, n)
-    pressure_photospheric_dyn_cm2 = eddington_photospheric_pressure_dyn_cm2(
-        surface_gravity_cgs(problem.parameters.mass_g, radius_surface_cm),
-        opacity_surface_state.opacity_cm2_g,
-    )
+    temperature_match_k = outer_match_temperature_k(problem, model)
+    pressure_match_dyn_cm2 = outer_match_pressure_dyn_cm2(problem, model)
 
     return Float64[
         radius_surface_cm - problem.parameters.radius_guess_cm,
         luminosity_surface_erg_s - problem.parameters.luminosity_guess_erg_s,
-        positive_log(temperature_surface_k) - positive_log(temperature_effective_k),
-        pressure_surface_dyn_cm2 - pressure_photospheric_dyn_cm2,
+        positive_log(temperature_surface_k) - positive_log(temperature_match_k),
+        pressure_surface_dyn_cm2 - pressure_match_dyn_cm2,
     ]
 end
