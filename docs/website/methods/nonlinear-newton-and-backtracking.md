@@ -10,15 +10,15 @@ The guiding idea is intentionally conservative: ASTRA should not "hide" a bad Ne
 
 ## Step acceptance
 
-Each iteration evaluates the residual, builds the Jacobian, solves for a correction, applies a weighted correction limiter, and then tries a damped update. If the frozen-weight merit function drops and the raw residual norm does not increase, the step is accepted. If not, the damping factor is cut in half and the trial is retried.
+Each iteration evaluates the residual, builds the Jacobian, solves for a correction, applies a weighted correction limiter, and then tries a damped update. If the frozen-weight merit function satisfies Armijo sufficient decrease and the raw residual norm does not increase, the step is accepted. If not, the damping factor is cut in half and the trial is retried.
 
 That means ASTRA's current acceptance rule is still a modest damped-Newton controller, not yet a full trust-region strategy or line-search merit method. The value of writing that down explicitly is that future changes can be judged against a known baseline instead of slipping in as undocumented solver folklore.
 
 ## Normative acceptance contract
 
-For the current classical lane, a trial Newton step is accepted only if it lowers the frozen-weight merit function on the same residual definition and does not increase the raw residual norm. Backtracking changes the damping factor, but it does not change the residual, the packed-variable basis, or the physical ownership of the equations.
+For the current classical lane, a trial Newton step is accepted only if it satisfies Armijo sufficient decrease for the frozen-weight merit function on the same residual definition and does not increase the raw residual norm. Backtracking changes the damping factor, but it does not change the residual, the packed-variable basis, or the physical ownership of the equations.
 
-The merit objective is a frozen-weight merit function built from the base iterate's row weights. That is the current scientifically explicit controller backbone. It is stronger than the old weighted-norm wording, but it is still not yet a predicted-versus-actual line-search method.
+The merit objective is a frozen-weight merit function built from the base iterate's row weights. The current controller now also records predicted-versus-actual decrease and the best rejected trial, but adaptive regularization remains deferred.
 
 If the direct solve is singular or produces a non-finite update, ASTRA may retry the same linearized subproblem with regularized normal equations. That is still part of the same nonlinear step, not a different physics model.
 
@@ -40,7 +40,7 @@ The point of the page is to show the exact acceptance logic future developers ar
 
 ## Implementation checklist
 
-- [x] Step acceptance is defined by frozen-weight merit reduction on the same residual, with a raw-residual safeguard.
+- [x] Step acceptance is defined by Armijo sufficient decrease on the frozen-weight merit, with a raw-residual safeguard.
 - [x] Damping/backtracking is described as a modification of step size, not of physics ownership.
 - [x] Regularization is described as a linear-subproblem fallback, not a different model.
 - [x] The current page points to the canonical step-metric specification.

@@ -10,6 +10,9 @@ At bootstrap, the diagnostics object tracks:
 
 - residual norm,
 - merit history,
+- predicted-versus-actual decrease,
+- accepted-step row-family merit summaries,
+- the best rejected trial,
 - initial and final row-family merit summaries,
 - convergence status,
 - iteration count,
@@ -20,7 +23,7 @@ At bootstrap, the diagnostics object tracks:
 
 That note field is intentional: scientific software should preserve what a result does **not** prove, not only what it prints.
 
-The current row-family surface is still intentionally small. The diagnostics object reports initial and final row-family merit summaries, not full rejected-trial attribution and not predicted-versus-actual decrease accounting.
+The current row-family surface is still intentionally bounded. The diagnostics object now reports predicted-versus-actual decrease and the best rejected trial, but it still does not claim adaptive regularization or trust-region maturity.
 
 ## Pedagogical point
 

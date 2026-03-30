@@ -72,7 +72,7 @@ $$
 \phi_k(x) = \frac{1}{2}\|W_r(x_k) R(x)\|_2^2,
 $$
 
-where the row weights are frozen at the base iterate `x_k` for the duration of the current damping search. In plain language: ASTRA now compares trial states using one explicit scalar objective, but it does **not** yet claim a full state-dependent trust-region or predicted-versus-actual controller.
+where the row weights are frozen at the base iterate `x_k` for the duration of the current damping search. In plain language: ASTRA now compares trial states using one explicit scalar objective, and the current controller uses that objective inside an Armijo sufficient-decrease rule.
 
 ### Correction weights
 
@@ -123,12 +123,13 @@ ASTRA's current acceptance rule is now:
 
 1. compute a limited correction,
 2. try damped versions of that correction,
-3. accept a trial only if the **frozen-weight merit function decreases** on the same residual definition,
-4. and reject the trial if the **raw residual norm increases**, even when the weighted metric improves.
+3. evaluate the frozen-weight linearized merit model for each damping factor,
+4. accept a trial only if it satisfies **Armijo sufficient decrease** for the frozen-weight merit function,
+5. and reject the trial if the **raw residual norm increases**, even when the merit model looks favorable.
 
 That last condition is an explicit scientific-honesty safeguard. During development of the earlier weighted-only slice, a weighted-only acceptance rule could reduce the controller metric while allowing the raw mixed-unit residual norm to blow up by many orders of magnitude. ASTRA therefore now uses a frozen-weight merit function as the primary controller, but it still does not allow a trial step to hide a catastrophic raw-residual regression.
 
-Convergence remains tied to the weighted residual metric for now. Raw residuals are still recorded in diagnostics because they remain scientifically informative, and the diagnostics object now also records the merit history plus initial and final row-family merit summaries.
+Convergence remains tied to the weighted residual metric for now. Raw residuals are still recorded in diagnostics because they remain scientifically informative, and the diagnostics object now also records merit history, predicted-versus-actual decrease, accepted-step row-family attribution, and the best rejected trial.
 
 ## Why luminosity needs special treatment
 
@@ -172,17 +173,19 @@ For the file-backed comparison details, see [MESA Reference: Solver Scaling](mes
 
 ## What the current merit slice is
 
-ASTRA now has a minimal merit-function controller, not merely a future ambition.
+ASTRA now has a minimal Armijo merit-function controller, not merely a future ambition.
 
 The important qualifier is that the current controller uses a **frozen-weight merit function** inside each Newton iteration rather than a more ambitious state-dependent globalization method. That is the smallest scientifically explicit step beyond the old weighted-norm wording because it gives ASTRA one scalar objective for accepted-step decisions while preserving the current packed basis, current correction limiter, and current raw-residual safeguard.
 
-The diagnostics surface currently exposes only:
+The diagnostics surface currently exposes:
 
 - merit history at accepted states,
-- initial and final row-family merit summaries,
-- and the dominant row family at those two endpoints.
+- predicted-versus-actual decrease accounting,
+- accepted-step row-family attribution,
+- the best rejected trial,
+- and the original initial/final row-family merit summaries.
 
-That is intentionally modest. Initial and final row-family merit summaries are enough to make the new objective inspectable without pretending ASTRA already has full rejected-trial attribution.
+That is still intentionally modest. ASTRA now has accepted-step row-family attribution and a best rejected trial, but it does **not** yet claim trust-region maturity or adaptive regularization.
 
 ## What a fuller merit-based globalization method would add
 
@@ -208,7 +211,7 @@ A merit function turns the coupled residual into one explicit objective. That ma
 
 ### Predicted versus actual decrease
 
-Once ASTRA has a scalar merit function, it can compare:
+ASTRA now records:
 
 - the decrease predicted by the linearized Newton model,
 - against the decrease actually observed after evaluating the nonlinear residual.
@@ -219,6 +222,8 @@ That comparison is the heart of modern globalization logic. It tells the solver 
 - the step was too large,
 - the weighting policy was misleading,
 - or the problem itself is locally hard.
+
+For the current frozen-weight controller, the diagnostics report `\Delta \phi_\mathrm{pred}`, `\Delta \phi_\mathrm{act}`, and the ratio `\rho = \Delta \phi_\mathrm{act}/\Delta \phi_\mathrm{pred}` when the predicted decrease is positive.
 
 ### Better compatibility with line search and trust regions
 
@@ -239,7 +244,7 @@ A merit-based controller would also make ASTRA's diagnostics more interpretable:
 - weighted residual norms would remain controller diagnostics,
 - and the merit decrease would become the clean record of what the globalization layer believed it was optimizing.
 
-The current minimal slice only lands the first part of that vision. Predicted-versus-actual decrease remains deferred, and the current row-family surface is limited to initial and final row-family merit summaries.
+The current slice now lands the first two parts of that vision. Predicted-versus-actual decrease is real, and the row-family surface now includes accepted-step row-family attribution plus the best rejected trial. Adaptive regularization remains deferred.
 
 ## Why ASTRA is not claiming full merit globalization yet
 
@@ -268,7 +273,7 @@ This page does **not** claim that ASTRA already has:
 - adaptive regularization based on predicted/actual reduction,
 - or production-grade weighting policies for all future formulations.
 
-Those are still future work. Predicted-versus-actual decrease remains deferred.
+Those are still future work. Adaptive regularization remains deferred.
 
 ## Implementation checklist
 
@@ -286,6 +291,6 @@ Those are still future work. Predicted-versus-actual decrease remains deferred.
 
 ## Open-risk checklist
 
-- [x] The page says clearly that predicted-versus-actual decrease remains deferred.
-- [x] The page treats the current frozen-weight merit function as a minimal slice rather than as the final nonlinear controller.
-- [ ] The future merit function still needs predicted-versus-actual decrease diagnostics before ASTRA should claim a mature globalization strategy.
+- [x] The page says clearly that adaptive regularization remains deferred.
+- [x] The page treats the current frozen-weight Armijo controller as a minimal slice rather than as the final nonlinear controller.
+- [ ] The future controller still needs adaptive regularization or trust-region evidence before ASTRA should claim a mature globalization strategy.

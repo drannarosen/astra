@@ -14,6 +14,31 @@ For each update, record:
 
 ## 2026-03-30
 
+### Armijo merit globalization
+
+ASTRA's classical Newton controller now uses Armijo sufficient decrease on the frozen-weight merit function rather than accepting any step with lower merit. The diagnostics surface also now reports predicted-versus-actual decrease, accepted-step row-family attribution, and the best rejected trial, while keeping the current correction limiter, raw-residual safeguard, and regularization ladder unchanged.
+
+Why this mattered:
+
+- it upgrades the controller from a merely explicit objective to a scientifically recognizable sufficient-decrease rule,
+- it makes row-family failure modes much more attributable than the earlier initial/final-only summaries,
+- and it creates the evidence surface ASTRA needs before deciding whether adaptive regularization should become solver-owned behavior.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_armijo_merit_diagnostics.jl"); include("test/test_solver_progress_diagnostics.jl")'`
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_armijo_merit_acceptance.jl"); include("test/test_default_newton_progress.jl"); include("test/test_convergence_basin.jl")'`
+
+What this still does not prove:
+
+- the classical solve is still not converged on the default fixture,
+- adaptive regularization remains deferred,
+- and the new `rho` evidence still needs broader model-family coverage before ASTRA should claim mature globalization.
+
+Next step:
+
+- run the full regression and docs-build verification, then decide whether the next bottleneck is adaptive regularization or a row-family-local physics boundary issue.
+
 ### Minimal frozen-weight merit globalization
 
 ASTRA's classical Newton controller now speaks in terms of one explicit frozen-weight merit function rather than only weighted-residual wording. The current controller still uses the existing correction limiter, the existing regularization ladder, and the existing raw-residual safeguard, but the accepted-step decision is now described and recorded as merit decrease. The diagnostics object also now exposes merit history plus initial and final row-family merit summaries.
