@@ -19,6 +19,8 @@
     @test isapprox(density_analytic, density_fd; rtol = 1.0e-4, atol = 1.0e-8)
 
     eos_state = problem.microphysics.eos(density_g_cm3, temperature_k, composition)
+    degenerate_eos = ASTRA.Microphysics.AnalyticalGasRadiationEOS(include_degeneracy = true)
+    coulomb_eos = ASTRA.Microphysics.AnalyticalGasRadiationEOS(include_coulomb = true)
     opacity_state = problem.microphysics.opacity(density_g_cm3, temperature_k, composition)
     nuclear_state = problem.microphysics.nuclear(density_g_cm3, temperature_k, composition)
     screened_nuclear = ASTRA.Microphysics.AnalyticalNuclear(include_screening = true)
@@ -28,9 +30,46 @@
     @test 0.0 < eos_state.gas_pressure_fraction <= 1.0
     @test isfinite(eos_state.adiabatic_gradient)
     @test isfinite(eos_state.specific_heat_erg_g_k)
+    @test isfinite(eos_state.chi_rho)
+    @test isfinite(eos_state.chi_T)
     @test opacity_state.source == :analytical_opacity
     @test nuclear_state.source == :analytical_nuclear
     @test screened_nuclear_state.energy_rate_erg_g_s >= nuclear_state.energy_rate_erg_g_s
+
+    degenerate_density_fd =
+        (
+            degenerate_eos(density_g_cm3 * 1.0e0 + 1.0e-6, temperature_k, composition).pressure_dyn_cm2 -
+            degenerate_eos(density_g_cm3 * 1.0e0 - 1.0e-6, temperature_k, composition).pressure_dyn_cm2
+        ) / (2.0e-6)
+    degenerate_temperature_fd =
+        (
+            degenerate_eos(density_g_cm3, temperature_k + 1.0, composition).pressure_dyn_cm2 -
+            degenerate_eos(density_g_cm3, temperature_k - 1.0, composition).pressure_dyn_cm2
+        ) / 2.0
+    degenerate_density_analytic = ASTRA.Microphysics.pressure_density_derivative(
+        degenerate_eos,
+        density_g_cm3,
+        temperature_k,
+        composition,
+    )
+    degenerate_temperature_analytic = ASTRA.Microphysics.pressure_temperature_derivative(
+        degenerate_eos,
+        density_g_cm3,
+        temperature_k,
+        composition,
+    )
+    coulomb_density_analytic = ASTRA.Microphysics.pressure_density_derivative(
+        coulomb_eos,
+        density_g_cm3,
+        temperature_k,
+        composition,
+    )
+    coulomb_temperature_analytic = ASTRA.Microphysics.pressure_temperature_derivative(
+        coulomb_eos,
+        density_g_cm3,
+        temperature_k,
+        composition,
+    )
 
     pressure_density_fd =
         (
@@ -101,6 +140,12 @@
     @test isfinite(nuclear_density_fd)
     @test isfinite(nuclear_density_analytic)
     @test isapprox(nuclear_density_analytic, nuclear_density_fd; rtol = 1.0e-6, atol = 1.0e-8)
+    @test isfinite(degenerate_density_fd)
+    @test isfinite(degenerate_temperature_fd)
+    @test isfinite(degenerate_density_analytic)
+    @test isfinite(degenerate_temperature_analytic)
+    @test isfinite(coulomb_density_analytic)
+    @test isfinite(coulomb_temperature_analytic)
     @test isfinite(screened_nuclear_density_fd)
     @test isfinite(screened_nuclear_density_analytic)
     @test isapprox(

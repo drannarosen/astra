@@ -9,6 +9,27 @@
     @test 0.0 < eos_state.gas_pressure_fraction <= 1.0
     @test isfinite(eos_state.adiabatic_gradient)
     @test isfinite(eos_state.specific_heat_erg_g_k)
+    @test isfinite(eos_state.chi_rho)
+    @test isfinite(eos_state.chi_T)
+
+    degenerate_eos = ASTRA.Microphysics.AnalyticalGasRadiationEOS(include_degeneracy = true)
+    degenerate_problem = ASTRA.StructureProblem(
+        problem.formulation,
+        problem.parameters,
+        problem.composition,
+        problem.grid,
+        ASTRA.MicrophysicsBundle(
+            degenerate_eos,
+            problem.microphysics.opacity,
+            problem.microphysics.nuclear,
+            problem.microphysics.convection,
+        ),
+        problem.solver,
+    )
+    degenerate_state = ASTRA.cell_eos_state(degenerate_problem, model, 1)
+    @test degenerate_state.pressure_dyn_cm2 >= eos_state.pressure_dyn_cm2
+    @test isfinite(degenerate_state.chi_rho)
+    @test isfinite(degenerate_state.chi_T)
 
     κ_state = ASTRA.cell_opacity_state(problem, model, 1)
     ε_state = ASTRA.cell_nuclear_state(problem, model, 1)
