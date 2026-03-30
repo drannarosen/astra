@@ -21,6 +21,8 @@
     eos_state = problem.microphysics.eos(density_g_cm3, temperature_k, composition)
     opacity_state = problem.microphysics.opacity(density_g_cm3, temperature_k, composition)
     nuclear_state = problem.microphysics.nuclear(density_g_cm3, temperature_k, composition)
+    screened_nuclear = ASTRA.Microphysics.AnalyticalNuclear(include_screening = true)
+    screened_nuclear_state = screened_nuclear(density_g_cm3, temperature_k, composition)
 
     @test isfinite(eos_state.pressure_dyn_cm2)
     @test 0.0 < eos_state.gas_pressure_fraction <= 1.0
@@ -28,6 +30,7 @@
     @test isfinite(eos_state.specific_heat_erg_g_k)
     @test opacity_state.source == :analytical_opacity
     @test nuclear_state.source == :analytical_nuclear
+    @test screened_nuclear_state.energy_rate_erg_g_s >= nuclear_state.energy_rate_erg_g_s
 
     pressure_density_fd =
         (
@@ -64,6 +67,17 @@
         temperature_k,
         composition,
     )
+    screened_nuclear_density_fd =
+        (
+            screened_nuclear(density_g_cm3 * 1.0e0 + 1.0e-6, temperature_k, composition).energy_rate_erg_g_s -
+            screened_nuclear(density_g_cm3 * 1.0e0 - 1.0e-6, temperature_k, composition).energy_rate_erg_g_s
+        ) / (2.0e-6)
+    screened_nuclear_density_analytic = ASTRA.Microphysics.nuclear_density_derivative(
+        screened_nuclear,
+        density_g_cm3,
+        temperature_k,
+        composition,
+    )
 
     @test isfinite(pressure_density_fd)
     @test isfinite(pressure_density_analytic)
@@ -76,4 +90,12 @@
     @test isfinite(nuclear_density_fd)
     @test isfinite(nuclear_density_analytic)
     @test isapprox(nuclear_density_analytic, nuclear_density_fd; rtol = 1.0e-6, atol = 1.0e-8)
+    @test isfinite(screened_nuclear_density_fd)
+    @test isfinite(screened_nuclear_density_analytic)
+    @test isapprox(
+        screened_nuclear_density_analytic,
+        screened_nuclear_density_fd;
+        rtol = 1.0e-6,
+        atol = 1.0e-8,
+    )
 end
