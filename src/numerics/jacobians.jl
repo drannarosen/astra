@@ -6,8 +6,6 @@ _temperature_cell_index(grid::StellarGrid, k::Int) = 2 * (grid.n_cells + 1) + k
 
 _density_cell_index(grid::StellarGrid, k::Int) = 2 * (grid.n_cells + 1) + grid.n_cells + k
 
-const AUDIT_LUMINOSITY_STEP_FLOOR = 1.0e25
-
 function _center_columns(grid::StellarGrid)
     return Int[
         _radius_face_index(grid, 1),
@@ -141,12 +139,16 @@ function _local_central_difference(
     step::Real,
 )
     base_vector = pack_state(model.structure)
-    jacobian = Matrix{Float64}(undef, length(row_builder(problem, model)), length(columns))
+    base_row = row_builder(problem, model)
+    row_scale = max(maximum(abs.(base_row)), 1.0)
+    jacobian = Matrix{Float64}(undef, length(base_row), length(columns))
 
     for (j, column) in pairs(columns)
         column_step = jacobian_column_step(base_vector, column, step)
         if _luminosity_face_index(problem.grid, 0) < column <= _luminosity_face_index(problem.grid, problem.grid.n_cells)
-            column_step = max(column_step, AUDIT_LUMINOSITY_STEP_FLOOR)
+            # Luminosity residuals can sit at very large absolute scales, so the
+            # audit reference needs a perturbation that rises with the local row magnitude.
+            column_step = max(column_step, sqrt(eps(Float64)) * row_scale)
         end
 
         perturbed_plus = copy(base_vector)
