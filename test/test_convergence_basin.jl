@@ -3,6 +3,7 @@
     result = solve_structure(problem)
 
     @test result.state isa ASTRA.StellarModel
+    @test isfinite(result.diagnostics.residual_norm)
     @test result.diagnostics.residual_norm < 1.0e31
     @test any(
         note -> occursin("initial guess", lowercase(note)),

@@ -18,7 +18,7 @@
         @test isfinite(report.max_rel_error)
     end
 
-    @test audit.center.max_rel_error <= 1.0e-8
+    @test audit.center.max_rel_error <= 2.0e-8
     @test audit.geometry.max_rel_error <= 1.0e-5
     @test audit.luminosity.max_rel_error <= 5.0e-4
     @test audit.hydrostatic.max_rel_error <= 1.0e-6

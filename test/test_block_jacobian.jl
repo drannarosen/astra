@@ -7,5 +7,6 @@
 
     @test size(jacobian) == size(fd_jacobian)
     @test all(isfinite, jacobian)
-    @test isapprox(jacobian, fd_jacobian; rtol = 1.0e-3, atol = 1.0e-6)
+    @test all(isfinite, fd_jacobian)
+    @test isapprox(jacobian, fd_jacobian; rtol = 5.0e-4, atol = 1.0e-6)
 end
