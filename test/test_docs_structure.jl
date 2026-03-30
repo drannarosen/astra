@@ -145,11 +145,21 @@
             "What is deferred",
             "ideal gas plus radiation",
         ],
+        "docs/website/physics/eos/ideal-gas-plus-radiation.md" => [
+            "pressure decomposition",
+            "dP/dT",
+            "dP/drho",
+        ],
         "docs/website/physics/opacity.md" => [
             "Current ASTRA implementation",
             "Numerical realization in ASTRA",
             "What is deferred",
             "Kramers",
+        ],
+        "docs/website/physics/opacity/kramers-opacity.md" => [
+            "Rosseland",
+            "dκ/dT",
+            "dκ/drho",
         ],
         "docs/website/physics/nuclear.md" => [
             "Current ASTRA implementation",
@@ -157,11 +167,21 @@
             "What is deferred",
             "pp-toy",
         ],
+        "docs/website/physics/nuclear/pp-toy-heating.md" => [
+            "energy rate",
+            "dε/dT",
+            "dε/drho",
+        ],
         "docs/website/physics/convection.md" => [
             "Current ASTRA implementation",
             "Numerical realization in ASTRA",
             "What is deferred",
             "criterion hook",
+        ],
+        "docs/website/physics/convection/radiative-gradient-and-criterion-hook.md" => [
+            "nabla_rad",
+            "nabla_ad",
+            "residual still uses radiative transport",
         ],
         "docs/website/physics/boundary-conditions.md" => [
             "Current ASTRA implementation",
