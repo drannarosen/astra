@@ -16,28 +16,55 @@ function _accepted_trial_step(
     update::AbstractVector{<:Real},
 )
     base_vector = pack_state(model.structure)
-    base_norm = residual_norm(residual)
+    base_raw_norm = residual_norm(residual)
+    base_row_weights = residual_row_weights(problem, model)
+    base_weighted_norm = weighted_residual_norm(residual, base_row_weights)
+    limited_update = limit_weighted_correction(problem, model, update)
     damping = problem.solver.damping
     rejected_trials = 0
+    notes = String[]
+
+    if limited_update.factor < 1.0
+        push!(
+            notes,
+            "Weighted correction limiter scaled the trial step by factor $(limited_update.factor).",
+        )
+    end
 
     while damping >= problem.solver.minimum_damping
-        next_vector = base_vector .+ damping .* update
+        damped_update = damping .* limited_update.update
+        next_vector = base_vector .+ damped_update
         next_structure = unpack_state(model.structure, next_vector)
         next_model = StellarModel(next_structure, model.composition, model.evolution)
         next_residual = assemble_structure_residual(problem, next_model)
-        next_norm = residual_norm(next_residual)
+        next_raw_norm = residual_norm(next_residual)
+        next_weighted_norm = weighted_residual_norm(next_residual, base_row_weights)
 
-        if isfinite(next_norm) && next_norm < base_norm
-            notes = damping < problem.solver.damping ? [
-                "Backtracking accepted damping factor $(damping) after rejecting a larger trial step.",
-            ] : String[]
+        if isfinite(next_weighted_norm) &&
+           next_weighted_norm < base_weighted_norm &&
+           isfinite(next_raw_norm) &&
+           next_raw_norm <= base_raw_norm
+            trial_notes = copy(notes)
+            if damping < problem.solver.damping
+                push!(
+                    trial_notes,
+                    "Backtracking accepted damping factor $(damping) after rejecting a larger trial step.",
+                )
+            end
+            push!(
+                trial_notes,
+                "Accepted step reduced the weighted residual metric without increasing the raw residual norm.",
+            )
             return (
                 accepted = true,
                 model = next_model,
                 residual = next_residual,
-                notes = notes,
+                notes = trial_notes,
                 rejected_trials = rejected_trials,
                 damping_history = Float64[damping],
+                weighted_residual_norm = next_weighted_norm,
+                weighted_correction_norm = weighted_correction_norm(problem, model, damped_update),
+                weighted_max_correction = weighted_max_correction(problem, model, damped_update),
             )
         end
 
@@ -49,11 +76,12 @@ function _accepted_trial_step(
         accepted = false,
         model = model,
         residual = residual,
-        notes = String[
-            "Backtracking exhausted without an acceptable damping factor.",
-        ],
+        notes = vcat(notes, ["Backtracking exhausted without an acceptable damping factor."]),
         rejected_trials = rejected_trials,
         damping_history = Float64[],
+        weighted_residual_norm = base_weighted_norm,
+        weighted_correction_norm = limited_update.weighted_correction_norm,
+        weighted_max_correction = limited_update.weighted_max_correction,
     )
 end
 
@@ -61,8 +89,12 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
     model = initial_model
     residual = assemble_structure_residual(problem, model)
     initial_residual_norm = residual_norm(residual)
+    initial_weighted_residual_norm = weighted_residual_norm(problem, model, residual)
     residual_history = Float64[initial_residual_norm]
+    weighted_residual_history = Float64[initial_weighted_residual_norm]
     damping_history = Float64[]
+    weighted_correction_norm_history = Float64[]
+    weighted_max_correction_history = Float64[]
     accepted_step_count = 0
     rejected_trial_count = 0
     notes = String[
@@ -71,14 +103,19 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
     ]
 
     for _ in 1:problem.solver.max_newton_iterations
-        if converged_residual(problem, residual)
+        current_weighted_residual_norm = weighted_residual_norm(problem, model, residual)
+        if converged_residual(problem, model, residual)
             diagnostics = build_diagnostics(
                 problem,
                 model,
                 residual,
                 initial_residual_norm,
                 residual_history,
+                current_weighted_residual_norm,
+                weighted_residual_history,
                 damping_history,
+                weighted_correction_norm_history,
+                weighted_max_correction_history,
                 accepted_step_count,
                 rejected_trial_count,
                 accepted_step_count,
@@ -111,6 +148,12 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 model = trial_step.model
                 residual = trial_step.residual
                 push!(residual_history, residual_norm(residual))
+                push!(weighted_residual_history, trial_step.weighted_residual_norm)
+                push!(
+                    weighted_correction_norm_history,
+                    trial_step.weighted_correction_norm,
+                )
+                push!(weighted_max_correction_history, trial_step.weighted_max_correction)
                 accepted = true
             end
         elseif update !== nothing
@@ -158,19 +201,30 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 model = trial_step.model
                 residual = trial_step.residual
                 push!(residual_history, residual_norm(residual))
+                push!(weighted_residual_history, trial_step.weighted_residual_norm)
+                push!(
+                    weighted_correction_norm_history,
+                    trial_step.weighted_correction_norm,
+                )
+                push!(weighted_max_correction_history, trial_step.weighted_max_correction)
                 accepted = true
                 break
             end
         end
 
         if !accepted
+            current_weighted_residual_norm = weighted_residual_norm(problem, model, residual)
             diagnostics = build_diagnostics(
                 problem,
                 model,
                 residual,
                 initial_residual_norm,
                 residual_history,
+                current_weighted_residual_norm,
+                weighted_residual_history,
                 damping_history,
+                weighted_correction_norm_history,
+                weighted_max_correction_history,
                 accepted_step_count,
                 rejected_trial_count,
                 accepted_step_count,
@@ -181,13 +235,18 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
         end
     end
 
+    current_weighted_residual_norm = weighted_residual_norm(problem, model, residual)
     diagnostics = build_diagnostics(
         problem,
         model,
         residual,
         initial_residual_norm,
         residual_history,
+        current_weighted_residual_norm,
+        weighted_residual_history,
         damping_history,
+        weighted_correction_norm_history,
+        weighted_max_correction_history,
         accepted_step_count,
         rejected_trial_count,
         accepted_step_count,

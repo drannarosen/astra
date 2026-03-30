@@ -15,7 +15,11 @@ function build_diagnostics(
     residual::AbstractVector{<:Real},
     initial_residual_norm::Real,
     residual_history::AbstractVector{<:Real},
+    weighted_residual_norm_value::Real,
+    weighted_residual_history::AbstractVector{<:Real},
     damping_history::AbstractVector{<:Real},
+    weighted_correction_norm_history::AbstractVector{<:Real},
+    weighted_max_correction_history::AbstractVector{<:Real},
     accepted_step_count::Integer,
     rejected_trial_count::Integer,
     iterations::Integer,
@@ -32,6 +36,7 @@ function build_diagnostics(
         "Classical baseline is canonical; Entropy-DAE remains a documented stub.",
         "Toy model caveat: initialization is architecture-first and numerically helpful, not a physically calibrated stellar seed.",
         "Solve boundary: solve_structure(problem; state = guess) is the current public solve boundary for future sensitivities, with only model.structure treated as solve-owned.",
+        "Solver acceptance and convergence now use weighted residual metrics; raw residual histories are still reported for scientific honesty.",
     ]
     append!(notes, String.(extra_notes))
 
@@ -39,7 +44,11 @@ function build_diagnostics(
         residual_norm(residual),
         Float64(initial_residual_norm),
         Float64.(residual_history),
+        Float64(weighted_residual_norm_value),
+        Float64.(weighted_residual_history),
         Float64.(damping_history),
+        Float64.(weighted_correction_norm_history),
+        Float64.(weighted_max_correction_history),
         Int(accepted_step_count),
         Int(rejected_trial_count),
         converged,

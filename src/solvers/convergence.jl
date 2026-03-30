@@ -1,3 +1,7 @@
-function converged_residual(problem::StructureProblem, residual::AbstractVector{<:Real})
-    return residual_norm(residual) <= problem.solver.tolerance
+function converged_residual(
+    problem::StructureProblem,
+    model::StellarModel,
+    residual::AbstractVector{<:Real},
+)
+    return weighted_residual_norm(problem, model, residual) <= problem.solver.tolerance
 end

@@ -275,7 +275,11 @@ struct StructureDiagnostics
     residual_norm::Float64
     initial_residual_norm::Float64
     residual_history::Vector{Float64}
+    weighted_residual_norm::Float64
+    weighted_residual_history::Vector{Float64}
     damping_history::Vector{Float64}
+    weighted_correction_norm_history::Vector{Float64}
+    weighted_max_correction_history::Vector{Float64}
     accepted_step_count::Int
     rejected_trial_count::Int
     converged::Bool

@@ -74,19 +74,30 @@ include("io.jl")
 module Solvers
 using LinearAlgebra
 using ..ASTRA: SOLAR_LUMINOSITY_ERG_S,
+    GRAVITATIONAL_CONSTANT_CGS,
     SolveResult,
     StructureProblem,
     StructureDiagnostics,
     StellarModel,
     assemble_structure_residual,
     build_diagnostics,
+    cell_energy_source_state,
+    cell_eos_state,
+    center_luminosity_series_target_erg_s,
+    center_radius_series_target_cm,
     finite_difference_jacobian,
+    interior_structure_row_range,
     structure_jacobian,
+    structure_center_row_range,
+    structure_surface_row_range,
+    shell_volume_cm3,
     pack_state,
     residual_norm,
-    unpack_state
+    unpack_state,
+    SURFACE_DENSITY_GUESS_G_CM3
 
 include("solvers/linear_solvers.jl")
+include("solvers/step_metrics.jl")
 include("solvers/convergence.jl")
 include("solvers/nonlinear_solvers.jl")
 end

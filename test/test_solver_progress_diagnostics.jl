@@ -44,12 +44,33 @@ end
 
     @test result.diagnostics.initial_residual_norm ≈ initial_residual
     @test !isempty(result.diagnostics.residual_history)
+    @test !isempty(result.diagnostics.weighted_residual_history)
     @test first(result.diagnostics.residual_history) ≈ initial_residual
     @test last(result.diagnostics.residual_history) ≈ result.diagnostics.residual_norm
+    @test first(result.diagnostics.weighted_residual_history) ≈
+          ASTRA.Solvers.weighted_residual_norm(
+              problem,
+              guess,
+              ASTRA.assemble_structure_residual(problem, guess),
+          )
+    @test last(result.diagnostics.weighted_residual_history) ≈
+          result.diagnostics.weighted_residual_norm
     @test result.diagnostics.accepted_step_count >= 0
     @test result.diagnostics.rejected_trial_count >= 0
     @test length(result.diagnostics.damping_history) == result.diagnostics.accepted_step_count
+    @test length(result.diagnostics.weighted_correction_norm_history) ==
+          result.diagnostics.accepted_step_count
+    @test length(result.diagnostics.weighted_max_correction_history) ==
+          result.diagnostics.accepted_step_count
     @test all(0.0 < damping <= problem.solver.damping for damping in result.diagnostics.damping_history)
+    @test all(
+        0.0 <= correction <= 1.0 + 1.0e-12 for
+        correction in result.diagnostics.weighted_correction_norm_history
+    )
+    @test all(
+        0.0 <= correction <= 1.0 + 1.0e-12 for
+        correction in result.diagnostics.weighted_max_correction_history
+    )
 
     if !result.diagnostics.converged && result.diagnostics.accepted_step_count == 0
         @test result.diagnostics.rejected_trial_count > 0
@@ -73,8 +94,12 @@ end
     @test capped_result.diagnostics.iterations == capped_result.diagnostics.accepted_step_count
     @test length(capped_result.diagnostics.residual_history) ==
           capped_result.diagnostics.iterations + 1
+    @test length(capped_result.diagnostics.weighted_residual_history) ==
+          capped_result.diagnostics.iterations + 1
     @test capped_result.diagnostics.initial_residual_norm ≈ capped_initial_residual
     @test first(capped_result.diagnostics.residual_history) ≈ capped_initial_residual
     @test last(capped_result.diagnostics.residual_history) ≈
           capped_result.diagnostics.residual_norm
+    @test last(capped_result.diagnostics.weighted_residual_history) ≈
+          capped_result.diagnostics.weighted_residual_norm
 end
