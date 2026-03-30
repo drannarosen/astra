@@ -7,6 +7,7 @@
 
     @test hot.opacity_cm2_g > 0.0
     @test cool.opacity_cm2_g > 0.0
+    @test cool.opacity_cm2_g != hot.opacity_cm2_g
     @test hot.source == :analytical_opacity
 
     dκdT = ASTRA.Microphysics.opacity_temperature_derivative(
@@ -24,4 +25,10 @@
 
     @test isfinite(dκdT)
     @test isfinite(dκdρ)
+    fd =
+        (
+            κ_model(1.0, 1.5e7 + 1.0, composition).opacity_cm2_g -
+            κ_model(1.0, 1.5e7 - 1.0, composition).opacity_cm2_g
+        ) / 2.0
+    @test isapprox(dκdT, fd; rtol = 1.0e-4, atol = 1.0e-8)
 end
