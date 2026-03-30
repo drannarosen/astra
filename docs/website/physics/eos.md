@@ -8,7 +8,16 @@ ASTRA currently uses an analytical gas plus radiation EOS:
 
 `P = rho k_B T / (mu m_u) + a T^4 / 3`
 
-The same closure also supplies a beta-dependent adiabatic gradient, a beta-based specific heat at constant pressure, pressure derivatives, and the staged `chi_rho` / `chi_T` terms that the gravothermal helper lane now uses. The public closure payload remains intentionally narrow: pressure, gas-pressure fraction, adiabatic gradient, specific heat, and the local thermodynamic response terms ASTRA already consumes. Degeneracy and Coulomb corrections now exist as flag-gated analytical enrichments, but the documented default path is still fully explicit gas plus radiation.
+In plain language, the gas term is what an ideal ion-electron plasma would contribute, while the radiation term is what a photon gas contributes. At low temperature and moderate density the gas term dominates; in hot, luminous interiors the radiation term becomes more important and changes the thermodynamic response.
+
+The same closure also supplies a gas-pressure fraction `beta`, an adiabatic gradient, a specific heat at constant pressure, pressure derivatives, and the staged `chi_rho` / `chi_T` response terms that ASTRA now uses in the gravothermal helper lane. The public closure payload remains intentionally narrow: pressure, gas-pressure fraction, adiabatic gradient, specific heat, and the local thermodynamic response terms ASTRA already consumes.
+
+Degeneracy and Coulomb corrections now exist as flag-gated analytical enrichments:
+
+- `include_degeneracy = true` adds a Paczynski-style electron-pressure interpolation,
+- `include_coulomb = true` adds a Debye-Huckel Coulomb pressure correction.
+
+Those enrichments are part of the analytical stack, but the default bootstrap path is still the explicit gas-plus-radiation EOS.
 
 ## Numerical realization in ASTRA
 
@@ -16,7 +25,7 @@ The EOS is evaluated in the residual through [Residual Assembly](../methods/resi
 
 ## What is deferred
 
-Real EOS tables, partial ionization, entropy-authoritative inversion, and composition-rich thermodynamics are deferred. Degeneracy and Coulomb terms are not active in the default bootstrap lane yet, even though the staged closure now carries validated flag-gated analytical forms for future promotion. This page is the place to explain the closure ASTRA actually has now, not the closure we will want later.
+Real EOS tables, partial ionization, entropy-authoritative inversion, and composition-rich thermodynamics are deferred. Degeneracy and Coulomb terms are implemented analytically but are not active in the default bootstrap lane yet. This page is the place to explain the closure ASTRA actually has now, not the closure we will want later.
 
 ## Implementation checklist
 

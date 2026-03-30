@@ -23,14 +23,14 @@ This is also a boundary-value problem because the center and surface conditions 
 
 ## Current ASTRA implementation
 
-ASTRA assembles the system as one residual vector with center rows, interior blocks, and surface rows. The current placeholder closures are still in place:
+ASTRA assembles the system as one residual vector with center rows, interior blocks, and surface rows. The current staged analytical closures are the current placeholder closures for the bootstrap lane:
 
 - analytical gas plus radiation EOS
 - analytical opacity components
-- analytical PP-plus-CNO heating
+- analytical PP-plus-CNO heating plus source-decomposed `eps_grav` and `eps_nu`
 - radiative-gradient transport hook
 
-That means ASTRA is solving the correct *shape* of the classical problem, but not yet with production microphysics. The coupled-system structure is already there, and the luminosity row now owns an assembled `eps_nuc + eps_grav - eps_nu` source term. Gravothermal release is evolution-owned because it depends on previous accepted thermodynamic history, while screening-enabled burning and richer EOS corrections remain flag-gated rather than default-on. Composition evolution remains deferred.
+That means ASTRA is solving the correct *shape* of the classical problem, but not yet with production microphysics. The coupled-system structure is already there, and the luminosity row now owns an assembled `eps_nuc + eps_grav - eps_nu` source term. Gravothermal release is evolution-owned because it depends on previous accepted thermodynamic history and EOS response terms, while screening-enabled burning and richer EOS corrections remain flag-gated rather than default-on. Composition evolution remains deferred.
 
 ## Numerical realization in ASTRA
 

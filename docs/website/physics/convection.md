@@ -9,7 +9,7 @@ In ASTRA's bootstrap lane, only the first layer exists today.
 
 ## Current ASTRA implementation
 
-The current **criterion hook** compares a radiative-gradient estimate to the EOS adiabatic gradient and classifies the local regime as radiative or convective. That is enough to show where a future convection model belongs in the code, but it is not yet a mixing-length transport closure and it does not alter the transport residual.
+The current **criterion hook** compares a radiative-gradient estimate to the EOS adiabatic gradient and classifies the local regime as radiative or convective. In plain language, ASTRA can already ask, "Would radiation alone carry the flux stably here?" but it cannot yet answer the next question, "If not, how much extra flux does convection carry?" That is enough to show where a future convection model belongs in the code, but it is not yet a mixing-length transport closure and it does not alter the transport residual.
 
 ## Numerical realization in ASTRA
 

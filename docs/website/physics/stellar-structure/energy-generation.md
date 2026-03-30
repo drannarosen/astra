@@ -53,11 +53,11 @@ In other words:
 
 ## Numerical realization in ASTRA
 
-The luminosity row is assembled in [Residual Assembly](../../methods/residual-assembly.md), and the local source derivatives are tracked in [Jacobian Construction](../../methods/jacobian-construction.md). The solver keeps luminosity in raw cgs $\mathrm{erg\,s^{-1}}$; it is not rewritten as a solar-unit variable or a log-luminosity variable. ASTRA's `eps_grav` term is evolution-owned because it depends on previous accepted thermodynamic history, while `eps_nu` is a staged analytical loss term inside the same residual-owned source decomposition.
+The luminosity row is assembled in [Residual Assembly](../../methods/residual-assembly.md), and the local source derivatives are tracked in [Jacobian Construction](../../methods/jacobian-construction.md). The solver keeps luminosity in raw cgs $\mathrm{erg\,s^{-1}}$; it is not rewritten as a solar-unit variable or a log-luminosity variable. ASTRA's `eps_grav` term is evolution-owned because it depends on previous accepted thermodynamic history and on the EOS response terms `chi_rho` and `chi_T`, while `eps_nu` is a staged analytical loss term inside the same residual-owned source decomposition.
 
 ## What is deferred
 
-Real reaction networks and composition evolution are deferred. The current closure is still a bootstrap source term, not a production energy-balance model. The public closure payload still excludes abundance time derivatives even though the reference Stellax source tracks them internally, and the current `eps_grav` implementation requires evolution history rather than a wider solve contract.
+Real reaction networks and composition evolution are deferred. The current closure is still a bootstrap source term, not a production energy-balance model. The public closure payload still excludes abundance time derivatives even though the reference Stellax source tracks them internally, and the current `eps_grav` implementation requires evolution history rather than a wider solve contract. The present `eps_nu` term is intentionally minimal and monotone, not a full neutrino-process package.
 
 ## Implementation checklist
 

@@ -14,6 +14,12 @@ where `rho` is density, `T` is temperature, `mu` is the mean molecular weight fr
 
 This is the exact default pressure decomposition ASTRA uses today in `src/microphysics/eos.jl`.
 
+Pedagogically, this is a good first EOS because each term answers a different physical question:
+
+- the gas term says how much pressure the particles supply by thermal motion,
+- the radiation term says how much pressure the trapped photon field supplies,
+- the ratio between them tells us how compressible the fluid is and how the star responds to heating.
+
 Flag-gated enrichments also exist in the same closure:
 
 - Paczynski-style electron-pressure interpolation when `include_degeneracy = true`,
@@ -37,7 +43,7 @@ $$
 
 In code, these are the `pressure_temperature_derivative(...)` and `pressure_density_derivative(...)` helpers in `src/microphysics/eos.jl`.
 
-The staged closure now also returns `chi_rho` and `chi_T`, because ASTRA's evolution-owned gravothermal helper needs those thermodynamic response terms when `eps_grav` is evaluated from the cp-form identity.
+The staged closure now also returns `chi_rho` and `chi_T`, because ASTRA's evolution-owned gravothermal helper needs those thermodynamic response terms when `eps_grav` is evaluated from the cp-form identity. In the default gas-plus-radiation limit, those response terms reduce to the familiar beta-based identities. In the flag-gated branches, ASTRA uses the EOS's returned `chi_rho` and `chi_T` directly instead of pretending the ideal-gas identities still hold.
 
 ## How it enters ASTRA
 
@@ -45,7 +51,7 @@ The EOS pressure is used directly in the hydrostatic row and in the transport he
 
 The method-side realization is documented in [Residual Assembly](../../methods/residual-assembly.md) and [Jacobian Construction](../../methods/jacobian-construction.md), where the EOS sensitivities enter the hydrostatic and transport rows.
 
-The EOS also supplies a beta-dependent `adiabatic_gradient` and a beta-based specific heat at constant pressure. The flagged Paczynski and Debye-Huckel branches are real analytical options now, but both remain disabled in the default bootstrap path and are therefore not part of the active thermodynamic payload described here.
+The EOS also supplies a beta-dependent `adiabatic_gradient` and a beta-based specific heat at constant pressure. The flagged Paczynski and Debye-Huckel branches are real analytical options now, but both remain disabled in the default bootstrap path and are therefore staged enrichments rather than default thermodynamics.
 
 ## What is deferred
 

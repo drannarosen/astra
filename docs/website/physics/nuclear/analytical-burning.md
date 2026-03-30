@@ -6,6 +6,12 @@ ASTRA's current nuclear source is a staged analytical heating law with PP and CN
 
 The current energy rate is the sum of analytical PP-chain and CNO-cycle terms, with optional triple-alpha compiled in but disabled by default. Weak screening can also be enabled as a flag-gated analytical enhancement for the PP and CNO branches. The returned quantity is still an energy rate in `erg g^-1 s^-1`. In ASTRA this is the exact `energy_rate_erg_g_s` payload from `src/microphysics/nuclear.jl`.
 
+The teaching picture is:
+
+- PP burning is the gentle hydrogen-burning branch that can matter at lower core temperatures,
+- CNO is much more temperature-sensitive and therefore acts like a sharper thermostat once the core is hot enough,
+- triple-alpha is the staged helium-burning branch and is kept default-off because this bootstrap lane is not yet abundance-evolving.
+
 ## Derivatives ASTRA uses
 
 The current derivative payloads are
@@ -22,4 +28,4 @@ The row-level realization is documented in [Residual Assembly](../../methods/res
 
 ## What is deferred
 
-Real reaction networks, neutrino losses, composition evolution, and detailed screening physics are deferred. Screening and triple-alpha remain flag-gated in the default path. This page documents the bootstrap source ASTRA actually uses today, not a full abundance-evolution or reaction-network package.
+Real reaction networks, composition evolution, and detailed screening physics are deferred. Screening and triple-alpha remain flag-gated in the default path. Neutrino losses are not owned by this closure; they live in the broader analytical energy-source helper lane. This page documents the bootstrap heating source ASTRA actually uses today, not a full abundance-evolution or reaction-network package.

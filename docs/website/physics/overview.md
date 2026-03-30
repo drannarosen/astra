@@ -30,10 +30,10 @@ Here, constitutive physics means the local closure laws that tell the structure 
 
 The structure equations are not closed until we choose an equation of state, an opacity law, a nuclear heating law, and a transport closure. ASTRA's bootstrap lane currently uses staged analytical physics:
 
-- [Equation of State](eos.md): staged analytical gas plus radiation
+- [Equation of State](eos.md): staged analytical gas plus radiation, with flag-gated degeneracy and Coulomb enrichments
 - [Opacity](opacity.md): analytical Kramers + H-minus + electron scattering
-- [Nuclear Energy Generation](nuclear.md): analytical PP + CNO heating
-- [Convection](convection.md): criterion hook only
+- [Nuclear Energy Generation](nuclear.md): analytical PP + CNO heating, with flag-gated weak screening and triple-alpha
+- [Convection](convection.md): Schwarzschild criterion hook on top of radiative transport
 
 These pages explain the physics and state plainly what ASTRA actually computes today.
 
@@ -79,7 +79,7 @@ The methods pages describe how this physics becomes code:
 
 ## What is deferred
 
-Real EOS tables, opacity tables, real MLT, composition transport, and evolutionary algorithms are all deferred. Screening-enabled burning, degeneracy, Coulomb corrections, `eps_grav`, and `eps_nu` are also still outside the active bootstrap path. This page is a map of the classical baseline only, so future contributors can tell the difference between an implemented closure and a planned one.
+Real EOS tables, opacity tables, real MLT, composition transport, and production evolution algorithms are all deferred. ASTRA's active analytical path now includes `eps_grav` and `eps_nu` in the luminosity equation, while weak screening, triple-alpha, degeneracy, and Coulomb terms remain implemented but default-off. This page is a map of the classical baseline only, so future contributors can tell the difference between an implemented closure, a flag-gated staged option, and a planned capability.
 
 ## Physics handbook checklist
 

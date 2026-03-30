@@ -1,6 +1,6 @@
 # Solar-First Lane Checklist
 
-Last updated: **2026-03-29**
+Last updated: **2026-03-30**
 
 This checklist tracks ASTRA's first serious science lane:
 
@@ -42,6 +42,7 @@ This checklist tracks ASTRA's first serious science lane:
 - [x] Opacity contract upgraded from toy closure toward classical baseline use
 - [x] Source-decomposed energy equation implemented
 - [x] `eps_grav` gravothermal bookkeeping implemented in evolution ownership layer
+- [x] `eps_grav` consumes EOS-owned `chi_rho` / `chi_T` response terms in staged enriched regimes
 - [x] Staged `eps_nu` loss term wired into the luminosity source decomposition
 - [x] Weak-screening analytical nuclear option implemented and tested
 - [x] Flag-gated degeneracy and Coulomb EOS enrichments implemented and tested

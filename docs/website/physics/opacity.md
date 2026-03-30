@@ -10,6 +10,12 @@ ASTRA currently uses an analytical opacity closure with three additive component
 - H-minus bound-free plus free-free opacity in the cool-atmosphere window,
 - electron scattering with a Klein-Nishina correction.
 
+Pedagogically, those three pieces are useful because they correspond to three different ways radiation can struggle to escape:
+
+- Kramers terms dominate hot, moderately dense ionized gas,
+- H-minus matters in cooler envelope and atmosphere conditions where loosely bound electrons are abundant,
+- electron scattering matters when photons are mostly being redirected rather than absorbed.
+
 The closure is still analytical and fully local in `(rho, T, composition)`, so it remains easy to inspect end to end. Its derivative helpers are still explicit ASTRA-owned functions; the current implementation uses centered local finite differences for the composite temperature and density sensitivities rather than introducing automatic differentiation.
 
 ## Numerical realization in ASTRA
@@ -18,7 +24,7 @@ Opacity enters the radiative-gradient helper in [Residual Assembly](../methods/r
 
 ## What is deferred
 
-Real opacity tables, conductive opacity, and table-blend hierarchies are deferred. The H-minus term is a simplified analytical proxy, not a production low-temperature opacity table. The current page should be read as the exact staged closure used today, not as a promise about ASTRA's eventual opacity stack.
+Real opacity tables, conductive opacity, and table-blend hierarchies are deferred. The H-minus term is a simplified analytical proxy, not a production low-temperature opacity table, and the electron-scattering term is still an analytical correction rather than a full transport-opacity treatment. The current page should be read as the exact staged closure used today, not as a promise about ASTRA's eventual opacity stack.
 
 ## Implementation checklist
 

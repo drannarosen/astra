@@ -12,13 +12,19 @@ The current closure is the arithmetic sum of:
 
 The page mentions `Rosseland` because the transport equation ultimately wants a Rosseland mean opacity, but ASTRA's present implementation is still an analytical stand-in rather than a table-backed Rosseland stack.
 
+The physical picture is:
+
+- Kramers opacity increases with density and falls steeply with temperature because hotter gas is more ionized and therefore less efficient at bound-free and free-free blocking.
+- H-minus opacity is switched on only in a cool window because that mechanism matters mainly in envelope and atmosphere conditions, not in a hot stellar core.
+- Electron scattering is almost composition-controlled in the Thomson limit, then softened by the current Klein-Nishina-style correction as the thermal photon energies rise.
+
 ## Derivatives ASTRA uses
 
 The Jacobian and transport helper use the opacity derivative payloads
 
 ASTRA tracks the literal payload names `dκ/dT` and `dκ/drho` here so the derivative story matches the code-facing terminology.
 
-The current `opacity_temperature_derivative(...)` and `opacity_density_derivative(...)` helpers in `src/microphysics/opacity.jl` are explicit ASTRA-owned centered local finite differences through this analytical closure. That keeps the derivative owner local without introducing a new AD dependency in the bootstrap lane.
+The current `opacity_temperature_derivative(...)` and `opacity_density_derivative(...)` helpers in `src/microphysics/opacity.jl` are explicit ASTRA-owned centered local finite differences through this analytical closure. That keeps the derivative owner local without introducing a new AD dependency in the bootstrap lane. It also means ASTRA is differentiating the exact smoothed analytical opacity it solves with, including the H-minus windowing.
 
 ## How it enters ASTRA
 

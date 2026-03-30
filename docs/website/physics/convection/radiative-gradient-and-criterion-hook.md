@@ -12,7 +12,13 @@ $$
 
 where `kappa` comes from the staged analytical opacity closure, `L` is face-centered luminosity, `P` is EOS pressure, `m` is enclosed mass, and `T` is cell temperature.
 
-The criterion hook compares `nabla_rad` against `nabla_ad`, and in the current staged gas-plus-radiation EOS `nabla_ad` is computed from the local gas-pressure fraction rather than fixed to `0.4`.
+The criterion hook compares `nabla_rad` against `nabla_ad`, and in the current staged gas-plus-radiation EOS `nabla_ad` is computed from the local thermodynamic state rather than fixed blindly to `0.4`.
+
+Pedagogically, this matters because the hook is already teaching the right division of labor:
+
+- opacity and luminosity push `nabla_rad` up or down,
+- the EOS decides how compressible the fluid is through `nabla_ad`,
+- the convection hook only compares the two and returns a regime plus a transport hint.
 
 ## Derivative payloads ASTRA uses
 
