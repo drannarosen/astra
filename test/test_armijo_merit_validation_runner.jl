@@ -7,7 +7,7 @@
         @test all(isfile, bundle.payload_paths)
         @test any(path -> occursin("default-12", basename(path)), bundle.payload_paths)
         @test any(path -> occursin("cells-24", basename(path)), bundle.payload_paths)
-        @test any(path -> occursin("perturb", basename(path)), bundle.payload_paths)
+        @test count(path -> occursin("perturb", basename(path)), bundle.payload_paths) >= 3
 
         manifest = read(bundle.manifest_path, String)
         @test occursin("fixture_label = default-12", manifest)

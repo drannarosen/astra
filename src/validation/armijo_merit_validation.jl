@@ -258,6 +258,10 @@ function _try_build_armijo_merit_validation_perturbation_payload(
     )
 end
 
+function _armijo_merit_validation_perturbation_minimum()
+    return 3
+end
+
 function run_armijo_merit_validation_suite(output_dir::AbstractString)
     mkpath(output_dir)
 
@@ -307,6 +311,12 @@ function run_armijo_merit_validation_suite(output_dir::AbstractString)
         end
         push!(payload_paths, payload_path)
         push!(payloads, payload)
+    end
+
+    if length(perturbation_payloads) < _armijo_merit_validation_perturbation_minimum()
+        error(
+            "Armijo validation suite produced $(length(perturbation_payloads)) perturbation payloads; at least $(_armijo_merit_validation_perturbation_minimum()) are required.",
+        )
     end
 
     default_problem = build_toy_problem(n_cells = 12)
