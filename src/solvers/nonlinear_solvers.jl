@@ -90,8 +90,11 @@ function _accepted_trial_step(
             ),
         )
 
-        if isfinite(next_merit) &&
-           next_merit < base_merit &&
+        if isfinite(base_slope) &&
+           base_slope < 0.0 &&
+           predicted_decrease > 0.0 &&
+           isfinite(next_merit) &&
+           next_merit <= armijo_target &&
            isfinite(next_raw_norm) &&
            next_raw_norm <= base_raw_norm
             trial_notes = copy(notes)
@@ -103,7 +106,7 @@ function _accepted_trial_step(
             end
             push!(
                 trial_notes,
-                "Accepted step reduced the frozen-weight merit function without increasing the raw residual norm.",
+                "Accepted step satisfied Armijo sufficient decrease for the frozen-weight merit function without increasing the raw residual norm.",
             )
             return (
                 accepted = true,
@@ -133,7 +136,7 @@ function _accepted_trial_step(
         accepted = false,
         model = model,
         residual = residual,
-        notes = vcat(notes, ["Backtracking exhausted without a merit-decreasing damping factor."]),
+        notes = vcat(notes, ["Backtracking exhausted without an Armijo-acceptable damping factor."]),
         rejected_trials = rejected_trials,
         damping_history = Float64[],
         weighted_residual_norm = base_weighted_norm,

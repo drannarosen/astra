@@ -20,6 +20,13 @@
     @test isfinite(result.diagnostics.weighted_residual_norm)
     @test all(diff(result.diagnostics.weighted_residual_history) .< 0.0)
     @test all(diff(result.diagnostics.merit_history) .< 0.0)
+    @test all(result.diagnostics.predicted_decrease_history .> 0.0)
+    @test all(result.diagnostics.actual_decrease_history .> 0.0)
+    @test all(isfinite, result.diagnostics.decrease_ratio_history)
+    @test all(
+        trial -> isapprox(trial.row_family_merit.total, trial.merit_value; rtol = 1e-12),
+        result.diagnostics.accepted_trial_history,
+    )
     @test result.diagnostics.weighted_residual_norm <= 0.999 * initial_weighted_residual
     @test result.diagnostics.merit_value ≈
           0.5 *
