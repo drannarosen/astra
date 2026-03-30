@@ -30,7 +30,10 @@ export StellarParameters,
     radiative_temperature_gradient,
     surface_effective_temperature_k,
     surface_gravity_cgs,
-    eddington_photospheric_pressure_dyn_cm2
+    eddington_photospheric_pressure_dyn_cm2,
+    eddington_t_tau_temperature_k,
+    outer_half_cell_column_density_g_cm2,
+    outer_half_cell_optical_depth
 
 include("foundation/constants.jl")
 include("foundation/units.jl")
