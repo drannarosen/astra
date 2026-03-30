@@ -104,7 +104,7 @@ not to claim production microphysics fidelity.
 """
 function default_microphysics()
     return MicrophysicsBundle(
-        Microphysics.IdealGasRadiationEOS(),
+        Microphysics.AnalyticalGasRadiationEOS(),
         Microphysics.AnalyticalOpacity(),
         Microphysics.AnalyticalNuclear(),
         Microphysics.SchwarzschildConvectionHook(),
