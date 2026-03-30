@@ -35,6 +35,39 @@ function _capped_exit_progress_fixture()
     error("Unable to find a capped one-step Newton-progress fixture.")
 end
 
+function _weighted_history_consistency_fixture()
+    problem = ASTRA.build_toy_problem(n_cells = 12)
+    base_state = initialize_state(problem)
+    base_vector = ASTRA.pack_state(base_state.structure)
+
+    for amplitude in (1.0e-6, 1.0e-5, 1.0e-4, 1.0e-3, 1.0e-2)
+        Random.seed!(1)
+        for _ in 1:100
+            perturbed_vector =
+                base_vector .+ amplitude .* randn(length(base_vector)) .* max.(abs.(base_vector), 1.0)
+            perturbed_structure = ASTRA.unpack_state(base_state.structure, perturbed_vector)
+            state = ASTRA.StellarModel(
+                perturbed_structure,
+                base_state.composition,
+                base_state.evolution,
+            )
+            result = solve_structure(problem; state = state)
+            if result.diagnostics.accepted_step_count > 0
+                recomputed_weighted_residual = ASTRA.Solvers.weighted_residual_norm(
+                    problem,
+                    result.state,
+                    ASTRA.assemble_structure_residual(problem, result.state),
+                )
+                if result.diagnostics.weighted_residual_history[end] != recomputed_weighted_residual
+                    return problem, state, result
+                end
+            end
+        end
+    end
+
+    error("Unable to find a weighted-history mismatch fixture.")
+end
+
 @testset "solver progress diagnostics" begin
     problem = ASTRA.build_toy_problem(n_cells = 12)
     guess = initialize_state(problem)
@@ -69,8 +102,7 @@ end
               guess,
               ASTRA.assemble_structure_residual(problem, guess),
           )
-    @test last(result.diagnostics.weighted_residual_history) ≈
-          result.diagnostics.weighted_residual_norm
+    @test last(result.diagnostics.weighted_residual_history) == result.diagnostics.weighted_residual_norm
     @test result.diagnostics.accepted_step_count >= 0
     @test result.diagnostics.rejected_trial_count >= 0
     @test length(result.diagnostics.damping_history) == result.diagnostics.accepted_step_count
@@ -118,4 +150,9 @@ end
           capped_result.diagnostics.residual_norm
     @test last(capped_result.diagnostics.weighted_residual_history) ≈
           capped_result.diagnostics.weighted_residual_norm
+
+    mismatch_problem, mismatch_state, mismatch_result = _weighted_history_consistency_fixture()
+    @test mismatch_result.diagnostics.accepted_step_count > 0
+    @test mismatch_result.diagnostics.weighted_residual_history[end] ==
+          mismatch_result.diagnostics.weighted_residual_norm
 end
