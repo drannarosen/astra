@@ -19,6 +19,7 @@ function _accepted_trial_step(
     base_raw_norm = residual_norm(residual)
     base_row_weights = residual_row_weights(problem, model)
     base_weighted_norm = weighted_residual_norm(residual, base_row_weights)
+    base_merit = weighted_residual_merit(residual, base_row_weights)
     limited_update = limit_weighted_correction(problem, model, update)
     damping = problem.solver.damping
     rejected_trials = 0
@@ -39,9 +40,10 @@ function _accepted_trial_step(
         next_residual = assemble_structure_residual(problem, next_model)
         next_raw_norm = residual_norm(next_residual)
         next_weighted_norm = weighted_residual_norm(next_residual, base_row_weights)
+        next_merit = weighted_residual_merit(next_residual, base_row_weights)
 
-        if isfinite(next_weighted_norm) &&
-           next_weighted_norm < base_weighted_norm &&
+        if isfinite(next_merit) &&
+           next_merit < base_merit &&
            isfinite(next_raw_norm) &&
            next_raw_norm <= base_raw_norm
             trial_notes = copy(notes)
@@ -53,7 +55,7 @@ function _accepted_trial_step(
             end
             push!(
                 trial_notes,
-                "Accepted step reduced the weighted residual metric without increasing the raw residual norm.",
+                "Accepted step reduced the frozen-weight merit function without increasing the raw residual norm.",
             )
             return (
                 accepted = true,
@@ -63,6 +65,7 @@ function _accepted_trial_step(
                 rejected_trials = rejected_trials,
                 damping_history = Float64[damping],
                 weighted_residual_norm = next_weighted_norm,
+                merit_value = next_merit,
                 weighted_correction_norm = weighted_correction_norm(problem, model, damped_update),
                 weighted_max_correction = weighted_max_correction(problem, model, damped_update),
             )
@@ -76,10 +79,11 @@ function _accepted_trial_step(
         accepted = false,
         model = model,
         residual = residual,
-        notes = vcat(notes, ["Backtracking exhausted without an acceptable damping factor."]),
+        notes = vcat(notes, ["Backtracking exhausted without a merit-decreasing damping factor."]),
         rejected_trials = rejected_trials,
         damping_history = Float64[],
         weighted_residual_norm = base_weighted_norm,
+        merit_value = base_merit,
         weighted_correction_norm = limited_update.weighted_correction_norm,
         weighted_max_correction = limited_update.weighted_max_correction,
     )
@@ -157,7 +161,7 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 residual = trial_step.residual
                 push!(residual_history, residual_norm(residual))
                 push!(weighted_residual_history, trial_step.weighted_residual_norm)
-                push!(merit_history, weighted_residual_merit(problem, model, residual))
+                push!(merit_history, trial_step.merit_value)
                 push!(
                     weighted_correction_norm_history,
                     trial_step.weighted_correction_norm,
@@ -211,7 +215,7 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 residual = trial_step.residual
                 push!(residual_history, residual_norm(residual))
                 push!(weighted_residual_history, trial_step.weighted_residual_norm)
-                push!(merit_history, weighted_residual_merit(problem, model, residual))
+                push!(merit_history, trial_step.merit_value)
                 push!(
                     weighted_correction_norm_history,
                     trial_step.weighted_correction_norm,

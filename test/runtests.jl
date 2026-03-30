@@ -26,6 +26,7 @@ using ASTRA
     include("test_solver_progress_diagnostics.jl")
     include("test_default_newton_progress.jl")
     include("test_merit_globalization_metrics.jl")
+    include("test_merit_globalization_acceptance.jl")
     include("test_center_asymptotic_scaling.jl")
     include("test_weighted_solver_metrics.jl")
     include("test_atmosphere_boundary_helpers.jl")

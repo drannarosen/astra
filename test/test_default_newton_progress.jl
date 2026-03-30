@@ -19,7 +19,12 @@
     @test isfinite(result.diagnostics.residual_norm)
     @test isfinite(result.diagnostics.weighted_residual_norm)
     @test all(diff(result.diagnostics.weighted_residual_history) .< 0.0)
+    @test all(diff(result.diagnostics.merit_history) .< 0.0)
     @test result.diagnostics.weighted_residual_norm <= 0.999 * initial_weighted_residual
+    @test result.diagnostics.merit_value ≈
+          0.5 *
+          length(ASTRA.assemble_structure_residual(problem, result.state)) *
+          result.diagnostics.weighted_residual_norm^2 rtol = 1e-12
     @test result.diagnostics.residual_norm <= initial_residual
     @test any(
         note -> occursin("atmosphere boundary", lowercase(note)),
