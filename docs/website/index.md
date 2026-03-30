@@ -28,7 +28,7 @@ ASTRA is intentionally scoped for disciplined growth: a clean baseline first, th
 At the core of ASTRA is a strict separation of concerns:
 
 - [Physics](physics/overview.md) explains what equations and closures define the star,
-- [Methods](methods/index.md) explains how those equations become a nonlinear solve,
+- [Methods](methods/overview.md) explains how those equations become a nonlinear solve,
 - [Validation](validation/philosophy.md) explains what is actually proven,
 - [Planning](planning/roadmap.md) explains how ASTRA moves from bootstrap to a validated classical lane and then to more advanced formulations.
 
@@ -42,7 +42,7 @@ For a first pass through the project, use this route:
 
 - [Getting Started](getting-started/installation.md): install Julia, run the scaffold, and inspect the package layout.
 - [Architecture](architecture/overview.md): understand how ASTRA separates physics, numerics, and orchestration.
-- [Physics](physics/overview.md) and [Methods](methods/index.md): read the current equations, residuals, Jacobians, and boundary-condition realization.
+- [Physics](physics/overview.md) and [Methods](methods/overview.md): read the current equations, residuals, Jacobians, and boundary-condition realization.
 - [Validation](validation/philosophy.md): see what is established, what is provisional, and what is still stubbed.
 - [Planning](planning/roadmap.md): follow the development sequence from bootstrap to classical baseline and then to more advanced formulations.
 - [Development](development/development-guide.md): check implementation status, active blockers, and next steps.

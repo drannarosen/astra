@@ -47,7 +47,7 @@ For new contributors, this is one of the most important distinctions in the hand
 
 Boundary conditions are the extra center and surface conditions that close the global stellar-structure problem.
 
-The center and surface close the global solve. The center uses asymptotic series targets for the innermost face, and the surface uses provisional guessed outer conditions. See [Boundary Conditions](boundary-conditions.md) for the current closure and [Methods](../methods/index.md) for how those conditions enter the residual.
+The center and surface close the global solve. The center uses asymptotic series targets for the innermost face, and the surface uses provisional guessed outer conditions. See [Boundary Conditions](boundary-conditions.md) for the current closure and [Methods](../methods/overview.md) for how those conditions enter the residual.
 
 This matters numerically because the center and surface are exactly where the naive differential forms become least trustworthy. The center is formally singular in several common rearrangements, and the outer boundary is where a stellar interior model must decide how it is being matched to an atmosphere or outer-layer prescription.
 
@@ -90,7 +90,7 @@ This section is ASTRA's internal QA surface for the Physics overview: what is co
 - [x] Continuous-equation ownership is explicitly separated from numerical ownership.
 - [x] The four classical structure equations are named and cross-linked to their detailed pages.
 - [x] The page distinguishes `Physics` responsibilities from `Methods` responsibilities.
-- [x] The packed-variable discussion points readers back to [Methods](../methods/index.md) instead of confusing continuous and discrete equations.
+- [x] The packed-variable discussion points readers back to [Methods](../methods/overview.md) instead of confusing continuous and discrete equations.
 
 ### Current implementation coverage
 

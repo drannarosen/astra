@@ -53,7 +53,7 @@ project:
         - file: physics/boundary-conditions.md
     - title: Methods
       children:
-        - file: methods/index.md
+        - file: methods/overview.md
         - file: methods/from-equations-to-residual.md
         - file: methods/staggered-mesh-and-state-layout.md
         - file: methods/residual-assembly.md
@@ -63,7 +63,7 @@ project:
         - file: methods/initial-model-and-seeding.md
         - file: methods/boundary-condition-realization.md
         - file: methods/verification-and-jacobian-audits.md
-        - file: methods/mesa-reference/index.md
+        - file: methods/mesa-reference/overview.md
           children:
             - file: methods/mesa-reference/solver-scaling.md
             - file: methods/mesa-reference/boundary-conditions.md

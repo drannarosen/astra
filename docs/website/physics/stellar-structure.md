@@ -4,7 +4,7 @@ The classical 1D stellar-structure problem is a single coupled boundary-value pr
 
 This page introduces the classical stellar-structure equations, explains why mass coordinates are used, and shows how they connect to ASTRA's solver variables.
 
-This page owns the continuous-equation specification. The companion [Methods](../methods/index.md) pages own the discrete residual and Jacobian specification.
+This page owns the continuous-equation specification. The companion [Methods](../methods/overview.md) pages own the discrete residual and Jacobian specification.
 
 If you are new to stellar numerics, it helps to read this page as a translation table. Each equation is a compact statement about what a star must do everywhere at once. The methods pages later explain how ASTRA converts those statements into finite residual rows, but the continuous equations come first because they define what the code is trying to be faithful to.
 

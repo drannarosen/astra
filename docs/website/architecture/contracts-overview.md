@@ -79,7 +79,7 @@ That ordering matters because it helps the code, the diagnostics, and the mathem
 
 ## Why ASTRA follows this pattern
 
-This design is informed by a useful MESA pattern: density and temperature are cell-centered, radius and luminosity are face-based, and the EOS works naturally in a density-temperature basis. In ASTRA's handbook, those comparisons should be read through the local source-backed pages in [Methods: MESA Reference](../methods/mesa-reference/index.md), especially [Mesh and Variables](../methods/mesa-reference/mesh-and-variables.md), rather than through memory or folklore.
+This design is informed by a useful MESA pattern: density and temperature are cell-centered, radius and luminosity are face-based, and the EOS works naturally in a density-temperature basis. In ASTRA's handbook, those comparisons should be read through the local source-backed pages in [Methods: MESA Reference](../methods/mesa-reference/overview.md), especially [Mesh and Variables](../methods/mesa-reference/mesh-and-variables.md), rather than through memory or folklore.
 
 ASTRA is learning from that pattern, not copying historical complexity wholesale. The goal is to keep the useful ownership structure while avoiding a codebase where every layer quietly takes responsibility for everything.
 
