@@ -14,6 +14,25 @@ For each update, record:
 
 ## 2026-03-30
 
+### MESA scaling audit and transport-hardening plan
+
+ASTRA's methods pages now record a more precise file-backed MESA scaling comparison and a matching next-step implementation plan at `docs/plans/2026-03-30-transport-outer-boundary-hardening-implementation-plan.md`. The important correction is that MESA's useful pattern is layered conditioning, not merely "use `x_scale`": the local source shows per-variable scaling, equation-local normalization, and correction-domain guards. The corresponding ASTRA next move is to split interior and outer transport diagnostics, harden transport-local solver metrics, and add a narrow outer-boundary domain guard before widening scope into adaptive regularization.
+
+Why this mattered:
+
+- it keeps the methods record aligned with the actual MESA source instead of a hand-wavy "MESA-like" story,
+- it records that ASTRA's log-basis variables already encode part of the scaling story, so a literal `x_scale` clone would be the wrong first move,
+- and it turns the next transport/outer-boundary slice into an explicit, reviewable implementation plan instead of an oral recommendation.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_docs_structure.jl")'`
+- `cd /Users/anna/projects/julia-dev/astra/docs/website && myst build --site --html --strict`
+
+Next step:
+
+- execute `docs/plans/2026-03-30-transport-outer-boundary-hardening-implementation-plan.md` task-by-task and stop early if the split diagnostics point away from the outer boundary.
+
 ### Armijo merit validation evidence
 
 ASTRA now has a dated artifact bundle and interpretation note for the current Armijo merit validation sweep at `artifacts/validation/2026-03-30-armijo-merit-validation/` and `docs/website/development/armijo-merit-validation-2026-03-30.md`. The bundle covers the 6, 8, 12, 16, and 24 cell ladder plus the default-12 fixture and a deterministic perturbation family; every recorded payload is still `converged = false`, every accepted and best-rejected dominant family is `transport`, and regularized fallback appears in every payload.

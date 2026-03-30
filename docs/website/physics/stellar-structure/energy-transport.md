@@ -50,6 +50,12 @@ This is the `transport` row in `src/numerics/residuals.jl`. The gradient `nabla_
 
 The transport row is assembled in [Residual Assembly](../../methods/residual-assembly.md), and its current derivative handling is described in [Jacobian Construction](../../methods/jacobian-construction.md). The $\log(T)$ and $\log(P)$ form is deliberate: it keeps the row numerically stable while luminosity, pressure, and temperature span many orders of magnitude.
 
+## Current validation status
+
+The current dated Armijo validation bundle makes one point sharply: the dominant weighted failure signal is repeatedly in the `transport` family. In the committed `2026-03-30` bundle, every payload still reports `transport` as both the accepted-step dominant family and the best-rejected dominant family, while regularized fallback is used everywhere.
+
+That is a measured solver diagnostics result, not yet a proof that the radiative-gradient law itself is wrong. The sharper current hypothesis is narrower: the present transport bottleneck may be concentrated in the one-sided outer transport interface, the local transport derivative quality, or both. The current diagnostics do not yet split interior transport from the outer one-sided transport row, so ASTRA should harden that evidence surface before claiming a purely boundary-local cause.
+
 ## What is deferred
 
 Real mixing-length theory, convective overshoot, semiconvection, thermohaline transport, and composition transport are deferred. The present transport row is radiative-gradient-only and should be read as a bootstrap closure, not a finished convective model.

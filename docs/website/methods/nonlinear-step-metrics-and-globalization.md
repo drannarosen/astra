@@ -171,6 +171,21 @@ ASTRA follows the idea, not the full implementation. The current classical lane 
 
 For the file-backed comparison details, see [MESA Reference: Solver Scaling](mesa-reference/solver-scaling.md).
 
+## What the current validation bundle says
+
+The current dated Armijo validation bundle narrows the next solver question considerably. Across the default fixture, the small cell ladder, and the deterministic perturbation family, every committed payload still reports:
+
+- `converged = false`,
+- `used_regularized_fallback = true`,
+- `accepted_step_count = 8`,
+- and `transport` as both the accepted-step dominant family and the best-rejected dominant family.
+
+That is enough to say two things honestly.
+
+First, conditioning still matters. A solve that always falls back to regularized normal equations and still accumulates hundreds of rejected trials is not numerically mature.
+
+Second, a purely global-conditioning story is no longer the sharpest interpretation. The repeated `transport` dominance is a more localized signature than "the whole Jacobian is badly scaled." That is why the next ASTRA slice should harden the transport/outer-boundary evidence surface and transport-local solver metrics before it widens scope into adaptive regularization.
+
 ## What the current merit slice is
 
 ASTRA now has a minimal Armijo merit-function controller, not merely a future ambition.

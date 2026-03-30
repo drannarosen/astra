@@ -32,6 +32,8 @@ The same distinction matters for local derivatives. ASTRA's closures may be writ
 
 For the closest file-backed MESA comparison, see [MESA Reference: Solver Scaling](mesa-reference/solver-scaling.md). The physics-side reason luminosity needs special care appears in [Physics: Energy Generation](../physics/stellar-structure/energy-generation.md). The current ASTRA step-metric policy that sits on top of this column scaling is documented in [Nonlinear Step Metrics and Globalization](nonlinear-step-metrics-and-globalization.md).
 
+The current MESA audit sharpens one design choice for ASTRA. MESA does not just scale columns; it also normalizes several equations locally and applies domain-aware correction guards. ASTRA should copy that layered philosophy, not the literal `x_scale` implementation. Because ASTRA already solves `\ln R`, `\ln T`, and `\ln \rho`, broadening column scaling is not the first next move. The sharper next move is transport/outer-boundary-local hardening while keeping the present packed-variable ownership intact.
+
 ## Linear solve
 
 The current direct solve is a dense backslash solve. If that fails or returns a non-finite update, ASTRA retries with regularized normal equations on the same scaled system.
@@ -58,7 +60,7 @@ For the physical role of luminosity in the structure equations, see [Energy Gene
 ## MESA parity checklist
 
 - [x] The page points to the dedicated source-backed MESA comparison surface instead of implying parity locally.
-- [ ] ASTRA's current luminosity-only column scaling is benchmarked against at least one alternative conditioning strategy before claiming it is the best local policy.
+- [ ] ASTRA's current luminosity-only column scaling is benchmarked against at least one transport-local conditioning alternative before claiming it is the best local policy.
 
 ## Open-risk checklist
 
