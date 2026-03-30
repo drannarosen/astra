@@ -40,11 +40,12 @@ Here `\kappa_\mathrm{surf}` is the local Rosseland-mean opacity at the outer cel
 
 ## Current ASTRA implementation
 
-ASTRA's current Phase 2 atmosphere implementation keeps the existing outer radius and luminosity target rows, but now routes the surface thermodynamic targets, the final transport row, and the surface-pressure weighting through the shared one-sided match-point helper layer:
+ASTRA's current Phase 2 atmosphere implementation keeps the existing outer radius and luminosity target rows; the surface thermodynamic rows use the shared outer match-point helper layer, and the outer transport row remains one-sided to the photospheric face:
 
 - the outer cell temperature is matched in log form to `outer_match_temperature_k(...)`,
 - the outer cell pressure is matched against `outer_match_pressure_dyn_cm2(...)`,
-- the final transport row is one-sided and uses the same Phase 2 helper layer rather than the old direct `T_\mathrm{eff}` and `P_\mathrm{ph}` reconstruction.
+- the surface pressure weighting uses the shared outer match-point pressure scale,
+- the outer transport row remains one-sided to the photospheric face and uses `surface_effective_temperature_k(...)` plus `eddington_photospheric_pressure_dyn_cm2(...)`.
 
 This is a one-sided `T(\tau)` reconstruction. It keeps the outer face as the photospheric reference while treating the outermost cell as a deeper match point instead of the photosphere itself.
 
@@ -65,8 +66,9 @@ Status: implemented.
 - keep the same public solve contract and packed basis `[\ln R, L, \ln T, \ln \rho]`,
 - treat the outer face as the photosphere at `tau = 2/3`,
 - reconstruct the outermost thermodynamic cell from a half-cell optical-depth estimate and hydrostatic column estimate.
-- route the outer transport row through the shared match-point helper layer,
-- route the surface pressure scaling through the same helper layer.
+- the surface thermodynamic rows use the shared outer match-point helper layer,
+- route the surface pressure scaling through the shared outer match-point pressure scale,
+- keep the outer transport row one-sided to the photospheric face.
 
 This design choice is deliberate. Phase 2 hardens atmosphere physics without simultaneously redesigning ASTRA's larger global model-family ownership. ASTRA may later revisit whether luminosity or radius should become emergent rather than targeted, but that is a separate project from the current atmosphere implementation.
 
@@ -92,7 +94,9 @@ The current approved atmosphere slice is:
 
 - keep the current outer radius target row,
 - keep the current outer luminosity target row,
-- keep the outer transport row and surface pressure scale aligned with the shared match-point helpers,
+- the surface thermodynamic rows use the shared outer match-point helper layer,
+- keep the surface pressure scale aligned with the shared outer match-point pressure scale,
+- keep the outer transport row one-sided to the photospheric face,
 - keep richer atmosphere options and global-closure redesign out of scope for this implementation.
 
 The reasoning is simple. ASTRA's current outer `R` and `L` rows still define the present bootstrap family, so changing them now would mix atmosphere hardening with a larger closure redesign. The better move is to keep the current ownership while making the atmosphere semantics and solver metrics consistent.
@@ -107,7 +111,7 @@ The reasoning is simple. ASTRA's current outer `R` and `L` rows still define the
 - [x] The Phase 3 richer-atmosphere path is named explicitly.
 - [x] The page distinguishes current implementation from planned atmosphere work.
 - [x] The approved Phase 2 choice to preserve outer `R` and `L` in that slice is recorded explicitly.
-- [x] The shared outer transport / pressure-scale helper layer is recorded explicitly.
+- [x] The shared outer match-point helper layer for the surface thermodynamic rows is recorded explicitly.
 - [x] The solver-side surface-pressure weighting is tied to the same match-point helper layer.
 - [ ] Add a source-backed `T(\tau)` comparison note for the implemented Phase 2 closure.
 - [ ] Add a benchmark artifact showing how the atmosphere closure changes the classical convergence basin.

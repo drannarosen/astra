@@ -53,7 +53,7 @@ Those rows are intentionally staged. They are part of the canonical current solv
 
 For the physics-side explanation of the photosphere, tau `= 2/3`, and the planned `T(\tau)` path, see [Atmosphere and Photosphere](../physics/atmosphere-and-photosphere.md).
 
-The approved next step is more specific than that short phrase suggests. Phase 2 preserves the current outer radius and luminosity target rows and routes the final transport row and pressure scaling through the same helper layer as the surface match-point reconstruction. In other words, the implementation changes the atmosphere semantics, not the global bootstrap family definition.
+The approved next step is more specific than that short phrase suggests. Phase 2 preserves the current outer radius and luminosity target rows; the surface thermodynamic rows use the shared outer match-point helper layer, the pressure scaling uses the shared outer match-point pressure scale, and the outer transport row remains one-sided to the photospheric face. In other words, the implementation changes the atmosphere semantics, not the global bootstrap family definition.
 
 ## Why this matters
 
@@ -67,7 +67,8 @@ The continuous boundary story is summarized in [Physics: Boundary Conditions](..
 - [x] The surface closure is identified as explicit and one-sided.
 - [x] The page states that these rows are the current ASTRA equations, not only design goals.
 - [x] The current surface row formulas are written explicitly.
-- [x] The outer transport row and surface pressure scale are recorded as sharing the Phase 2 helper layer.
+- [x] The surface thermodynamic rows use the shared outer match-point helper layer.
+- [x] The outer transport row remains one-sided to the photospheric face.
 - [x] The Phase 2 `T(\tau)` path is documented as implemented.
 
 ## MESA parity checklist

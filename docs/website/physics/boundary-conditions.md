@@ -38,7 +38,7 @@ The center rows are assembled in [Residual Assembly](../methods/residual-assembl
 
 Phase 3 richer atmosphere options and a more explicit benchmark campaign are deferred. ASTRA currently needs the surface to be explicit, numerically stable, and scientifically legible, not yet astrophysically complete.
 
-The approved next step is to keep the current outer radius and luminosity target rows while keeping the one-sided `T(\tau)` reconstruction and its helper-layer transport and pressure scaling aligned. That keeps the atmosphere question separate from the larger future question of whether ASTRA should continue to target both outer `R` and `L` in the long run.
+The approved next step is to keep the current outer radius and luminosity target rows while the surface thermodynamic rows use the shared outer match-point helper layer, the surface pressure scale uses the shared outer match-point pressure scale, and the outer transport row remains one-sided to the photospheric face. That keeps the atmosphere question separate from the larger future question of whether ASTRA should continue to target both outer `R` and `L` in the long run.
 
 ## Implementation checklist
 

@@ -10,7 +10,7 @@ ASTRA's default classical initializer now includes center asymptotic targets, so
 
 ### Surface closure is now staged, not finished
 
-The current outer boundary uses a Phase 2 one-sided `T(\tau)` atmosphere closure with shared helper-layer transport and pressure scaling rather than a guessed density. That is better than the old provisional closure, but it is still not proven across a broader convergence basin.
+The current outer boundary uses a Phase 2 one-sided `T(\tau)` atmosphere closure; the surface thermodynamic rows use the shared outer match-point helper layer, the surface pressure scale uses the shared outer match-point pressure scale, and the outer transport row remains one-sided to the photospheric face. That is better than the old provisional closure, but it is still not proven across a broader convergence basin.
 
 ### Evolution remains intentionally stubbed
 

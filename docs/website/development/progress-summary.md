@@ -14,9 +14,9 @@ For each update, record:
 
 ## 2026-03-30
 
-### Phase 2 helper-layer transport realignment
+### Phase 2 atmosphere contract recorded
 
-ASTRA's atmosphere slice now routes both the outer transport row and the surface pressure scale through the shared Phase 2 match-point helper layer. The current classical lane still keeps the outer radius and luminosity target rows, preserves the packed structure basis `[\ln R, L, \ln T, \ln \rho]`, and uses the one-sided Phase 2 Eddington `T(\tau)` match at the surface. The new coupling matters because the residual rows and the solver metrics now agree on the same outer match point.
+ASTRA's atmosphere slice now records the one-sided Phase 2 `T(\tau)` contract directly in the website. The current classical lane still keeps the outer radius and luminosity target rows, preserves the packed structure basis `[\ln R, L, \ln T, \ln \rho]`, and the surface thermodynamic rows use the shared outer match-point helper layer while the outer transport row remains one-sided to the photospheric face. The surface pressure scale also uses the shared outer match-point pressure scale.
 
 Why this mattered:
 
@@ -35,12 +35,12 @@ Next step:
 
 ### Atmosphere boundary hardening
 
-ASTRA's classical lane now uses a one-sided Phase 2 Eddington `T(\tau)` atmosphere closure at the surface. The outer radius and luminosity target rows remain in place, but the surface temperature row is now tied to the shared outer match helper, the surface pressure row is tied to the shared outer match helper, and the final transport row uses the same helper layer. The solver-side row weights were also realigned so the surface temperature row is dimensionless and the surface pressure row is weighted on the same outer match-point pressure scale.
+ASTRA's classical lane now uses a one-sided Phase 2 Eddington `T(\tau)` atmosphere closure at the surface. The outer radius and luminosity target rows remain in place, the surface temperature row is tied to the shared outer match-point temperature helper, the surface pressure row is tied to the shared outer match-point pressure helper, and the outer transport row remains one-sided to the photospheric face. The solver-side row weights were also realigned so the surface temperature row is dimensionless and the surface pressure row is weighted on the shared outer match-point pressure scale.
 
 Why this mattered:
 
 - it replaces the provisional hard surface temperature/density guesses with a physically interpretable atmosphere closure,
-- it makes the outer transport row consistent with the same atmosphere semantics,
+- it keeps the outer transport row one-sided to the photospheric face while matching the surface thermodynamic rows through the same atmosphere semantics,
 - and it fixes the weighted acceptance metric so it judges the new pressure row against the same outer match-point pressure scale instead of the old density units.
 
 Verification run:

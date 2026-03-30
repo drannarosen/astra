@@ -31,7 +31,8 @@ This checklist tracks ASTRA's first serious science lane:
 - [x] Weighted Newton residual/correction metrics and correction limiting implemented without widening the public solve-owned state
 - [x] Phase 2 one-sided `T(\tau)` atmosphere boundary implemented for the classical outer solve
 - [x] Phase 2 atmosphere design choice recorded: preserve current outer `R/L` ownership while upgrading to a one-sided `T(\tau)` thermodynamic reconstruction
-- [x] Outer transport row and surface pressure scale routed through the shared Phase 2 helper layer
+- [x] surface thermodynamic rows use the shared outer match-point helper layer
+- [x] outer transport row remains one-sided to the photospheric face
 
 ## Initialization lane
 

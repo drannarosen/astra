@@ -16,7 +16,9 @@ This page records significant ASTRA repository changes in a compact, contributor
 ### Changed
 
 - the surface temperature and pressure rows now use atmosphere-derived targets instead of guessed outer thermodynamic values
-- the outer transport row and surface pressure scale now use the shared Phase 2 match-point helper layer
+- the surface thermodynamic rows use the shared outer match-point helper layer
+- the surface pressure scale uses the shared outer match-point pressure scale
+- the outer transport row remains one-sided to the photospheric face
 - solver row weights now treat the atmosphere surface rows in temperature and pressure units rather than the old density guess
 - trial steps are now limited by weighted correction RMS and max-correction envelopes before backtracking
 - nonlinear acceptance now requires weighted residual improvement plus a raw-residual safeguard
@@ -25,7 +27,7 @@ This page records significant ASTRA repository changes in a compact, contributor
 
 ### Notes
 
-The current controller is stronger and more transparent than the older raw-norm-only slice, but it is still not a full merit-function or trust-region globalization scheme. The weighting policy remains part of the current bootstrap numerical contract rather than a proven final design. The atmosphere boundary is now a staged one-sided `T(\tau)` match-point reconstruction, not yet a full tabulated atmosphere module.
+The current controller is stronger and more transparent than the older raw-norm-only slice, but it is still not a full merit-function or trust-region globalization scheme. The weighting policy remains part of the current bootstrap numerical contract rather than a proven final design. The atmosphere boundary is now a staged one-sided `T(\tau)` reconstruction with the surface thermodynamic rows using the shared outer match-point helper layer and the outer transport row remaining one-sided to the photospheric face, not yet a full tabulated atmosphere module.
 
 ## 2026-03-29
 

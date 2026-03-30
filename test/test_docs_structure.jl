@@ -128,8 +128,8 @@
             "`StellarModel`",
             "Next step",
             "First classical residual minimal slice",
-            "Phase 2 helper-layer transport realignment",
-            "one-sided Phase 2 Eddington",
+            "Phase 2 atmosphere contract recorded",
+            "outer transport row remains one-sided to the photospheric face",
         ],
         "docs/website/development/checklists.md" => [
             "developer-facing checklists",
@@ -145,17 +145,19 @@
             "screening",
             "degeneracy",
             "Atmosphere Phase 2 `T(\\tau)` upgrade implemented",
-            "shared Phase 2 helper layer",
+            "surface thermodynamic rows use the shared outer match-point helper layer",
+            "outer transport row remains one-sided to the photospheric face",
         ],
         "docs/website/development/issues.md" => [
             "Phase 2 one-sided `T(\\tau)` atmosphere boundary",
-            "shared helper-layer transport and pressure scaling",
+            "outer transport row remains one-sided to the photospheric face",
+            "shared outer match-point helper layer",
             "convergence basin",
         ],
         "docs/website/development/changelog.md" => [
             "Phase 2 one-sided `T(\\tau)` atmosphere closure",
-            "shared Phase 2 match-point helper layer",
-            "staged one-sided `T(\\tau)` match-point reconstruction",
+            "surface thermodynamic rows use the shared outer match-point helper layer",
+            "outer transport row remains one-sided to the photospheric face",
         ],
         "docs/website/physics/overview.md" => [
             "Structure equations",
@@ -239,7 +241,8 @@
             "Numerical realization in ASTRA",
             "What is deferred",
             "Phase 2",
-            "helper-layer transport and pressure scaling",
+            "surface thermodynamic rows use the shared outer match-point helper layer",
+            "outer transport row remains one-sided to the photospheric face",
         ],
         "docs/website/physics/atmosphere-and-photosphere.md" => [
             "photosphere",
@@ -247,7 +250,8 @@
             "Eddington-grey",
             "Phase 2",
             "Phase 3",
-            "shared one-sided match-point helper layer",
+            "surface thermodynamic rows use the shared outer match-point helper layer",
+            "outer transport row remains one-sided to the photospheric face",
         ],
         "docs/website/physics/stellar-structure/mass-conservation.md" => [
             "dr/dm",
@@ -360,6 +364,7 @@
             "Normative center-boundary contract",
             "shared outer match-point temperature",
             "shared outer match-point pressure scale",
+            "outer transport row remains one-sided to the photospheric face",
         ],
         "docs/website/methods/verification-and-jacobian-audits.md" => [
             "local derivative validation",
