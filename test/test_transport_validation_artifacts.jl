@@ -6,7 +6,7 @@
 
         @test occursin("accepted_transport_dominant_family", manifest)
         @test occursin("best_rejected_transport_dominant_family", manifest)
-        @test occursin("accepted_transport_dominant_family", payload)
-        @test occursin("best_rejected_transport_dominant_family", payload)
+        @test occursin("row_family_merit.interior_transport", payload)
+        @test occursin("row_family_merit.outer_transport", payload)
     end
 end
