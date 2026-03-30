@@ -78,6 +78,17 @@
         temperature_k,
         composition,
     )
+    screened_nuclear_temperature_fd =
+        (
+            screened_nuclear(density_g_cm3, temperature_k + 1.0, composition).energy_rate_erg_g_s -
+            screened_nuclear(density_g_cm3, temperature_k - 1.0, composition).energy_rate_erg_g_s
+        ) / 2.0
+    screened_nuclear_temperature_analytic = ASTRA.Microphysics.nuclear_temperature_derivative(
+        screened_nuclear,
+        density_g_cm3,
+        temperature_k,
+        composition,
+    )
 
     @test isfinite(pressure_density_fd)
     @test isfinite(pressure_density_analytic)
@@ -95,6 +106,14 @@
     @test isapprox(
         screened_nuclear_density_analytic,
         screened_nuclear_density_fd;
+        rtol = 1.0e-6,
+        atol = 1.0e-8,
+    )
+    @test isfinite(screened_nuclear_temperature_fd)
+    @test isfinite(screened_nuclear_temperature_analytic)
+    @test isapprox(
+        screened_nuclear_temperature_analytic,
+        screened_nuclear_temperature_fd;
         rtol = 1.0e-6,
         atol = 1.0e-8,
     )
