@@ -168,6 +168,31 @@
             "Numerical realization in ASTRA",
             "What is deferred",
         ],
+        "docs/website/physics/stellar-structure/mass-conservation.md" => [
+            "dr/dm",
+            "shell volume",
+            "Numerical realization in ASTRA",
+        ],
+        "docs/website/physics/stellar-structure/hydrostatic-equilibrium.md" => [
+            "dP/dm",
+            "pressure support",
+            "Current ASTRA implementation",
+        ],
+        "docs/website/physics/stellar-structure/energy-generation.md" => [
+            "dL/dm",
+            "eps_nuc",
+            "What is deferred",
+        ],
+        "docs/website/physics/stellar-structure/energy-transport.md" => [
+            "dT/dm",
+            "radiative gradient",
+            "log(T",
+        ],
+        "docs/website/physics/stellar-structure/coupled-problem.md" => [
+            "boundary-value problem",
+            "Jacobian",
+            "placeholder closures",
+        ],
         "docs/website/numerics/residuals.md" => [
             "first classical structure equations",
             "source-decomposed",
