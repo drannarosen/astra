@@ -91,6 +91,22 @@ weighted_residual(
     residual::AbstractVector{<:Real},
 ) = residual_row_weights(problem, model) .* Float64.(residual)
 
+function weighted_residual_merit(
+    residual::AbstractVector{<:Real},
+    row_weights::AbstractVector{<:Real},
+)
+    weighted = Float64.(residual) .* Float64.(row_weights)
+    return 0.5 * sum(abs2, weighted)
+end
+
+function weighted_residual_merit(
+    problem::StructureProblem,
+    model::StellarModel,
+    residual::AbstractVector{<:Real},
+)
+    return weighted_residual_merit(residual, residual_row_weights(problem, model))
+end
+
 function weighted_residual_norm(
     residual::AbstractVector{<:Real},
     row_weights::AbstractVector{<:Real},
@@ -105,6 +121,52 @@ function weighted_residual_norm(
     residual::AbstractVector{<:Real},
 )
     return weighted_residual_norm(residual, residual_row_weights(problem, model))
+end
+
+function _family_merit(weighted_residual::AbstractVector{<:Real}, row_range)
+    return 0.5 * sum(abs2, view(weighted_residual, row_range))
+end
+
+function row_family_merit_summary(
+    problem::StructureProblem,
+    model::StellarModel,
+    residual::AbstractVector{<:Real};
+    row_weights::AbstractVector{<:Real} = residual_row_weights(problem, model),
+)
+    weighted_residual = Float64.(residual) .* Float64.(row_weights)
+    n = problem.grid.n_cells
+
+    center = _family_merit(weighted_residual, structure_center_row_range())
+    geometry = 0.0
+    hydrostatic = 0.0
+    luminosity = 0.0
+    transport = 0.0
+
+    for k in 1:(n - 1)
+        row_range = interior_structure_row_range(k)
+        row = first(row_range)
+        geometry += _family_merit(weighted_residual, row:row)
+        hydrostatic += _family_merit(weighted_residual, (row + 1):(row + 1))
+        luminosity += _family_merit(weighted_residual, (row + 2):(row + 2))
+        transport += _family_merit(weighted_residual, (row + 3):(row + 3))
+    end
+
+    surface = _family_merit(weighted_residual, structure_surface_row_range(n))
+    total = center + geometry + hydrostatic + luminosity + transport + surface
+    family_values = (center, geometry, hydrostatic, luminosity, transport, surface)
+    family_names = (:center, :geometry, :hydrostatic, :luminosity, :transport, :surface)
+    dominant_family = family_names[argmax(family_values)]
+
+    return _ASTRA_MODULE.RowFamilyMeritSummary(
+        center,
+        geometry,
+        hydrostatic,
+        luminosity,
+        transport,
+        surface,
+        total,
+        dominant_family,
+    )
 end
 
 """

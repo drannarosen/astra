@@ -291,6 +291,23 @@ struct StructureDiagnostics
 end
 
 """
+    RowFamilyMeritSummary(...)
+
+Grouped frozen-weight merit contributions for the current classical residual
+row families.
+"""
+struct RowFamilyMeritSummary
+    center::Float64
+    geometry::Float64
+    hydrostatic::Float64
+    luminosity::Float64
+    transport::Float64
+    surface::Float64
+    total::Float64
+    dominant_family::Symbol
+end
+
+"""
     SolveResult(state, diagnostics)
 
 Container returned by `solve_structure`.
