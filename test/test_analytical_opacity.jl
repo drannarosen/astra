@@ -1,0 +1,27 @@
+@testset "analytical opacity" begin
+    composition = Composition(0.70, 0.28, 0.02)
+    κ_model = ASTRA.Microphysics.AnalyticalOpacity()
+
+    hot = κ_model(1.0, 1.5e7, composition)
+    cool = κ_model(1.0e-8, 6000.0, composition)
+
+    @test hot.opacity_cm2_g > 0.0
+    @test cool.opacity_cm2_g > 0.0
+    @test hot.source == :analytical_opacity
+
+    dκdT = ASTRA.Microphysics.opacity_temperature_derivative(
+        κ_model,
+        1.0,
+        1.5e7,
+        composition,
+    )
+    dκdρ = ASTRA.Microphysics.opacity_density_derivative(
+        κ_model,
+        1.0,
+        1.5e7,
+        composition,
+    )
+
+    @test isfinite(dκdT)
+    @test isfinite(dκdρ)
+end

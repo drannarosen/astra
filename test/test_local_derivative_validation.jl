@@ -18,6 +18,17 @@
     @test isfinite(density_analytic)
     @test isapprox(density_analytic, density_fd; rtol = 1.0e-4, atol = 1.0e-8)
 
+    eos_state = problem.microphysics.eos(density_g_cm3, temperature_k, composition)
+    opacity_state = problem.microphysics.opacity(density_g_cm3, temperature_k, composition)
+    nuclear_state = problem.microphysics.nuclear(density_g_cm3, temperature_k, composition)
+
+    @test isfinite(eos_state.pressure_dyn_cm2)
+    @test 0.0 < eos_state.gas_pressure_fraction <= 1.0
+    @test isfinite(eos_state.adiabatic_gradient)
+    @test isfinite(eos_state.specific_heat_erg_g_k)
+    @test opacity_state.source == :analytical_opacity
+    @test nuclear_state.source == :analytical_nuclear
+
     pressure_density_fd =
         (
             problem.microphysics.eos(density_g_cm3 * 1.0e0 + 1.0e-6, temperature_k, composition).pressure_dyn_cm2 -
