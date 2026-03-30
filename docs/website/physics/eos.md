@@ -1,11 +1,19 @@
 # Equation of State
 
-ASTRA's current EOS closure is deliberately simple: ideal gas plus radiation pressure.
+The equation of state closes the stellar-structure problem by turning density, temperature, and composition into pressure and thermodynamic response. In ASTRA's bootstrap lane, that closure is intentionally simple and fully explicit.
 
-## Why start here
+## Current ASTRA implementation
 
-- it is interpretable,
-- it keeps the thermodynamic closure explicit,
-- and it provides a clean teaching surface for later upgrades.
+ASTRA currently uses an ideal gas plus radiation EOS:
 
-The important architectural change is that this placeholder closure is now exercised by the classical residual itself, not just by interface tests. Later ASTRA work can add richer EOS backends, but the rule remains the same: the solver depends on an EOS interface and helper layer rather than on one hard-coded implementation.
+`P = rho k_B T / (mu m_u) + a T^4 / 3`
+
+The same closure also supplies a fixed adiabatic gradient and the pressure derivatives that the Jacobian needs. That is enough for the classical residual to ask the EOS for the quantities it owns without pretending the thermodynamics are production grade.
+
+## Numerical realization in ASTRA
+
+The EOS is evaluated in the residual through [Residual Assembly](../methods/residual-assembly.md) and differentiated in [Jacobian Construction](../methods/jacobian-construction.md). The current implementation keeps pressure derived from the local cell state; it is not stored as an independent solver variable.
+
+## What is deferred
+
+Real EOS tables, partial ionization, degeneracy, Coulomb corrections, and composition-rich thermodynamics are deferred. This page is the place to explain the closure ASTRA actually has now, not the closure we will want later.

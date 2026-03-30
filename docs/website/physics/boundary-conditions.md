@@ -1,16 +1,24 @@
 # Boundary Conditions
 
-Boundary conditions are not side details in a stellar code. They are part of the model definition.
+Boundary conditions close the global stellar solve. They are not an afterthought: they set the inner asymptotics and the outer matching that make the classical boundary-value problem well posed.
 
-ASTRA's first classical residual now uses deliberately minimal physical closures:
+At the center, spherical geometry forces regularity conditions because the naive differential form becomes singular as $r \to 0$. At the surface, the code needs some explicit outer closure so the global system has a finite edge.
 
-- a center asymptotic radius closure for the innermost face using the leading-order spherical-series target,
-- a center asymptotic luminosity closure for the innermost face using the leading-order integrated source target,
-- a surface radius closure against the declared stellar-radius guess,
-- a surface luminosity closure against the declared luminosity guess,
-- a surface temperature closure against the declared effective-temperature guess,
-- and a surface density closure against a simple atmosphere-density guess.
+## Current ASTRA implementation
 
-The center treatment is still deliberately bootstrap-level, but it is no longer the old numerically fragile shell-volume closure plus `L_face[1] = 0` pair. ASTRA now enforces the leading-order center asymptotics directly at the inner face so the first zone is not asked to satisfy a subtractive-cancellation constraint that Float64 resolves poorly.
+ASTRA currently uses center asymptotic targets for radius and luminosity, plus provisional surface guesses for radius, luminosity, temperature, and density. The center closure follows the leading-order series form, and the surface closure is intentionally lightweight.
 
-The surface closure is still provisional, because the current milestone is about replacing the toy interior rows with real equation semantics, not about pretending the atmosphere treatment is finished.
+The current center targets are:
+
+- `r_inner = (3 m_inner / (4 pi rho_c))^(1/3)`
+- `L_inner = m_inner * epsilon_nuc`
+
+Those are the rows that replaced the older fragile center closure.
+
+## Numerical realization in ASTRA
+
+The center rows are assembled in [Residual Assembly](../methods/residual-assembly.md) through the boundary helper layer, and the solver-side interpretation is described in [Boundary Condition Realization](../methods/boundary-condition-realization.md). The surface guesses are still provisional and remain part of the bootstrap lane only.
+
+## What is deferred
+
+Real atmosphere fitting, solar-calibrated outer layers, and a finished surface closure are deferred. ASTRA currently needs the surface to be explicit and numerically stable, not astrophysically complete.

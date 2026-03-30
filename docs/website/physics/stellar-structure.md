@@ -1,28 +1,33 @@
 # Stellar Structure
 
-The classical 1D stellar-structure problem is built from four coupled ideas:
+The classical 1D stellar-structure problem is a single coupled boundary-value problem in the enclosed-mass coordinate. It combines geometry, force balance, source balance, and energy transport into one nonlinear solve.
 
-- mass continuity,
-- hydrostatic equilibrium,
-- energy conservation,
-- energy transport.
+## What the coupled problem does
 
-ASTRA's long-term classical baseline will turn those into a coupled nonlinear solve in the enclosed-mass coordinate.
+The four structure equations are:
 
-The approved state staggering for that solve is:
+- `dr/dm` for mass conservation and shell geometry
+- `dP/dm` for hydrostatic support
+- `dL/dm` for energy generation
+- `dT/dm` for energy transport
 
-- face-centered radius and luminosity,
-- cell-centered density and temperature.
+ASTRA now arranges those equations on a staggered mesh with face-centered radius and luminosity, and cell-centered density and temperature. That is the classical baseline lane, not a finished stellar-evolution package.
 
-That is a physically natural arrangement for a 1D mass-coordinate stellar code and is consistent with the common MESA-style structure layout documented in its developer materials.
+## Current ASTRA implementation
 
-## Current status
+The current residual has one geometric row, one hydrostatic row, one luminosity row, and one transport row per interior zone, plus center and surface boundary rows. The interior rows are built from the current toy EOS, opacity, and nuclear closures, so the solver can exercise the full residual chain before the microphysics grows up.
 
-The current repository now implements a first classical residual on the approved staggered structure state. The interior rows carry:
+That means the code is already solving the right *kind* of nonlinear system, but still with intentionally simple closures:
 
-1. a geometric shell-volume closure,
-2. a hydrostatic-equilibrium closure,
-3. a luminosity-generation closure using placeholder nuclear heating,
-4. and a transport closure built from a radiative gradient estimate.
+- shell-volume geometry in the mass row
+- ideal-gas-plus-radiation pressure in the hydrostatic row
+- toy pp-like heating in the luminosity row
+- radiative-gradient transport in the temperature row
 
-That is an important step forward from the earlier teaching scaffold, but it is still not yet a validated solar model. The EOS, opacity, nuclear, convection, and surface layers remain intentionally simple placeholder closures for this milestone.
+## Numerical realization in ASTRA
+
+The residual assembly lives in [Residual Assembly](../methods/residual-assembly.md). The solver boundary and variable ownership live in [From Equations to Residual](../methods/from-equations-to-residual.md) and [Staggered Mesh and State Layout](../methods/staggered-mesh-and-state-layout.md). Jacobian quality is tracked in [Jacobian Construction](../methods/jacobian-construction.md).
+
+## What is deferred
+
+The current page is the classical baseline only. A validated solar model, realistic EOS/opacity tables, MLT, composition transport, PMS evolution, and Entropy-DAE all remain deferred until the classical residual is numerically trustworthy.

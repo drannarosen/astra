@@ -1,11 +1,19 @@
 # Nuclear Energy Generation
 
-The bootstrap nuclear module is a toy proton-proton-chain-inspired heating law. It is intentionally lightweight and only serves as a placeholder energy source.
+Nuclear heating tells the star where luminosity is created. ASTRA's bootstrap lane uses a toy heating law so the energy-generation row can participate in the real residual before the reaction network grows up.
 
-## What it does not claim
+## Current ASTRA implementation
 
-- detailed reaction-network fidelity,
-- abundance evolution realism,
-- or regime coverage beyond a toy teaching surface.
+ASTRA currently uses a toy pp-toy heating law:
 
-The real architectural question at bootstrap is not reaction-network completeness. It is whether the solver can ask for nuclear heating through a clean interface and receive an interpretable answer.
+`epsilon_nuc = 1.07e-7 * rho * X^2 * (T / 1.0e6)^4`
+
+That gives the classical residual a smooth source term with the right qualitative temperature sensitivity, while remaining easy to differentiate and easy to reason about.
+
+## Numerical realization in ASTRA
+
+The luminosity row in [Residual Assembly](../methods/residual-assembly.md) subtracts `dm * epsilon_nuc`. The Jacobian audit in [Jacobian Construction](../methods/jacobian-construction.md) checks the local density and temperature derivatives that this closure contributes.
+
+## What is deferred
+
+Real reaction networks, screening physics, neutrino losses, and composition evolution are deferred. This page documents the current source term that ASTRA actually uses, not a full nuclear-physics lane.

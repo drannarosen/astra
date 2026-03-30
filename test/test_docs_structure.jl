@@ -128,29 +128,49 @@
             "Tier 0 structural sanity checks implemented",
             "Entropy-DAE comparison lane",
         ],
+        "docs/website/physics/index.md" => [
+            "Structure equations",
+            "Constitutive physics",
+            "Boundary conditions",
+            "What is deferred",
+        ],
         "docs/website/physics/stellar-structure.md" => [
-            "first classical residual",
-            "not yet a validated solar model",
+            "Current ASTRA implementation",
+            "Numerical realization in ASTRA",
+            "What is deferred",
+        ],
+        "docs/website/physics/eos.md" => [
+            "Current ASTRA implementation",
+            "Numerical realization in ASTRA",
+            "What is deferred",
+            "ideal gas plus radiation",
+        ],
+        "docs/website/physics/opacity.md" => [
+            "Current ASTRA implementation",
+            "Numerical realization in ASTRA",
+            "What is deferred",
+            "Kramers",
+        ],
+        "docs/website/physics/nuclear.md" => [
+            "Current ASTRA implementation",
+            "Numerical realization in ASTRA",
+            "What is deferred",
+            "pp-toy",
+        ],
+        "docs/website/physics/convection.md" => [
+            "Current ASTRA implementation",
+            "Numerical realization in ASTRA",
+            "What is deferred",
+            "criterion hook",
         ],
         "docs/website/physics/boundary-conditions.md" => [
-            "shell-volume closure",
-            "surface closure is still provisional",
+            "Current ASTRA implementation",
+            "Numerical realization in ASTRA",
+            "What is deferred",
         ],
         "docs/website/numerics/residuals.md" => [
             "first classical structure equations",
             "source-decomposed",
-        ],
-        "docs/website/physics/eos.md" => [
-            "placeholder closure",
-            "classical residual",
-        ],
-        "docs/website/physics/opacity.md" => [
-            "classical residual",
-            "placeholder closure",
-        ],
-        "docs/website/physics/convection.md" => [
-            "criterion hook",
-            "not yet a full transport theory",
         ],
         "docs/website/myst.yml" => [
             "title: Physics",
