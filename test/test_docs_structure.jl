@@ -149,12 +149,19 @@
             "outer transport row remains one-sided to the photospheric face",
         ],
         "docs/website/development/issues.md" => [
+            "Active issues",
+            "Classical residual convergence basin is still provisional",
+            "Surface closure is now staged, not finished",
+            "Evolution remains intentionally stubbed",
             "Phase 2 one-sided `T(\\tau)` atmosphere boundary",
             "outer transport row remains one-sided to the photospheric face",
             "shared outer match-point helper layer",
             "convergence basin",
         ],
         "docs/website/development/changelog.md" => [
+            "first classical residual slice",
+            "surface closure remains provisional",
+            "differentiability strategy",
             "Phase 2 one-sided `T(\\tau)` atmosphere closure",
             "surface thermodynamic rows use the shared outer match-point helper layer",
             "outer transport row remains one-sided to the photospheric face",
@@ -437,11 +444,6 @@
             "methods/nonlinear-step-metrics-and-globalization.md",
             "methods/mesa-reference/overview.md",
         ],
-        "docs/website/development/changelog.md" => [
-            "first classical residual slice",
-            "surface closure remains provisional",
-            "differentiability strategy",
-        ],
         "docs/website/development/backlog.md" => [
             "Next up",
             "Queued after that",
@@ -451,12 +453,6 @@
             "backend-agnostic",
             "classical baseline",
             "Entropy-DAE later",
-        ],
-        "docs/website/development/issues.md" => [
-            "Active issues",
-            "Classical residual convergence basin is still provisional",
-            "Surface closure is now staged, not finished",
-            "Evolution remains intentionally stubbed",
         ],
         "docs/website/contributing/documentation-style.md" => [
             "Use plain ASTRA when you mean the project",
