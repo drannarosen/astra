@@ -52,7 +52,7 @@ If you are new to Julia, a few ideas will make the ASTRA codebase much easier to
 
 In Julia, a **package** is a named project. In ASTRA, that project name is `ASTRA`, and the package also carries the environment used by the repository. A **namespace** is the named space that holds code so functions and types live under that project name. An **environment** is the package setup discussed above: the dependency list and versions used by this repository.
 
-`src/ASTRA.jl` is the module entrypoint. In practice, that means it is the main file that defines the `ASTRA` module and then loads the rest of the source files in the order the package needs them.
+`src/ASTRA.jl` is the module entrypoint. In practice, that means it is the main file that defines the `ASTRA` module and then loads the rest of the source files in the order the package needs them. Around that entrypoint, ASTRA groups code into layer directories such as `foundation/`, `microphysics/`, `numerics/`, `solvers/`, `formulations/`, and `evolution/` so the filesystem itself reflects the architecture.
 
 **Multiple dispatch** means Julia chooses which method to run based on the types of the inputs. In ASTRA, that helps keep formulation logic and microphysics interfaces explicit without pushing everything through one large conditional block.
 

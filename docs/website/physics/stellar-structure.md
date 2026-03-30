@@ -2,6 +2,8 @@
 
 The classical 1D stellar-structure problem is a single coupled boundary-value problem in the enclosed-mass coordinate. It combines geometry, force balance, source balance, and energy transport into one nonlinear solve.
 
+This page introduces the classical stellar-structure equations, explains why mass coordinates are used, and shows how they connect to ASTRA's solver variables.
+
 This page owns the continuous-equation specification. The companion [Methods](../methods/index.md) pages own the discrete residual and Jacobian specification.
 
 If you are new to stellar numerics, it helps to read this page as a translation table. Each equation is a compact statement about what a star must do everywhere at once. The methods pages later explain how ASTRA converts those statements into finite residual rows, but the continuous equations come first because they define what the code is trying to be faithful to.
@@ -17,18 +19,22 @@ The four structure equations are:
 
 ASTRA now arranges those equations on a staggered mesh with face-centered radius and luminosity, and cell-centered density and temperature. That is the classical baseline lane, not a finished stellar-evolution package.
 
+That coupling is why the problem must be solved simultaneously rather than shell by shell.
+
 In the continuous theory, those equations are usually written in physical variables. In the actual nonlinear solve, ASTRA updates mostly logarithmic state variables,
 
 $$
 x = \left(\log r_{i+1/2},\; L_{i+1/2},\; \log T_i,\; \log \rho_i \right),
 $$
 
-because $r$, $T$, and $\rho$ span extreme dynamic ranges and must remain positive. That means the numerics layer must distinguish carefully between:
+because $r$, $T$, and $\rho$ span extreme dynamic ranges, must remain positive, and are easier to update stably in logarithmic form. ASTRA keeps luminosity $L$ in linear units rather than $\log L$ because its conditioning needs are milder here, its physical interpretation is cleaner in linear form, and a log transform would add complication without much numerical gain. That means the numerics layer must distinguish carefully between:
 
 - the physical equations, written in $r$, $P$, $L$, $T$, and $\rho$,
 - and the solver derivatives, taken with respect to $\log r$, $\log T$, and $\log \rho$.
 
 ## Continuous equations in mass coordinate
+
+ASTRA uses enclosed mass $m$ as a **Lagrangian** coordinate rather than radius $r$ as an **Eulerian** spatial coordinate. In plain language, the solver labels shells by how much mass they contain, not by where they sit in space. That choice is standard in stellar structure because mass shells do not cross, the equations couple cleanly without advective terms, and the center and surface boundary conditions are easier to express.
 
 For a static, spherically symmetric, non-rotating star written in enclosed baryonic mass $m$, the classical structure equations are
 
@@ -73,9 +79,19 @@ The continuous equations above are written in differential form. ASTRA does not 
 
 That separation matters for scientific correctness. A code can quote the right textbook equation and still implement the wrong sign, the wrong owner, the wrong variable basis, or the wrong boundary semantics. ASTRA therefore treats agreement between `Physics` and `Methods` as a contract, not as a stylistic preference.
 
+In the solver, derivatives are taken with respect to the packed variables, not the textbook variables. For example, a derivative written physically as $\partial P / \partial T$ must be converted by the chain rule:
+
+$$
+\frac{\partial P}{\partial \log T} = T \frac{\partial P}{\partial T}.
+$$
+
+Similar conversions apply to $\log r$ and $\log \rho$. This is why ASTRA distinguishes carefully between the physical equations and the solver basis used by the residual and Jacobian.
+
 ## Current ASTRA implementation
 
 The current residual has one geometric row, one hydrostatic row, one luminosity row, and one transport row per interior zone, plus center and surface boundary rows. The interior rows are built from the current toy EOS, opacity, and nuclear closures, so the solver can exercise the full residual chain before the microphysics grows up.
+
+Without boundary conditions at the center and surface, the differential equations do not have a unique solution.
 
 That means the code is already solving the right *kind* of nonlinear system, but still with intentionally simple closures:
 

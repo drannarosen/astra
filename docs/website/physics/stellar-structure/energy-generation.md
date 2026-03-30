@@ -2,6 +2,8 @@
 
 Energy generation tells the star where luminosity comes from and where it is lost. In a full classical stellar-structure solve, the luminosity equation should track all local gain and loss terms, not only nuclear heating.
 
+In plain language, the luminosity at a given shell is built up by adding local energy sources and subtracting local losses inside that shell.
+
 The shorthand form is `dL/dm`, and the source terms are often written as `eps_nuc`, `eps_grav`, and `eps_nu` in code and notes. ASTRA currently implements only the nuclear term, but the continuous equation should be stated in its full source-decomposed form.
 
 ## Continuous equation
@@ -12,9 +14,9 @@ $$
 
 Here $L$ is luminosity, $\varepsilon_\mathrm{nuc}$ is the specific nuclear energy generation rate, $\varepsilon_\mathrm{grav}$ is the gravothermal term, and $\varepsilon_\nu$ is the specific neutrino-loss term, all in $\mathrm{erg\,g^{-1}\,s^{-1}}$. The equation says luminosity grows outward by integrating local heating and cooling terms. ASTRA keeps the source symbol `eps_nuc` visible in the current discrete implementation because that is the only term the bootstrap residual presently owns.
 
-This is one of the most important places to be explicit about what is mathematically complete and what is only partially implemented. The full classical equation is not optional bookkeeping decoration. It is the statement of energy conservation for the stellar model.
+This is one of the most important places to be explicit about what is mathematically complete and what is only partially implemented. The full classical equation is not optional bookkeeping. It is the energy-conservation statement the stellar model is supposed to satisfy.
 
-The gravothermal term matters whenever the star stores or releases internal energy through contraction or expansion. The neutrino term matters whenever local thermal or nuclear conditions allow energy to escape without remaining in the radiation field. A serious stellar code must eventually own all of these terms explicitly.
+The gravothermal term matters whenever the star stores or releases internal energy through contraction or expansion. Even without nuclear burning, a contracting star can still shine by releasing gravothermal energy. The neutrino term matters whenever local thermal or nuclear conditions allow energy to escape without remaining in the radiation field. A serious stellar code must eventually own all of these terms explicitly.
 
 One useful way to read the equation is as an energy-budget sentence:
 
@@ -38,7 +40,11 @@ $$
 L_{k+1} - L_k - dm_k \, \varepsilon_{\mathrm{nuc},k} = 0
 $$
 
-as implemented in `src/numerics/residuals.jl`. The source term comes from the toy nuclear closure in `src/numerics/structure_equations.jl`, so this page should be read as the exact placeholder source ASTRA actually uses today.
+Here, $L_k$ and $L_{k+1}$ are the shell's inner and outer face luminosities, while $dm_k$ and $\varepsilon_{\mathrm{nuc},k}$ belong to the cell between them.
+
+ASTRA writes this row as a luminosity difference across a shell because luminosity is face-centered while the source term is cell-centered on the staggered mesh.
+
+As implemented in `src/numerics/residuals.jl`, the source term comes from the toy nuclear closure in `src/numerics/structure_equations.jl`, so this page should be read as the exact placeholder source ASTRA actually uses today.
 
 In other words:
 

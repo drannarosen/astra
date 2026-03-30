@@ -26,6 +26,8 @@ That is why ASTRA treats stellar structure as a boundary-value problem rather th
 
 ## Constitutive physics
 
+Here, constitutive physics means the local closure laws that tell the structure equations how matter and radiation behave.
+
 The structure equations are not closed until we choose an equation of state, an opacity law, a nuclear heating law, and a transport closure. ASTRA's bootstrap lane currently uses placeholder physics:
 
 - [Equation of State](eos.md): ideal gas plus radiation
@@ -43,11 +45,15 @@ For new contributors, this is one of the most important distinctions in the hand
 
 ## Boundary conditions
 
+Boundary conditions are the extra center and surface conditions that close the global stellar-structure problem.
+
 The center and surface close the global solve. The center uses asymptotic series targets for the innermost face, and the surface uses provisional guessed outer conditions. See [Boundary Conditions](boundary-conditions.md) for the current closure and [Methods](../methods/index.md) for how those conditions enter the residual.
 
 This matters numerically because the center and surface are exactly where the naive differential forms become least trustworthy. The center is formally singular in several common rearrangements, and the outer boundary is where a stellar interior model must decide how it is being matched to an atmosphere or outer-layer prescription.
 
 ## Current ASTRA implementation
+
+ASTRA currently solves a classical residual, meaning the vector of equation mismatches the solver tries to drive to zero.
 
 ASTRA currently solves a classical residual with `log(radius)`, `log(temperature)`, and `log(density)` as the thermodynamic/geometry unknowns, while keeping luminosity in raw cgs $\mathrm{erg\,s^{-1}}$. The result is a bootstrap classical solve, not a production stellar model, but the ownership of each quantity is now explicit enough that the equations can be hardened step by step.
 
@@ -77,8 +83,33 @@ Real EOS tables, real opacity tables, real MLT, composition transport, and evolu
 
 ## Physics handbook checklist
 
+This section is ASTRA's internal QA surface for the Physics overview: what is conceptually established, what is already documented explicitly, and what still needs source-backed or implementation-backed follow-through.
+
+### Conceptual architecture
+
 - [x] Continuous-equation ownership is explicitly separated from numerical ownership.
 - [x] The four classical structure equations are named and cross-linked to their detailed pages.
-- [x] The packed-variable story points back to [Methods](../methods/index.md) rather than pretending the continuous equations are already discrete equations.
-- [ ] Every closure page documents the exact continuous equation, the current ASTRA implementation, and the deferred production-grade terms with equal detail.
-- [ ] Every major page in this section includes source-backed validation and implementation checklists that can be updated as ASTRA grows.
+- [x] The page distinguishes `Physics` responsibilities from `Methods` responsibilities.
+- [x] The packed-variable discussion points readers back to [Methods](../methods/index.md) instead of confusing continuous and discrete equations.
+
+### Current implementation coverage
+
+- [x] Placeholder EOS, opacity, nuclear, and convection closures are stated explicitly.
+- [x] Current boundary-condition treatment is stated explicitly.
+- [x] The current solve-variable basis is documented explicitly.
+- [ ] Every linked closure page currently documents implementation status with equal completeness.
+
+### Validation and source coverage
+
+- [ ] Each major closure page includes source-backed physics references.
+- [ ] Each major closure page distinguishes implemented physics from deferred production-grade physics.
+- [x] The overview page is backed by consistent detailed pages for stellar structure, EOS, opacity, nuclear, convection, and boundary conditions.
+- [ ] Equation-to-implementation consistency has been checked across `Physics` and `Methods` pages.
+
+### Open documentation / physics gaps
+
+- [ ] Real EOS tables are still deferred.
+- [ ] Real opacity tables are still deferred.
+- [ ] Real MLT is still deferred.
+- [ ] Composition transport and evolutionary algorithms are deferred.
+- [ ] Section-wide source-backed validation and implementation checklists are not yet complete.

@@ -1,6 +1,6 @@
 # Energy Transport
 
-Energy transport tells the star how temperature must fall outward so the generated luminosity can escape. ASTRA currently uses the radiative-gradient form of the transport equation, expressed in logarithmic state variables for numerical robustness.
+Energy transport tells the star how temperature must fall outward so the generated luminosity can escape. In plain language, the temperature must drop outward fast enough for the local luminosity to be carried through each shell. ASTRA currently uses the radiative-gradient form of the transport equation, expressed in logarithmic state variables for numerical robustness.
 
 The shorthand form is `dT/dm`, and the current closure is a radiative gradient, not a full MLT transport model.
 
@@ -16,7 +16,7 @@ $$
 \nabla \equiv \frac{d \log T}{d \log P}
 $$
 
-for the dimensionless temperature gradient. In other words, the literal numerator `d \log T` is part of the transport specification rather than a stylistic choice. The current classical ASTRA lane computes a radiative gradient estimate for `nabla`; it does not yet solve a full MLT closure. The exact notation matters here: the ASTRA row is built from `log(T)` and `log(P)`, not from raw temperatures and pressures.
+for the dimensionless temperature gradient. Physically, $\nabla$ measures how quickly temperature changes compared to pressure through the star. The logarithms are not cosmetic notation here; they are built into the definition of the transport gradient itself. In the bootstrap lane, ASTRA assumes radiation alone is setting the temperature gradient. The exact notation matters here: the ASTRA row is built from `log(T)` and `log(P)`, not from raw temperatures and pressures.
 
 ## Log-form view
 
@@ -32,7 +32,7 @@ $$
 \frac{d \log T}{dm} = -\frac{G m}{4 \pi r^4 P} \nabla.
 $$
 
-That form makes the solver logic clearer: the row really couples logarithmic temperature changes to logarithmic pressure changes. It is one of the reasons ASTRA treats $\log T$ as a solve-owned variable instead of $T$ itself.
+That form makes the solver logic clearer: the row really couples logarithmic temperature changes to logarithmic pressure changes. Because $\nabla$ is already defined logarithmically and $\log T$ is solve-owned, the log form is the natural representation for ASTRA's packed basis. It is one of the reasons ASTRA treats $\log T$ as a solve-owned variable instead of $T$ itself.
 
 ## Current ASTRA implementation
 
@@ -41,6 +41,8 @@ ASTRA currently writes the transport row in log form:
 $$
 \log T_{k+1} - \log T_k + \nabla_k \left(\log P_{k+1} - \log P_k\right) = 0
 $$
+
+Here, $\log T_k$ and $\log P_k$ are neighboring cell values, while $\nabla_k$ is the local transport gradient evaluated for cell $k$.
 
 This is the `transport` row in `src/numerics/residuals.jl`. The gradient `nabla_k` comes from the helper in `src/numerics/structure_equations.jl`, which combines the toy opacity law, the EOS pressure, the luminosity, and the local enclosed mass.
 

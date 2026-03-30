@@ -6,13 +6,14 @@ This page is the high-level map of the codebase and the responsibilities of its 
 
 The bootstrap architecture answers that explicitly. In this page's language, when a component **owns** something, it is the authoritative place where that quantity, operation, or decision is defined or updated.
 
+- `foundation/` owns the basic model language of the package: constants, configuration, grids, core types, and state construction. This is the layer that tells ASTRA what kind of model it is holding.
 - `microphysics/` owns the closure interfaces for the EOS (equation of state), opacity, nuclear heating, and convection. These modules answer local physics questions such as "what pressure does this density and temperature imply?" They do not own the global solve.
-- `residuals.jl` and `jacobians.jl` own the discrete nonlinear system: the **residual** is the collection of equations ASTRA is trying to drive to zero, and the **Jacobian** is the derivative information that tells the solver how those equations change when the state changes.
+- `numerics/` owns the discrete nonlinear system: the **residual** is the collection of equations ASTRA is trying to drive to zero, and the **Jacobian** is the derivative information that tells the solver how those equations change when the state changes.
 - `solvers/` owns the linear and nonlinear iteration logic. This is where ASTRA decides how to take a Newton step, when to damp it, and how to solve the linearized system.
 - `formulations/` owns the choice of **formulation**, meaning the mathematical method ASTRA has chosen for a solve. The classical baseline and Entropy-DAE belong here as different formulation lanes.
 - `evolution/` is present only as a stub until the classical baseline is trustworthy. Its job will be timestep-aware orchestration once ASTRA moves beyond the current bootstrap structure solve.
 
-This separation is the main architectural guardrail against the codebase collapsing into monolithic-code sprawl.
+This separation is the main architectural guardrail against the codebase collapsing into monolithic-code sprawl. It also makes the source tree teach the architecture directly instead of leaving students to infer it from a flat list of files.
 
 ## Contracts come first
 
