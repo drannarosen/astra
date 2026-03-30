@@ -9,6 +9,8 @@ The canonical hardening and verification narrative now lives in [Methods: Verifi
 At bootstrap, the diagnostics object tracks:
 
 - residual norm,
+- merit history,
+- initial and final row-family merit summaries,
 - convergence status,
 - iteration count,
 - one central thermodynamic summary,
@@ -17,6 +19,8 @@ At bootstrap, the diagnostics object tracks:
 - and explicit notes explaining the toy nature of the solve.
 
 That note field is intentional: scientific software should preserve what a result does **not** prove, not only what it prints.
+
+The current row-family surface is still intentionally small. The diagnostics object reports initial and final row-family merit summaries, not full rejected-trial attribution and not predicted-versus-actual decrease accounting.
 
 ## Pedagogical point
 

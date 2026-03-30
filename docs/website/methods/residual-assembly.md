@@ -21,7 +21,7 @@ The center rows enforce the asymptotic inner radius and luminosity targets. Each
 3. luminosity balance,
 4. transport.
 
-The surface rows enforce the Phase 1 atmosphere closure. Radius and luminosity targets stay in place, the temperature row matches `T_eff`, the pressure row matches the photospheric pressure scale, and the final transport row becomes one-sided at the outer edge.
+The surface rows enforce the Phase 2 atmosphere closure. Radius and luminosity targets stay in place, the temperature row matches the shared outer match-point temperature, the pressure row matches the shared outer match-point pressure scale, and the final transport row remains one-sided at the outer edge.
 
 ## Normative interior residual contract
 
@@ -41,7 +41,7 @@ $$
 
 $$
 R_{L,k} =
-L_{k+1} - L_k - dm_k \, \varepsilon_{\mathrm{nuc},k},
+L_{k+1} - L_k - dm_k \, \varepsilon_{\mathrm{total},k},
 $$
 
 $$
@@ -59,10 +59,19 @@ The row family mirrors the current `src/numerics/residuals.jl` implementation:
 
 - geometry compares shell volume to `dm / rho`,
 - hydrostatic balance compares adjacent-cell pressure plus gravity,
-- luminosity balance currently subtracts $dm \, \varepsilon_\mathrm{nuc}$,
+- luminosity balance currently subtracts $dm \, \varepsilon_\mathrm{total}$,
 - transport uses the log-form radiative gradient row.
 
 For the continuous physics behind those rows, see [Mass Conservation](../physics/stellar-structure/mass-conservation.md), [Hydrostatic Equilibrium](../physics/stellar-structure/hydrostatic-equilibrium.md), [Energy Generation](../physics/stellar-structure/energy-generation.md), and [Energy Transport](../physics/stellar-structure/energy-transport.md).
+
+The current ASTRA source decomposition already assembles
+
+$$
+\varepsilon_{\mathrm{total}} =
+\varepsilon_\mathrm{nuc} + \varepsilon_\mathrm{grav} - \varepsilon_\nu,
+$$
+
+through the current helper layer. That is why the present residual uses `eps_total` rather than only `eps_nuc`.
 
 The full classical luminosity equation should eventually carry
 
@@ -70,7 +79,7 @@ $$
 \frac{dL}{dm} = \varepsilon_\mathrm{nuc} + \varepsilon_\mathrm{grav} - \varepsilon_\nu,
 $$
 
-but the current ASTRA residual only owns the nuclear term. That means the residual is already source-decomposed in the energy equation in spirit, but only partially in the bootstrap implementation. The current closure stack is still toy physics; the row order and ownership boundaries are what matter here.
+The current closure stack is still toy physics, but the row order and ownership boundaries are already source-decomposed in the code. What remains deferred is production-grade microphysics, not the existence of the `eps_total` owner itself.
 
 The current surface formulas are:
 
@@ -124,6 +133,5 @@ The continuous counterparts live in:
 
 ## Deferred-scope checklist
 
-- [x] `eps_grav` is not yet part of `R_{L,k}`.
-- [x] `eps_nu` is not yet part of `R_{L,k}`.
+- [x] Production-grade `eps_grav` and `eps_nu` microphysics are still deferred even though the current row already owns `eps_total`.
 - [x] The transport row is still radiative-only in the current classical lane.

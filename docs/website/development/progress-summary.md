@@ -14,6 +14,31 @@ For each update, record:
 
 ## 2026-03-30
 
+### Minimal frozen-weight merit globalization
+
+ASTRA's classical Newton controller now speaks in terms of one explicit frozen-weight merit function rather than only weighted-residual wording. The current controller still uses the existing correction limiter, the existing regularization ladder, and the existing raw-residual safeguard, but the accepted-step decision is now described and recorded as merit decrease. The diagnostics object also now exposes merit history plus initial and final row-family merit summaries.
+
+Why this mattered:
+
+- it gives the current classical lane one declared solver objective without changing the packed basis or luminosity ownership,
+- it makes the controller diagnostics more interpretable than the old weighted-norm-only wording,
+- and it lands the smallest honest merit slice while keeping predicted-versus-actual decrease and richer row-family attribution explicitly deferred.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_merit_globalization_metrics.jl"); include("test/test_solver_progress_diagnostics.jl")'`
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_merit_globalization_acceptance.jl"); include("test/test_default_newton_progress.jl"); include("test/test_convergence_basin.jl")'`
+
+What this still does not prove:
+
+- the classical solve is still not converged on the default fixture,
+- predicted-versus-actual decrease remains deferred,
+- and row-family diagnostics are still only initial/final merit summaries rather than full rejected-trial attribution.
+
+Next step:
+
+- run the full required regression and docs-build verification, then refresh any measured benchmark numbers that changed.
+
 ### Phase 2 atmosphere contract recorded
 
 ASTRA's atmosphere slice now records the one-sided Phase 2 `T(\tau)` contract directly in the website. The current classical lane still keeps the outer radius and luminosity target rows, preserves the packed structure basis `[\ln R, L, \ln T, \ln \rho]`, and the surface thermodynamic rows use the shared outer match-point helper layer while the outer transport row remains one-sided to the photospheric face. The surface pressure scale also uses the shared outer match-point pressure scale.

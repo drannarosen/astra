@@ -320,6 +320,8 @@
             "center rows",
             "interior blocks",
             "surface rows",
+            "Phase 2 atmosphere closure",
+            "eps_total",
             "../physics/stellar-structure/mass-conservation.md",
             "../physics/stellar-structure/energy-transport.md",
             "Normative interior residual contract",
@@ -347,6 +349,9 @@
             "physical residual",
             "solver metrics",
             "merit-based globalization",
+            "frozen-weight merit function",
+            "initial and final row-family merit summaries",
+            "predicted-versus-actual decrease remains deferred",
             "\\phi(x)",
             "correction weights",
             "weighted residual",
@@ -356,6 +361,7 @@
             "damping",
             "accepted",
             "rejected trials",
+            "frozen-weight merit function",
             "Normative acceptance contract",
         ],
         "docs/website/methods/initial-model-and-seeding.md" => [
@@ -435,6 +441,8 @@
         "docs/website/numerics/diagnostics.md" => [
             "Canonical guide: [Verification and Jacobian Audits](../methods/verification-and-jacobian-audits.md)",
             "../methods/verification-and-jacobian-audits.md",
+            "merit history",
+            "row-family merit summaries",
         ],
         "docs/website/myst.yml" => [
             "title: Physics",
