@@ -7,19 +7,7 @@ function center_radius_series_target_cm(problem::StructureProblem, model::Stella
 end
 
 function center_luminosity_series_target_erg_s(problem::StructureProblem, model::StellarModel)
-    density_g_cm3 = exp(model.structure.log_density_cell_g_cm3[1])
-    temperature_k = exp(model.structure.log_temperature_cell_k[1])
-    composition = Composition(
-        model.composition.hydrogen_mass_fraction_cell[1],
-        model.composition.helium_mass_fraction_cell[1],
-        model.composition.metal_mass_fraction_cell[1],
-    )
-    energy_rate_erg_g_s = problem.microphysics.nuclear(
-        density_g_cm3,
-        temperature_k,
-        composition,
-    ).energy_rate_erg_g_s
-    return problem.grid.m_face_g[1] * energy_rate_erg_g_s
+    return problem.grid.m_face_g[1] * cell_energy_source_state(problem, model, 1).eps_total_erg_g_s
 end
 
 function center_boundary_residual(problem::StructureProblem, model::StellarModel)

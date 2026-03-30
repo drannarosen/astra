@@ -14,7 +14,7 @@ function interior_structure_block(problem::StructureProblem, model::StellarModel
     density_k_g_cm3 = exp(state.log_density_cell_g_cm3[k])
     pressure_k_dyn_cm2 = cell_eos_state(problem, model, k).pressure_dyn_cm2
     pressure_kp1_dyn_cm2 = cell_eos_state(problem, model, k + 1).pressure_dyn_cm2
-    energy_rate_k_erg_g_s = cell_nuclear_state(problem, model, k).energy_rate_erg_g_s
+    energy_rate_k_erg_g_s = cell_energy_source_state(problem, model, k).eps_total_erg_g_s
     nabla_transport = radiative_temperature_gradient(problem, model, k)
     dm_g = problem.grid.dm_cell_g[k]
     enclosed_mass_g = problem.grid.m_face_g[k + 1]

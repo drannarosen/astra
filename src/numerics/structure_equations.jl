@@ -61,6 +61,15 @@ function cell_nuclear_state(problem::StructureProblem, model::StellarModel, k::I
 end
 
 """
+    cell_energy_source_state(problem, model, k)
+
+Evaluate the assembled analytical source terms for cell `k`.
+"""
+function cell_energy_source_state(problem::StructureProblem, model::StellarModel, k::Int)
+    return energy_source_terms(problem, model, k)
+end
+
+"""
     radiative_temperature_gradient(problem, model, k)
 
 Return the provisional radiative temperature gradient used by the first

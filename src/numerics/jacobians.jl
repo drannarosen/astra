@@ -36,27 +36,13 @@ function _center_radius_row_partials(problem::StructureProblem, model::StellarMo
 end
 
 function _center_luminosity_row_partials(problem::StructureProblem, model::StellarModel)
-    density_g_cm3 = exp(model.structure.log_density_cell_g_cm3[1])
-    temperature_k = exp(model.structure.log_temperature_cell_k[1])
-    composition = cell_composition(problem, model, 1)
     enclosed_mass_g = problem.grid.m_face_g[1]
-    dε_dT = Microphysics.nuclear_temperature_derivative(
-        problem.microphysics.nuclear,
-        density_g_cm3,
-        temperature_k,
-        composition,
-    )
-    dε_dρ = Microphysics.nuclear_density_derivative(
-        problem.microphysics.nuclear,
-        density_g_cm3,
-        temperature_k,
-        composition,
-    )
+    dε_dlnT, dε_dlnρ = _centered_energy_source_log_derivatives(problem, model, 1)
 
     partials = zeros(Float64, length(_center_columns(problem.grid)))
     partials[2] = 1.0
-    partials[3] = -enclosed_mass_g * dε_dT * temperature_k
-    partials[4] = -enclosed_mass_g * dε_dρ * density_g_cm3
+    partials[3] = -enclosed_mass_g * dε_dlnT
+    partials[4] = -enclosed_mass_g * dε_dlnρ
     return partials
 end
 
@@ -74,29 +60,54 @@ function _geometry_row_partials(problem::StructureProblem, model::StellarModel, 
 end
 
 function _luminosity_row_partials(problem::StructureProblem, model::StellarModel, k::Int)
-    density_g_cm3 = exp(model.structure.log_density_cell_g_cm3[k])
-    temperature_k = exp(model.structure.log_temperature_cell_k[k])
-    composition = cell_composition(problem, model, k)
     dm_g = problem.grid.dm_cell_g[k]
-    dε_dT = Microphysics.nuclear_temperature_derivative(
-        problem.microphysics.nuclear,
-        density_g_cm3,
-        temperature_k,
-        composition,
-    )
-    dε_dρ = Microphysics.nuclear_density_derivative(
-        problem.microphysics.nuclear,
-        density_g_cm3,
-        temperature_k,
-        composition,
-    )
+    dε_dlnT, dε_dlnρ = _centered_energy_source_log_derivatives(problem, model, k)
 
     partials = zeros(Float64, length(_interior_columns(problem.grid, k)))
     partials[3] = -1.0
     partials[4] = 1.0
-    partials[5] = -dm_g * dε_dT * temperature_k
-    partials[7] = -dm_g * dε_dρ * density_g_cm3
+    partials[5] = -dm_g * dε_dlnT
+    partials[7] = -dm_g * dε_dlnρ
     return partials
+end
+
+function _perturb_structure_state(
+    model::StellarModel,
+    column::Int,
+    delta::Real,
+)
+    values = pack_state(model.structure)
+    values[column] += Float64(delta)
+    return StellarModel(unpack_state(model.structure, values), model.composition, model.evolution)
+end
+
+function _centered_energy_source_log_derivatives(
+    problem::StructureProblem,
+    model::StellarModel,
+    k::Int;
+    step::Real = 1.0e-6,
+)
+    base_vector = pack_state(model.structure)
+    temperature_column = _temperature_cell_index(problem.grid, k)
+    density_column = _density_cell_index(problem.grid, k)
+
+    temperature_step = jacobian_column_step(base_vector, temperature_column, step)
+    density_step = jacobian_column_step(base_vector, density_column, step)
+
+    temperature_plus = _perturb_structure_state(model, temperature_column, temperature_step)
+    temperature_minus = _perturb_structure_state(model, temperature_column, -temperature_step)
+    density_plus = _perturb_structure_state(model, density_column, density_step)
+    density_minus = _perturb_structure_state(model, density_column, -density_step)
+
+    eps_plus = cell_energy_source_state(problem, temperature_plus, k).eps_total_erg_g_s
+    eps_minus = cell_energy_source_state(problem, temperature_minus, k).eps_total_erg_g_s
+    dε_dlnT = (eps_plus - eps_minus) / (2.0 * temperature_step)
+
+    eps_plus = cell_energy_source_state(problem, density_plus, k).eps_total_erg_g_s
+    eps_minus = cell_energy_source_state(problem, density_minus, k).eps_total_erg_g_s
+    dε_dlnρ = (eps_plus - eps_minus) / (2.0 * density_step)
+
+    return dε_dlnT, dε_dlnρ
 end
 
 function _assign_row_partials!(
