@@ -1,17 +1,14 @@
 # ASTRA
 
-**ASTRA** is the **Adaptive STellar Research Architecture**: a Julia-native framework for stellar structure and evolution designed around **clarity, modular physics, solver ownership, validation, and controlled method development**.
+**ASTRA** is the **Adaptive STellar Research Architecture**: a Julia-native framework for stellar structure and evolution designed around **clarity, modular physics, solver ownership, validation, and disciplined method development**.
 
-ASTRA is built on a simple premise: modern stellar astrophysics needs more than a legacy black box. It needs an architecture that makes the physics explicit, keeps the numerics inspectable, and supports careful movement from classical baselines to more advanced formulations.
+ASTRA is built on a simple premise: modern stellar astrophysics needs more than a legacy black box. It needs a framework where the physics is explicit, the numerical methods are inspectable, and new formulations can be developed against a trusted baseline rather than buried inside inherited complexity.
 
-ASTRA therefore begins with a deliberate goal: build a **trustworthy classical stellar-structure baseline** first, then use that baseline as the foundation for validation, comparison, and later extensions in time evolution, alternative formulations, and differentiable methods.
+Stars are already difficult enough. The software does not need to be mysterious too.
 
-This site is part handbook, part design record, and part scientific guide. It has four jobs at once:
+ASTRA therefore begins with a deliberate goal: build a **trustworthy classical stellar-structure baseline** first, then use it as the foundation for validation, comparison, and later extensions in time evolution, alternative formulations, and differentiable methods.
 
-- orient new contributors,
-- explain the scientific and numerical architecture,
-- preserve design memory,
-- and teach the physics and methods behind the code.
+This site is part handbook, part design record, and part scientific guide: a place to orient contributors, explain the scientific and numerical architecture, preserve design memory, and teach the physics and methods behind the code.
 
 ## What ASTRA is for
 
@@ -20,9 +17,9 @@ ASTRA is a **research framework** for building stellar structure and evolution i
 - **modular**, so physics and numerics can evolve without collapsing into a monolith,
 - **validation-ready**, so each scientific step can be checked against known baselines,
 - **solver-aware**, so numerical methods are part of the design rather than hidden implementation detail,
-- and **future-facing**, so later work in differentiable methods and alternative formulations can grow from a trusted foundation.
+- and **future-facing**, so differentiable methods, alternative formulations, and inference-ready workflows can grow from a trusted scientific foundation.
 
-The first major milestone is a robust classical Henyey-style solver. That solver is not the endpoint. It is the reference surface against which more experimental approaches, including Entropy-DAE and differentiable workflows, can be developed and judged.
+The first major milestone is a robust classical Henyey-style solver. That solver is not the endpoint. It is the scientific baseline against which more experimental approaches, including Entropy-DAE and differentiable workflows, can be developed and judged.
 
 ASTRA is intentionally scoped for disciplined growth: a clean baseline first, then controlled expansion in physics, methods, and formulation.
 
@@ -37,23 +34,27 @@ At the core of ASTRA is a strict separation of concerns:
 
 That separation is not cosmetic. It is what makes ASTRA understandable, testable, extensible, and eventually differentiable in a controlled scientific way.
 
+The deeper ambition is not just cleaner code. It is to modernize stellar modeling software architecture so that equations, closures, solver choices, and validation claims can all be inspected in the same place and judged against the same scientific standard.
+
 ## How to Use This Site
 
-- Start with [Getting Started](getting-started/installation.md) if you want to install Julia, run the scaffold, and inspect the package layout.
-- Read [Architecture](architecture/overview.md) if you want to understand how ASTRA separates physics, numerics, and orchestration.
-- Read [Physics](physics/index.md) and [Methods](methods/index.md) if you want the exact equations, residuals, Jacobians, and boundary-condition realization that the code is currently using.
-- Read [Validation](validation/philosophy.md) if you want to know what the current scaffold demonstrates, what remains provisional, and how scientific trust is being built.
-- Read [Planning](planning/roadmap.md) if you want the development sequence from bootstrap to classical baseline and then to more advanced formulations.
-- Read [Development](development/development-guide.md) if you want to see what is implemented, what is blocked, and what comes next.
+For a first pass through the project, use this route:
 
-If you are new to the repository, read the site in that order. The ASTRA docs are meant to teach not just where the files live, but how to think about the codebase.
+- [Getting Started](getting-started/installation.md): install Julia, run the scaffold, and inspect the package layout.
+- [Architecture](architecture/overview.md): understand how ASTRA separates physics, numerics, and orchestration.
+- [Physics](physics/index.md) and [Methods](methods/index.md): read the current equations, residuals, Jacobians, and boundary-condition realization.
+- [Validation](validation/philosophy.md): see what is established, what is provisional, and what is still stubbed.
+- [Planning](planning/roadmap.md): follow the development sequence from bootstrap to classical baseline and then to more advanced formulations.
+- [Development](development/development-guide.md): check implementation status, active blockers, and next steps.
+
+New contributors should read the site in that order. The ASTRA docs are meant to teach not just where the files live, but how to think about the codebase.
 
 ## Current Status
 
-The current repository is at the bootstrap stage:
+The repository is still in its bootstrap stage:
 
 - package scaffold,
-- classical toy residual and Jacobian path,
+- early classical residual and Jacobian prototype,
 - tests and examples,
 - MyST documentation system,
 - formulation scaffolding,
@@ -71,3 +72,5 @@ That long-term direction includes:
 - alternative formulations,
 - differentiable solver boundaries,
 - and the scientific infrastructure needed for inference-ready stellar modeling.
+
+ASTRA's long-term direction is not just broader physics coverage. It is a modern scientific architecture for stellar modeling: one that can be solved, validated, extended, and eventually differentiated in a controlled way.

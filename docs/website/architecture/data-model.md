@@ -1,47 +1,49 @@
 # Data Model
 
-ASTRA's current implementation is centered on small immutable structs:
+ASTRA's data model is built from small, explicit Julia structs. A **struct** is just a named container with well-defined fields. In ASTRA, these containers are not only for storing numbers. They are used to make ownership visible.
 
-- `Composition`
-- `StellarParameters`
-- `GridConfig`
-- `SolverConfig`
-- `StellarGrid`
-- `StructureState`
-- `CompositionState`
-- `EvolutionState`
-- `StellarModel`
-- `MicrophysicsBundle`
-- `StructureProblem`
-- `StructureDiagnostics`
+## The main object families
 
-That list describes the **current code**, not the final ownership model.
+The current code centers on a few object families:
+
+- scalar setup objects such as `Composition`, `StellarParameters`, `GridConfig`, and `SolverConfig`,
+- persistent model-state objects such as `StructureState`, `CompositionState`, `EvolutionState`, and `StellarModel`,
+- execution objects such as `StructureProblem`, `SolveResult`, and `StructureDiagnostics`,
+- and the closure bundle `MicrophysicsBundle`.
+
+That list describes the current code, not a speculative future architecture.
 
 ## Transitional implementation versus canonical architecture
 
-The bootstrap package now exposes the explicit ownership split directly in code.
+The important public split is now explicit in code: `StructureState`, `CompositionState`, and `EvolutionState` are bundled by `StellarModel`.
 
-An internal `StellarState` helper still exists only as transitional legacy scaffolding. The canonical split is:
+An internal `StellarState` helper still exists only as transitional legacy scaffolding. When you are learning the architecture, treat the explicit three-block model as canonical.
 
-- `StructureState`
-- `CompositionState`
-- `EvolutionState`
+## Why immutable structs help
 
-## Why immutable structs
+If you are new to Julia, one useful idea is that many ASTRA objects are **immutable structs**. That means the high-level container itself is not casually rewritten in place. This makes ownership easier to read and reduces accidental side effects. Arrays inside a struct can still be replaced with updated arrays when needed, but the model shape stays explicit.
 
-If you are coming from Python, this is one of the most important Julia design moves to notice. Immutable structs make ownership clearer and reduce accidental side effects. We can still mutate arrays inside a struct later for hot-path performance, but the high-level object identity remains stable and readable.
+## Why parametric bundles help
 
-## Why parametric bundles matter
+`MicrophysicsBundle{E,O,N,C}` is a good example of Julia's type system helping architecture. A **parametric** struct is one whose field types are known in advance. Here that means ASTRA can carry concrete EOS, opacity, nuclear, and convection callables without falling back to vague abstract containers in hot code paths.
 
-`MicrophysicsBundle{E,O,N,C}` is a Julia-specific design win. It lets the package store concrete callable types for EOS, opacity, nuclear, and convection closures without paying the cost of abstractly typed containers.
+For contributors, the practical lesson is simple: the bundle is not fancy syntax for its own sake. It is how ASTRA keeps the closure layer explicit, fast, and inspectable.
 
-## The important ownership lesson
+## The ownership lesson
 
-The point of the data model is not just to hold numbers. It is to make it obvious which numbers are:
+The point of the data model is to make it obvious which quantities are:
 
 - persistent model state,
 - solve-owned unknowns,
 - evolution-owned metadata,
 - or derived closures.
 
-That ownership clarity is more important to ASTRA than shaving a few lines off the type definitions.
+If a type definition makes those roles harder to see, it is working against ASTRA's architecture even if it is technically convenient.
+
+## Data-model checklist
+
+- [x] The page explains what a struct is in ASTRA's own context.
+- [x] The page groups the main exported types by architectural role.
+- [x] The canonical `StellarModel` split is identified as current public architecture.
+- [x] The page explains immutable and parametric structs in plain language before using them architecturally.
+- [x] The closing lesson ties the type system back to ownership rather than to style alone.

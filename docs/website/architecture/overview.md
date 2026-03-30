@@ -2,29 +2,33 @@
 
 ASTRA is organized around one question: **what belongs to physics, what belongs to numerics, and what belongs to orchestration?**
 
-The bootstrap architecture answers that explicitly:
+This page is the high-level map of the codebase and the responsibilities of its main parts.
 
-- `microphysics/` owns EOS, opacity, nuclear, and convection interfaces,
-- `residuals.jl` and `jacobians.jl` own the discrete nonlinear system,
-- `solvers/` owns linear and nonlinear iteration logic,
-- `formulations/` owns the choice of method,
-- `evolution/` is present only as a stub until the classical baseline is trustworthy.
+The bootstrap architecture answers that explicitly. In this page's language, when a component **owns** something, it is the authoritative place where that quantity, operation, or decision is defined or updated.
 
-This separation is the main architectural guardrail against mini-MESA sprawl.
+- `microphysics/` owns the closure interfaces for the EOS (equation of state), opacity, nuclear heating, and convection. These modules answer local physics questions such as "what pressure does this density and temperature imply?" They do not own the global solve.
+- `residuals.jl` and `jacobians.jl` own the discrete nonlinear system: the **residual** is the collection of equations ASTRA is trying to drive to zero, and the **Jacobian** is the derivative information that tells the solver how those equations change when the state changes.
+- `solvers/` owns the linear and nonlinear iteration logic. This is where ASTRA decides how to take a Newton step, when to damp it, and how to solve the linearized system.
+- `formulations/` owns the choice of **formulation**, meaning the mathematical method ASTRA has chosen for a solve. The classical baseline and Entropy-DAE belong here as different formulation lanes.
+- `evolution/` is present only as a stub until the classical baseline is trustworthy. Its job will be timestep-aware orchestration once ASTRA moves beyond the current bootstrap structure solve.
+
+This separation is the main architectural guardrail against the codebase collapsing into monolithic-code sprawl.
 
 ## Contracts come first
 
-ASTRA now treats explicit ownership contracts as part of the architecture rather than as implementation trivia.
+In ASTRA, a **contract** is a clear rule about which part of the code is responsible for storing, updating, or computing something. ASTRA treats these ownership contracts as part of the architecture rather than as implementation trivia.
 
 The key near-term contract is:
 
-- a **structure block** owned by the nonlinear solve,
-- a **composition block** owned by the persistent stellar model and later by the evolution layer,
-- an **evolution block** owned by timestep-aware orchestration,
-- and **derived closures** owned by microphysics rather than by the state vector itself.
+- a **structure block**: the part of the model the nonlinear solve is allowed to update directly,
+- a **composition block**: persistent model state now, and later part of evolution-aware updates,
+- an **evolution block**: the home for timestep-aware quantities and orchestration state,
+- and **derived closures**: quantities such as EOS pressure that microphysics computes from state rather than stores in the solve vector.
 
-That design now appears directly in the bootstrap implementation through `StellarModel`, `StructureState`, `CompositionState`, and `EvolutionState`. The remaining internal `StellarState` scaffold is transitional legacy support rather than the current public architecture.
+That design now appears directly in the bootstrap implementation through `StellarModel`, `StructureState`, `CompositionState`, and `EvolutionState`. The older `StellarState` scaffold still exists internally for transition purposes, but it is not the public architecture ASTRA is building toward.
 
 ## Why this separation matters
 
-In a stellar code, the same number can easily try to play three different roles at once: persistent model truth, nonlinear-solve unknown, and derived diagnostic. ASTRA is trying to prevent that confusion early. If a contributor can answer "who owns this quantity?" before they answer "where is it stored?", the architecture is doing its job.
+In a stellar code, the same number can easily try to play three different roles at once: **persistent model truth** (the value stored as part of the model), **nonlinear-solve unknown** (the value the solver is actively adjusting), and **derived diagnostic** (a value computed from the state for interpretation or reporting). ASTRA is trying to prevent that confusion early.
+
+If a contributor can answer "who owns this quantity?" before they answer "where is it stored?", the architecture is doing its job.
