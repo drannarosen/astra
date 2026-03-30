@@ -4,7 +4,7 @@ ASTRA keeps solve-owned luminosity in raw `erg/s` and uses column scaling for co
 
 The first layer of conditioning comes from the variable basis itself: radius, temperature, and density are solved in logarithmic form, while luminosity stays linear because it crosses zero at the center. The second layer comes from explicit solver-side scaling of the packed columns.
 
-The current classical lane now has a third conditioning layer as well: explicit weighted residual and correction metrics that control trial-step acceptance without changing the physical residual definition. Those solver metrics are specified in [Nonlinear Step Metrics and Globalization](nonlinear-step-metrics-and-globalization.md).
+The current classical lane now has a third conditioning layer as well: explicit weighted residual and correction metrics that control trial-step acceptance without changing the physical residual definition. Those solver metrics now include transport-local row scaling for the log-gradient transport family and are specified in [Nonlinear Step Metrics and Globalization](nonlinear-step-metrics-and-globalization.md).
 
 This page is the canonical specification for the current linearized-solve scaling policy.
 

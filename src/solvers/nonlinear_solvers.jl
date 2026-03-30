@@ -176,6 +176,11 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
         "Solve boundary note: diagnostics describe the structure solve boundary now so later sensitivity rules can target the public solve entry point rather than Newton transcript details.",
     ]
 
+    final_row_family_merit() =
+        isempty(accepted_trial_history) ?
+        row_family_merit_summary(problem, model, residual) :
+        accepted_trial_history[end].row_family_merit
+
     for _ in 1:problem.solver.max_newton_iterations
         current_weighted_residual_norm = last(weighted_residual_history)
         current_merit_value = last(merit_history)
@@ -203,7 +208,7 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 accepted_step_count,
                 true,
                 initial_row_family_merit,
-                row_family_merit_summary(problem, model, residual),
+                final_row_family_merit(),
                 notes,
             )
             return SolveResult(model, diagnostics)
@@ -346,7 +351,7 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
                 accepted_step_count,
                 false,
                 initial_row_family_merit,
-                row_family_merit_summary(problem, model, residual),
+                final_row_family_merit(),
                 notes,
             )
             return SolveResult(model, diagnostics)
@@ -378,7 +383,7 @@ function solve_nonlinear_system(problem::StructureProblem, initial_model::Stella
         accepted_step_count,
         false,
         initial_row_family_merit,
-        row_family_merit_summary(problem, model, residual),
+        final_row_family_merit(),
         notes,
     )
     return SolveResult(model, diagnostics)

@@ -52,7 +52,8 @@ The current row-family policy is:
 - interior geometry row: scale by `max(shell volume, dm/rho)`,
 - interior hydrostatic row: scale by `max(|P_k|, |P_{k+1}|, |discrete gravity term|)`,
 - interior luminosity row: scale by `max(|L_k|, |L_{k+1}|, |dm * eps|)`,
-- interior transport row: unit scale because it is already a log-gradient residual,
+- interior transport row: scale by the larger of the local `ΔlogT` term, the local `nabla * ΔlogP` term, and `1`,
+- outer transport row: use the same idea, but with the one-sided photospheric-face temperature and pressure targets instead of the generic interior stencil,
 - surface radius, luminosity, temperature, and density rows: scale by their boundary targets.
 
 The weighted residual norm is the RMS norm
@@ -184,7 +185,7 @@ That is enough to say two things honestly.
 
 First, conditioning still matters. A solve that always falls back to regularized normal equations and still accumulates hundreds of rejected trials is not numerically mature.
 
-Second, a purely global-conditioning story is no longer the sharpest interpretation. The repeated `transport` dominance is a more localized signature than "the whole Jacobian is badly scaled." That is why the next ASTRA slice should harden the transport/outer-boundary evidence surface and transport-local solver metrics before it widens scope into adaptive regularization.
+Second, a purely global-conditioning story is no longer the sharpest interpretation. The repeated `transport` dominance is a more localized signature than "the whole Jacobian is badly scaled." That is why ASTRA now hardens the transport/outer-boundary evidence surface and transport-local solver metrics before widening scope into adaptive regularization.
 
 ## What the current merit slice is
 

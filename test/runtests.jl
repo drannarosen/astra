@@ -33,6 +33,7 @@ using ASTRA
     include("test_armijo_merit_validation_runner.jl")
     include("test_transport_row_family_diagnostics.jl")
     include("test_transport_validation_artifacts.jl")
+    include("test_transport_row_weights.jl")
     include("test_center_asymptotic_scaling.jl")
     include("test_weighted_solver_metrics.jl")
     include("test_atmosphere_boundary_helpers.jl")
