@@ -170,6 +170,9 @@ end
         @test rejected_trial.transport_hotspot.present
         @test rejected_trial.transport_hotspot.cell_index in 1:(problem.grid.n_cells - 1)
         @test rejected_trial.transport_hotspot.location in (:interior, :outer)
+        @test rejected_trial.transport_hotspot.raw_residual ≈
+              rejected_trial.transport_hotspot.delta_log_temperature -
+              rejected_trial.transport_hotspot.gradient_term
     else
         @test isnothing(result.diagnostics.best_rejected_trial)
     end
