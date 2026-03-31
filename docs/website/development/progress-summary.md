@@ -14,6 +14,31 @@ For each update, record:
 
 ## 2026-03-30
 
+### Outer surface coupling audit evidence
+
+ASTRA's refreshed `2026-03-30-outer-surface-coupling-audit` bundle sharpens the remaining near-surface diagnosis after the transport sign contract correction. In `default-12`, the accepted and best-rejected dominant surface family is `surface_pressure`, the accepted transport hotspot still sits on the outer row at cell index `11`, and the accepted outer-boundary summary reports `outer_transport_weighted = 0.8444699228014957`, `surface_temperature_weighted = 0.6854069474453723`, `surface_pressure_weighted = -0.7960701554689767`, `match_temperature_k = 1.1733423492649216e6`, and `match_pressure_dyn_cm2 = 3.9370078676338625e13`.
+
+Why this mattered:
+
+- it makes the `dominant surface family` and `best rejected dominant surface family` explicit rather than collapsing the surface rows into one bucket,
+- it shows the outer boundary remains active while the surface pressure row is the sharpest current near-surface owner on the default fixture,
+- and it also shows the bundle is mixed, not singular: the perturbation cases split between `surface_pressure` and `surface_temperature`, so the audit sharpens the target without proving a one-row-only fix.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. scripts/run_armijo_merit_validation.jl artifacts/validation/2026-03-30-outer-surface-coupling-audit`
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_docs_structure.jl")'`
+
+What this still does not prove:
+
+- every payload is still `converged = false`,
+- `used_regularized_fallback = true` remains present everywhere,
+- and the bundle does not yet establish whether the next solver change should land in pressure-match semantics, temperature attachment semantics, or the outer transport stencil itself.
+
+Next step:
+
+- treat `surface_pressure` as the current sharpest default-12 owner, but keep the evidence mixed across perturbations and continue with surgical diagnostics rather than a broad conditioning rewrite.
+
 ### Transport sign contract correction evidence
 
 ASTRA's refreshed `2026-03-30-transport-sign-correction` artifact bundle now records what changes once the transport sign contract is made physically consistent across code, tests, and docs. The default-12 payload no longer peaks on a surface-adjacent interior transport row. Instead, the accepted transport hotspot moves to the outer row at cell index `11`, with `accepted_dominant_family = surface`, `accepted_transport_hotspot.weighted_contribution = 0.8444699228014957`, `final_weighted_residual_norm = 0.26449516386740546`, and `final_merit = 1.7489422927311415`.
