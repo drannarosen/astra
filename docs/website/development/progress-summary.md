@@ -16,12 +16,12 @@ For each update, record:
 
 ### Outer boundary fitting-point ownership audit
 
-ASTRA's refreshed `2026-03-30-outer-boundary-fitting-point-ownership-audit` bundle separates the pressure bridge from the temperature bridge. In `default-12`, `pressure_contract_log_gap = 0.0` while `temperature_contract_log_gap = -2.599766419592937`, and the accepted dominant surface family is `surface_pressure`. The perturbation cases stay mixed: `perturb-a1e-6-case-01` and `perturb-a1e-6-case-03` accept on `surface_temperature`, `perturb-a1e-6-case-02` accepts on `surface_pressure`, and the accepted transport hotspot still sits on the outer row at cell index `11`.
+ASTRA's refreshed `2026-03-30-outer-boundary-fitting-point-ownership-audit` bundle separates the pressure bridge from the temperature bridge. Every payload in the focused bundle is still `converged = false` and `used_regularized_fallback = true`. In `default-12`, `pressure_contract_log_gap = 0.0` while `temperature_contract_log_gap = -2.599766419592937`, and the accepted dominant surface family is `surface_pressure`. The perturbation cases stay mixed: `perturb-a1e-6-case-01` and `perturb-a1e-6-case-03` accept on `surface_temperature`, `perturb-a1e-6-case-02` accepts on `surface_pressure`, and the accepted transport hotspot still sits on the outer row at cell index `11`.
 
 Why this mattered:
 
 - it records the current `outer-boundary-fitting-point-ownership` interpretation as a mixed bridge story instead of a single outer-boundary lump,
-- it deprioritizes the pressure bridge because the measured log gap is zero across the bundle,
+- it treats the pressure bridge as code-identical because both sides use the same `P_ph + g σ_half` bridge, so the zero gap deprioritizes pressure-bridge-gap ownership without independently validating pressure semantics,
 - and it leaves the temperature bridge mismatch as the sharper remaining non-pressure candidate.
 
 Verification run:

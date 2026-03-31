@@ -167,6 +167,9 @@
             "outer_transport",
             "default-12",
             "outer-boundary-fitting-point-ownership",
+            "converged = false",
+            "used_regularized_fallback = true",
+            "code-identical",
         ],
         "docs/website/development/outer-boundary-fitting-point-ownership-2026-03-30.md" => [
             "2026-03-30-outer-boundary-fitting-point-ownership-audit",
@@ -174,6 +177,9 @@
             "pressure_contract_log_gap",
             "default-12",
             "what this does not prove",
+            "converged = false",
+            "used_regularized_fallback = true",
+            "code-identical",
         ],
         "docs/website/development/transport-outer-boundary-hardening-2026-03-30.md" => [
             "boundary ownership",
@@ -332,6 +338,10 @@
             "surface thermodynamic rows use the shared outer match-point helper layer",
             "outer transport row remains one-sided to the photospheric face",
             "surface pressure row uses the shared outer match-point pressure contract in log form",
+            "pressure bridge is code-identical",
+            "temperature bridge remains a measured mismatch",
+            "converged = false",
+            "used_regularized_fallback = true",
         ],
         "docs/website/physics/stellar-structure/mass-conservation.md" => [
             "dr/dm",
@@ -458,6 +468,8 @@
             "shared outer match-point pressure contract",
             "log form",
             "outer transport row remains one-sided to the photospheric face",
+            "pressure bridge is code-identical",
+            "temperature bridge remains a measured mismatch",
         ],
         "docs/website/methods/verification-and-jacobian-audits.md" => [
             "local derivative validation",

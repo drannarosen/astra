@@ -14,7 +14,7 @@ That decomposition is important because it shows the temperature bridge and the 
 
 ## Measured bundle
 
-The focused bundle keeps the accepted transport hotspot on the outer row at cell index `11` in every payload, but the surface-family story splits.
+The focused bundle keeps the accepted transport hotspot on the outer row at cell index `11` in every payload, but the surface-family story splits. Every payload in the focused bundle is still `converged = false` and `used_regularized_fallback = true`.
 
 | case | accepted dominant surface family | accepted `temperature_contract_log_gap` | accepted `pressure_contract_log_gap` | best-rejected `temperature_contract_log_gap` | best-rejected `pressure_contract_log_gap` |
 | --- | --- | ---: | ---: | ---: | ---: |
@@ -23,7 +23,7 @@ The focused bundle keeps the accepted transport hotspot on the outer row at cell
 | `perturb-a1e-6-case-02` | `surface_pressure` | `-4.162187353515018` | `0.0` | `-1.9538156698440865` | `0.0` |
 | `perturb-a1e-6-case-03` | `surface_temperature` | `1.1417404995256852` | `0.0` | `0.0805409907507979` | `0.0` |
 
-The pressure bridge is the cleaner signal: `pressure_contract_log_gap` is zero across the full focused bundle.
+The pressure bridge is code-identical: both sides build the same `P_ph + g σ_half` bridge, so `pressure_contract_log_gap = 0.0` deprioritizes pressure-bridge-gap ownership but does not independently validate pressure semantics.
 
 The temperature bridge is not cleanly tracking the same way: the accepted gap stays negative in `default-12`, case `01`, and case `02`, but flips positive in case `03`.
 
@@ -33,7 +33,7 @@ Stop-rule outcome: outer-boundary failure remains mixed, with pressure bridge ow
 
 That is the most conservative reading that still respects the evidence:
 
-- the pressure bridge is code-backed and measured as exact in this bundle,
+- the pressure bridge is code-identical in this bundle rather than independently validated,
 - the temperature bridge remains a real mismatch and does not stay sign-stable across perturbations,
 - and the accepted dominant surface family splits between `surface_pressure` and `surface_temperature`.
 

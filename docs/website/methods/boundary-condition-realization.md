@@ -40,7 +40,9 @@ The row ownership is deliberately simple. The center radius row is owned by geom
 
 The surface rows now use a one-sided Phase 2 `T(\tau)` atmosphere closure rather than hard guesses. They keep the problem square and numerically stable while giving the outer boundary a physically interpretable temperature and pressure scale.
 
-The 2026-03-30 outer-boundary fitting-point audit makes one more distinction explicit: the pressure bridge is exact in the focused bundle (`pressure_contract_log_gap = 0.0`), while the temperature bridge remains a measured mismatch (`temperature_contract_log_gap` is nonzero). The current surface rows should therefore be read as two separate helper owners, not as one undifferentiated outer match.
+The focused bundle is still `converged = false` and `used_regularized_fallback = true`.
+
+The 2026-03-30 outer-boundary fitting-point audit makes one more distinction explicit: the pressure bridge is code-identical because the current comparison is built from the same `P_ph + g σ_half` bridge on both sides, so `pressure_contract_log_gap = 0.0` deprioritizes pressure-bridge-gap ownership without independently validating pressure semantics. The temperature bridge remains a measured mismatch (`temperature_contract_log_gap` is nonzero). The current surface rows should therefore be read as two separate helper owners, not as one undifferentiated outer match.
 
 ## Normative surface-boundary contract
 
