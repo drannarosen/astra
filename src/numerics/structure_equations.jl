@@ -98,6 +98,43 @@ function radiative_temperature_gradient(problem::StructureProblem, model::Stella
 end
 
 """
+    cell_transport_state(problem, model, k)
+
+Build the local convection state for cell `k` and evaluate the active transport
+closure. This keeps the transport branch ownership inside microphysics while the
+numerics layer owns the cell-local state assembly.
+"""
+function cell_transport_state(problem::StructureProblem, model::StellarModel, k::Int)
+    state = model.structure
+    eos_state = cell_eos_state(problem, model, k)
+    opacity_state = cell_opacity_state(problem, model, k)
+    radius_cm = exp(state.log_radius_face_cm[k + 1])
+    enclosed_mass_g = problem.grid.m_face_g[k + 1]
+    luminosity_erg_s = state.luminosity_face_erg_s[k + 1]
+    temperature_k = exp(state.log_temperature_cell_k[k])
+    density_g_cm3 = exp(state.log_density_cell_g_cm3[k])
+    radiative_gradient = radiative_temperature_gradient(problem, model, k)
+
+    local_state = Microphysics.ConvectionLocalState(
+        radius_cm,
+        enclosed_mass_g,
+        luminosity_erg_s,
+        eos_state.pressure_dyn_cm2,
+        temperature_k,
+        density_g_cm3,
+        opacity_state.opacity_cm2_g,
+        eos_state.specific_heat_erg_g_k,
+        eos_state.chi_rho,
+        eos_state.chi_T,
+        eos_state.adiabatic_gradient,
+        radiative_gradient,
+        0.0,
+    )
+
+    return problem.microphysics.convection(local_state)
+end
+
+"""
     transport_row_terms(problem, model, k)
 
 Return the canonical transport-row decomposition for cell `k`, including the
@@ -121,7 +158,8 @@ function transport_row_terms(problem::StructureProblem, model::StellarModel, k::
     state = model.structure
     n = problem.grid.n_cells
     pressure_k_dyn_cm2 = cell_eos_state(problem, model, k).pressure_dyn_cm2
-    nabla_transport = radiative_temperature_gradient(problem, model, k)
+    transport_state = cell_transport_state(problem, model, k)
+    nabla_transport = transport_state.active_gradient
     is_outer = k == n - 1
 
     if is_outer
@@ -144,8 +182,15 @@ function transport_row_terms(problem::StructureProblem, model::StellarModel, k::
             is_outer = true,
             delta_log_temperature = delta_log_temperature,
             delta_log_pressure = delta_log_pressure,
+            nabla_radiative = transport_state.radiative_gradient,
+            nabla_ledoux = transport_state.ledoux_gradient,
             nabla_transport = nabla_transport,
             gradient_term = gradient_term,
+            transport_regime = transport_state.transport_regime,
+            transport_guarded = transport_state.guarded,
+            superadiabatic_excess = transport_state.superadiabatic_excess,
+            convective_velocity_cm_s = transport_state.convective_velocity_cm_s,
+            convective_flux_fraction = transport_state.convective_flux_fraction,
             transport_pressure_target_dyn_cm2 = transport_pressure_target_dyn_cm2,
             residual = delta_log_temperature - gradient_term,
         )
@@ -162,8 +207,15 @@ function transport_row_terms(problem::StructureProblem, model::StellarModel, k::
         is_outer = false,
         delta_log_temperature = delta_log_temperature,
         delta_log_pressure = delta_log_pressure,
+        nabla_radiative = transport_state.radiative_gradient,
+        nabla_ledoux = transport_state.ledoux_gradient,
         nabla_transport = nabla_transport,
         gradient_term = gradient_term,
+        transport_regime = transport_state.transport_regime,
+        transport_guarded = transport_state.guarded,
+        superadiabatic_excess = transport_state.superadiabatic_excess,
+        convective_velocity_cm_s = transport_state.convective_velocity_cm_s,
+        convective_flux_fraction = transport_state.convective_flux_fraction,
         residual = delta_log_temperature - gradient_term,
     )
 end
