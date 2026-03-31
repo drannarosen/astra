@@ -14,6 +14,39 @@ For each update, record:
 
 ## 2026-03-30
 
+### Bridge outer temperature through fitting point
+
+ASTRA now keeps the Eddington-grey photosphere at `tau = 2/3`, but the live outer-cell temperature owner no longer continues that atmosphere directly to `tau = 2/3 + tau_half`. Instead, `outer_match_temperature_k(...)` now uses the local fitting-point bridge, so the live `outer-boundary-fitting-point-ownership` helper gaps are both code-identical: `temperature_contract_log_gap = 0.0` and `pressure_contract_log_gap = 0.0` on `default-12`. In other words, the live code path now does exactly what the slice title says: bridge outer temperature through fitting point.
+
+Measured post-cutover result:
+
+- the default solve is still `converged = false`,
+- the dominant surface family is `surface`,
+- the final weighted residual norm is `0.812065048601674`,
+- the final surface-family merit is `15.1493621034566`,
+- and the outer-transport family merit is `0.4946980185677376`.
+
+Why this mattered:
+
+- it removes the old live helper-gap disagreement on the temperature side instead of leaving the current code half-Eddington and half-fitting-point,
+- it makes the current surface closure say one thing physically instead of two,
+- and it sharpens the next scientific question: not "is the temperature helper mismatched?" but "why is the solve still surface-owned after that mismatch is removed?"
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_outer_boundary_fitting_point_terms.jl"); include("test/test_atmosphere_match_point.jl")'`
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_boundary_conditions.jl"); include("test/test_outer_boundary_row_diagnostics.jl"); include("test/test_solver_progress_diagnostics.jl"); include("test/test_docs_structure.jl")'`
+
+What this does not prove:
+
+- robust convergence,
+- that a Hopf atmosphere is needed,
+- or that the remaining failure lives only in the temperature owner.
+
+Next step:
+
+- keep the Eddington-grey photosphere, keep the pressure bridge exact, and inspect why the live solve is still surface-owned before widening scope to richer atmosphere models.
+
 ### Outer boundary fitting-point ownership audit
 
 ASTRA's refreshed `2026-03-30-outer-boundary-fitting-point-ownership-audit` bundle separates the pressure bridge from the temperature bridge. Every payload in the focused bundle is still `converged = false` and `used_regularized_fallback = true`. In `default-12`, `pressure_contract_log_gap = 0.0` while `temperature_contract_log_gap = -2.599766419592937`, and the accepted dominant surface family is `surface_pressure`. The perturbation cases stay mixed: `perturb-a1e-6-case-01` and `perturb-a1e-6-case-03` accept on `surface_temperature`, `perturb-a1e-6-case-02` accepts on `surface_pressure`, and the accepted transport hotspot still sits on the outer row at cell index `11`.

@@ -170,6 +170,9 @@
             "converged = false",
             "used_regularized_fallback = true",
             "code-identical",
+            "bridge outer temperature through fitting point",
+            "temperature_contract_log_gap = 0.0",
+            "dominant surface family is `surface`",
         ],
         "docs/website/development/outer-boundary-fitting-point-ownership-2026-03-30.md" => [
             "2026-03-30-outer-boundary-fitting-point-ownership-audit",
@@ -339,9 +342,9 @@
             "outer transport row remains one-sided to the photospheric face",
             "surface pressure row uses the shared outer match-point pressure contract in log form",
             "pressure bridge is code-identical",
-            "temperature bridge remains a measured mismatch",
+            "temperature bridge is now code-identical",
             "converged = false",
-            "used_regularized_fallback = true",
+            "surface-owned",
         ],
         "docs/website/physics/stellar-structure/mass-conservation.md" => [
             "dr/dm",
@@ -469,7 +472,7 @@
             "log form",
             "outer transport row remains one-sided to the photospheric face",
             "pressure bridge is code-identical",
-            "temperature bridge remains a measured mismatch",
+            "temperature bridge is now code-identical",
         ],
         "docs/website/methods/verification-and-jacobian-audits.md" => [
             "local derivative validation",

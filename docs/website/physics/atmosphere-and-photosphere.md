@@ -51,7 +51,7 @@ This is still a one-sided `T(\tau)` reconstruction at the photosphere. The diffe
 
 The focused bundle is still `converged = false` and `used_regularized_fallback = true`.
 
-The 2026-03-30 outer-boundary fitting-point audit separates the two helper bridges: the pressure bridge is code-identical because the current comparison is built from the same `P_ph + g σ_half` bridge on both sides, so `pressure_contract_log_gap = 0.0` deprioritizes pressure-bridge-gap ownership without independently validating pressure semantics. The temperature bridge remains a measured mismatch, which keeps it as the mixed bridge candidate.
+The 2026-03-30 outer-boundary fitting-point audit separated the two helper bridges before the temperature-owner cutover. In the live code path, the pressure bridge is code-identical because the current comparison is built from the same `P_ph + g σ_half` bridge on both sides, and the temperature bridge is now code-identical as well because `outer_match_temperature_k(...)` uses the fitting-point temperature owner directly. That removes the old helper-gap mismatch, but it does not prove the outer boundary is solved: the default solve is still unconverged and surface-owned.
 
 Why this is a reasonable slice:
 

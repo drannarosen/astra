@@ -42,7 +42,7 @@ The surface rows now use a one-sided Phase 2 `T(\tau)` atmosphere closure rather
 
 The focused bundle is still `converged = false` and `used_regularized_fallback = true`.
 
-The 2026-03-30 outer-boundary fitting-point audit makes one more distinction explicit: the pressure bridge is code-identical because the current comparison is built from the same `P_ph + g σ_half` bridge on both sides, so `pressure_contract_log_gap = 0.0` deprioritizes pressure-bridge-gap ownership without independently validating pressure semantics. The temperature bridge remains a measured mismatch (`temperature_contract_log_gap` is nonzero). The current surface rows should therefore be read as two separate helper owners, not as one undifferentiated outer match.
+The 2026-03-30 outer-boundary fitting-point audit made one more distinction explicit before the temperature-owner cutover: the pressure bridge is code-identical because the comparison was built from the same `P_ph + g σ_half` bridge on both sides. In the live code path, the temperature bridge is now code-identical as well because the outer temperature row uses the fitting-point bridge directly. The current surface rows should therefore be read as explicit helper owners whose remaining failure is no longer a helper-gap disagreement but an unconverged surface-owned solve.
 
 ## Normative surface-boundary contract
 
