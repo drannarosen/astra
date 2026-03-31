@@ -88,6 +88,27 @@ function outer_match_temperature_k(problem::StructureProblem, model::StellarMode
     return surface_effective_temperature_k(radius_surface_cm, luminosity_surface_erg_s)
 end
 
+function _photospheric_face_pressure_target_dyn_cm2(
+    problem::StructureProblem,
+    model::StellarModel,
+)
+    radius_surface_cm = exp(model.structure.log_radius_face_cm[end])
+    n = problem.grid.n_cells
+    opacity_outer_cm2_g = cell_opacity_state(problem, model, n).opacity_cm2_g
+    g_surface_cgs = surface_gravity_cgs(problem.parameters.mass_g, radius_surface_cm)
+    return eddington_photospheric_pressure_dyn_cm2(g_surface_cgs, opacity_outer_cm2_g)
+end
+
+function _bridge_pressure_target_dyn_cm2(problem::StructureProblem, model::StellarModel)
+    radius_surface_cm = exp(model.structure.log_radius_face_cm[end])
+    photospheric_face_pressure_dyn_cm2 =
+        _photospheric_face_pressure_target_dyn_cm2(problem, model)
+    g_surface_cgs = surface_gravity_cgs(problem.parameters.mass_g, radius_surface_cm)
+    sigma_half_g_cm2 =
+        outer_half_cell_column_density_g_cm2(problem.grid.dm_cell_g[end], radius_surface_cm)
+    return photospheric_face_pressure_dyn_cm2 + clip_positive(g_surface_cgs) * sigma_half_g_cm2
+end
+
 """
     outer_match_pressure_dyn_cm2(problem, model)
 
@@ -95,14 +116,7 @@ Return the one-sided hydrostatic pressure target at ASTRA's outer-cell match
 point.
 """
 function outer_match_pressure_dyn_cm2(problem::StructureProblem, model::StellarModel)
-    radius_surface_cm = exp(model.structure.log_radius_face_cm[end])
-    n = problem.grid.n_cells
-    opacity_outer_cm2_g = cell_opacity_state(problem, model, n).opacity_cm2_g
-    g_surface_cgs = surface_gravity_cgs(problem.parameters.mass_g, radius_surface_cm)
-    p_ph = eddington_photospheric_pressure_dyn_cm2(g_surface_cgs, opacity_outer_cm2_g)
-    sigma_half_g_cm2 =
-        outer_half_cell_column_density_g_cm2(problem.grid.dm_cell_g[end], radius_surface_cm)
-    return p_ph + clip_positive(g_surface_cgs) * sigma_half_g_cm2
+    return _bridge_pressure_target_dyn_cm2(problem, model)
 end
 
 """
