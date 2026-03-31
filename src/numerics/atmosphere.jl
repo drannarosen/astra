@@ -208,3 +208,45 @@ function surface_temperature_semantics(problem::StructureProblem, model::Stellar
         transport_temperature_offset_fraction,
     )
 end
+
+"""
+    surface_pressure_semantics(problem, model)
+
+Return the diagnostic decomposition of the live surface-pressure row into the
+photospheric pressure reference, the deeper match point, and the derived log
+gaps.
+"""
+function surface_pressure_semantics(problem::StructureProblem, model::StellarModel)
+    n = problem.grid.n_cells
+    state = model.structure
+    radius_surface_cm = exp(state.log_radius_face_cm[end])
+    opacity_outer_cm2_g = cell_opacity_state(problem, model, n).opacity_cm2_g
+    g_surface_cgs = surface_gravity_cgs(problem.parameters.mass_g, radius_surface_cm)
+    photospheric_face_pressure_dyn_cm2 =
+        eddington_photospheric_pressure_dyn_cm2(g_surface_cgs, opacity_outer_cm2_g)
+
+    fitting_point_terms = outer_boundary_fitting_point_terms(problem, model)
+    surface_pressure_dyn_cm2 = cell_eos_state(problem, model, n).pressure_dyn_cm2
+    match_pressure_dyn_cm2 = fitting_point_terms.current_match_pressure_dyn_cm2
+    hydrostatic_pressure_offset_dyn_cm2 = fitting_point_terms.hydrostatic_pressure_offset_dyn_cm2
+
+    surface_to_photosphere_log_gap =
+        positive_log(surface_pressure_dyn_cm2) - positive_log(photospheric_face_pressure_dyn_cm2)
+    match_to_photosphere_log_gap =
+        positive_log(match_pressure_dyn_cm2) - positive_log(photospheric_face_pressure_dyn_cm2)
+    surface_to_match_log_gap =
+        positive_log(surface_pressure_dyn_cm2) - positive_log(match_pressure_dyn_cm2)
+    hydrostatic_pressure_offset_fraction =
+        hydrostatic_pressure_offset_dyn_cm2 / photospheric_face_pressure_dyn_cm2
+
+    return SurfacePressureSemantics(
+        surface_pressure_dyn_cm2,
+        photospheric_face_pressure_dyn_cm2,
+        match_pressure_dyn_cm2,
+        hydrostatic_pressure_offset_dyn_cm2,
+        surface_to_photosphere_log_gap,
+        match_to_photosphere_log_gap,
+        surface_to_match_log_gap,
+        hydrostatic_pressure_offset_fraction,
+    )
+end

@@ -333,6 +333,24 @@ struct SurfaceTemperatureSemantics
 end
 
 """
+    SurfacePressureSemantics
+
+Diagnostic-only decomposition of the live surface-pressure row into the
+photospheric pressure reference, the deeper pressure match point, and their
+log gaps.
+"""
+struct SurfacePressureSemantics
+    surface_pressure_dyn_cm2::Float64
+    photospheric_face_pressure_dyn_cm2::Float64
+    match_pressure_dyn_cm2::Float64
+    hydrostatic_pressure_offset_dyn_cm2::Float64
+    surface_to_photosphere_log_gap::Float64
+    match_to_photosphere_log_gap::Float64
+    surface_to_match_log_gap::Float64
+    hydrostatic_pressure_offset_fraction::Float64
+end
+
+"""
     OuterBoundaryRowSummary(...)
 
 Diagnostic-only summary for the one-sided outer transport row and the paired
