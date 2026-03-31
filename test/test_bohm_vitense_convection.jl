@@ -1,5 +1,6 @@
 @testset "Bohm-Vitense convection closure" begin
     closure = ASTRA.Microphysics.BohmVitenseMLTConvection(1.8)
+    weaker_closure = ASTRA.Microphysics.BohmVitenseMLTConvection(0.9)
 
     stable = ASTRA.Microphysics.ConvectionLocalState(
         1.0e10,
@@ -34,6 +35,7 @@
 
     stable_result = closure(stable)
     convective_result = closure(convective)
+    weaker_convective_result = weaker_closure(convective)
 
     @test stable_result.transport_regime == :radiative
     @test stable_result.active_gradient ≈ stable.radiative_gradient
@@ -44,4 +46,6 @@
     @test convective_result.superadiabatic_excess >= 0.0
     @test convective_result.convective_velocity_cm_s > 0.0
     @test 0.0 <= convective_result.convective_flux_fraction <= 1.0
+    @test convective_result.convective_velocity_cm_s >
+          weaker_convective_result.convective_velocity_cm_s
 end

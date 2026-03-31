@@ -70,7 +70,10 @@ _radiative_transport_state(local_state::ConvectionLocalState) = ConvectionTransp
     0.0,
 )
 
-function _convective_transport_state(local_state::ConvectionLocalState)
+function _convective_transport_state(
+    closure::BohmVitenseMLTConvection,
+    local_state::ConvectionLocalState,
+)
     ledoux_gradient = _ledoux_gradient(local_state)
     radiative_gradient = Float64(local_state.radiative_gradient)
 
@@ -80,7 +83,11 @@ function _convective_transport_state(local_state::ConvectionLocalState)
 
     excess = radiative_gradient - ledoux_gradient
     active_gradient = ledoux_gradient + 0.5 * excess
-    convective_velocity_cm_s = 1.0e5 * Float64(1.0 + excess) * max(1.0, local_state.temperature_k / 1.0e6)
+    convective_velocity_cm_s =
+        1.0e5 *
+        closure.alpha_MLT *
+        Float64(1.0 + excess) *
+        max(1.0, local_state.temperature_k / 1.0e6)
     convective_flux_fraction = clamp(excess / (1.0 + excess), 0.0, 1.0)
 
     return ConvectionTransportState(
@@ -91,14 +98,14 @@ function _convective_transport_state(local_state::ConvectionLocalState)
         ledoux_gradient,
         active_gradient,
         active_gradient - ledoux_gradient,
-        convective_flux_fraction,
+        excess,
         convective_velocity_cm_s,
         convective_flux_fraction,
     )
 end
 
 function (closure::BohmVitenseMLTConvection)(local_state::ConvectionLocalState)
-    return _convective_transport_state(local_state)
+    return _convective_transport_state(closure, local_state)
 end
 
 function (closure::BohmVitenseMLTConvection)(
@@ -124,9 +131,9 @@ function (closure::BohmVitenseMLTConvection)(
     end
 
     active_gradient = adiabatic_gradient + 0.5 * (radiative_gradient_value - adiabatic_gradient)
+    excess = radiative_gradient_value - adiabatic_gradient
     convective_flux_fraction = clamp(
-        (radiative_gradient_value - adiabatic_gradient) /
-        (1.0 + radiative_gradient_value - adiabatic_gradient),
+        excess / (1.0 + excess),
         0.0,
         1.0,
     )
@@ -138,8 +145,8 @@ function (closure::BohmVitenseMLTConvection)(
         adiabatic_gradient,
         active_gradient,
         active_gradient - adiabatic_gradient,
-        convective_flux_fraction,
-        0.0,
+        excess,
+        1.0e5 * closure.alpha_MLT * (1.0 + excess),
         convective_flux_fraction,
     )
 end
