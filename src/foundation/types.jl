@@ -341,8 +341,8 @@ struct OuterBoundaryRowSummary
     current_match_temperature_k::Float64
     fitting_point_temperature_k::Float64
     temperature_contract_log_gap::Float64
-    current_match_pressure_k::Float64
-    fitting_point_pressure_k::Float64
+    current_match_pressure_dyn_cm2::Float64
+    fitting_point_pressure_dyn_cm2::Float64
     pressure_contract_log_gap::Float64
 end
 
