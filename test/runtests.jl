@@ -45,6 +45,7 @@ using ASTRA
     include("test_outer_boundary_ownership_audit_artifacts.jl")
     include("test_surface_owner_localization_audit_artifacts.jl")
     include("test_surface_temperature_semantics.jl")
+    include("test_surface_temperature_semantics_audit_artifacts.jl")
     include("test_outer_boundary_fitting_point_terms.jl")
     include("test_center_asymptotic_scaling.jl")
     include("test_weighted_solver_metrics.jl")

@@ -14,6 +14,39 @@ For each update, record:
 
 ## 2026-03-30
 
+### Surface temperature semantics audit
+
+ASTRA's rebuilt `2026-03-30-surface-temperature-semantics-audit` bundle now records the live semantics of the corrected surface-temperature row in the same focused four-case view. The structural pattern is consistent in every focused payload: `match_to_photosphere_log_gap` is larger than `surface_to_photosphere_log_gap`, `surface_to_match_log_gap` stays large and negative, and `transport_temperature_offset_fraction` remains far above unity. In plain language, the live `surface_temperature` failure is bridge-dominated across the focused bundle.
+
+Measured post-fix facts:
+
+- all four focused cases are still `converged = false`,
+- all four focused cases still have `used_regularized_fallback = true`,
+- all four focused cases keep `accepted_dominant_surface_family = surface_temperature`,
+- all four focused cases satisfy `match_to_photosphere_log_gap > surface_to_photosphere_log_gap`,
+- and all four focused cases keep `transport_temperature_offset_fraction >> 1`.
+
+Why this mattered:
+
+- it distinguishes a bridge-dominated temperature failure from a simple cell-versus-photosphere mismatch,
+- it gives the next slice a sharper scientific target than the broader `surface_temperature` label alone,
+- and it does so without changing solver behavior.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. scripts/run_surface_temperature_semantics_audit.jl artifacts/validation/2026-03-30-surface-temperature-semantics-audit`
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_surface_temperature_semantics_audit_artifacts.jl"); include("test/test_docs_structure.jl")'`
+
+What this does not prove:
+
+- robust convergence,
+- that Hopf is needed,
+- or that the current bridge semantics are correct.
+
+Next step:
+
+- keep the corrected Eddington-grey photosphere and the one-sided outer transport row fixed, and test the live temperature-bridge semantics directly before widening scope to richer atmosphere models.
+
 ### Surface owner localization audit
 
 ASTRA's rebuilt `2026-03-30-surface-owner-localization-audit` bundle now records the live post-temperature-fix state in a focused four-case view. Unlike the earlier mixed ownership story, all four focused cases now accept on `surface` with `accepted_dominant_surface_family = surface_temperature`, and the outer transport hotspot stays on the outer row at cell index `11`. The focused bundle therefore says something sharper than the pre-cutover audit did: under the corrected temperature owner, the surviving near-surface failure is temperature-dominated in this four-case bundle.

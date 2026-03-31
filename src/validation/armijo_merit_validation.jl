@@ -198,12 +198,38 @@ function _write_armijo_merit_validation_outer_boundary_summary(
         prefix * ".surface_pressure_weighted = ",
         repr(summary.surface_pressure_weighted),
     )
+    println(io, prefix * ".surface_temperature_k = ", repr(summary.surface_temperature_k))
     println(
         io,
         prefix * ".photospheric_face_temperature_k = ",
         repr(summary.photospheric_face_temperature_k),
     )
     println(io, prefix * ".match_temperature_k = ", repr(summary.match_temperature_k))
+    println(
+        io,
+        prefix * ".transport_temperature_offset_k = ",
+        repr(summary.transport_temperature_offset_k),
+    )
+    println(
+        io,
+        prefix * ".surface_to_photosphere_log_gap = ",
+        repr(summary.surface_to_photosphere_log_gap),
+    )
+    println(
+        io,
+        prefix * ".match_to_photosphere_log_gap = ",
+        repr(summary.match_to_photosphere_log_gap),
+    )
+    println(
+        io,
+        prefix * ".surface_to_match_log_gap = ",
+        repr(summary.surface_to_match_log_gap),
+    )
+    println(
+        io,
+        prefix * ".transport_temperature_offset_fraction = ",
+        repr(summary.transport_temperature_offset_fraction),
+    )
     println(
         io,
         prefix * ".photospheric_face_pressure_dyn_cm2 = ",
@@ -640,6 +666,10 @@ end
 
 function run_surface_owner_localization_audit(output_dir::AbstractString)
     return run_outer_boundary_ownership_audit(output_dir)
+end
+
+function run_surface_temperature_semantics_audit(output_dir::AbstractString)
+    return run_surface_owner_localization_audit(output_dir)
 end
 
 function _clear_outer_boundary_ownership_audit_payloads(output_dir::AbstractString)
