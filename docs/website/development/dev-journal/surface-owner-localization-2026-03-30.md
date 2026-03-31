@@ -2,6 +2,8 @@
 
 This note records the live post-temperature-fix interpretation of the focused `2026-03-30-surface-owner-localization-audit` bundle at `artifacts/validation/2026-03-30-surface-owner-localization-audit/`.
 
+Retention status: `historical`
+
 ## Code-backed current state
 
 The live outer-boundary helper stack is now:

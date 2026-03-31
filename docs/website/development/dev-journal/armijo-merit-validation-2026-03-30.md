@@ -2,6 +2,8 @@
 
 This note records the current Armijo merit validation sweep as a dated artifact-backed snapshot.
 
+Retention status: `historical`
+
 Exact command used:
 
 ```bash

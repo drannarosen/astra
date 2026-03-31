@@ -2,6 +2,8 @@
 
 This note records the current transport-family hardening evidence after the transport sign contract correction. The refreshed artifact bundle now lives at `artifacts/validation/2026-03-30-transport-sign-correction/`.
 
+Retention status: `historical`
+
 ## Outer Surface Coupling Audit
 
 The follow-up audit bundle now lives at `artifacts/validation/2026-03-30-outer-surface-coupling-audit/`. Its purpose is narrower than the earlier transport-family note: it asks which near-surface owner is actually sharpest once the surface row is split into row-level families and the outer boundary summary is recorded explicitly.
@@ -56,4 +58,10 @@ So this note records a refreshed transport hotspot diagnosis and a row-level out
 
 ## Next step
 
-Keep the transport sign contract explicit in the docs, and use the refreshed bundle to harden the surface_pressure semantics first, while leaving the transport hotspot on the outer row as the secondary diagnostic target.
+Keep the transport sign contract explicit in the docs, and read this note
+together with the newer `2026-03-31-outer-transport-pressure-coupling-audit`.
+That newer control lane says the outer-row pressure target mismatch is
+numerically live, but not sufficient by itself to move the accepted owner away
+from `surface_pressure`. So the transport hotspot remains a real secondary
+diagnostic target, but the current next owner is deeper pressure/transport
+coupling rather than a bare sign or target-selection bug.

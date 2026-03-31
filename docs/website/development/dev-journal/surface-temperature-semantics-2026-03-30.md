@@ -2,6 +2,8 @@
 
 This note records the live post-cutover surface-temperature semantics for the focused `2026-03-30-surface-temperature-semantics-audit` bundle at `artifacts/validation/2026-03-30-surface-temperature-semantics-audit/`.
 
+Retention status: `historical`
+
 ## Code-backed current state
 
 The live outer-boundary temperature stack is now split deliberately:

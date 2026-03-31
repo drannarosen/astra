@@ -2,6 +2,8 @@
 
 Artifact bundle: `artifacts/validation/2026-03-31-bohm-vitense-mlt-hard-cutover`
 
+Retention status: `current`
+
 This note records the first ASTRA slice where the active transport residual
 stops pretending convection is only a label. The branch-owned transport owner
 is now Bohm-Vitense local MLT, and the accepted outer transport row in the

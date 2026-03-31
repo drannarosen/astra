@@ -2,6 +2,8 @@
 
 This note records the live post-cutover surface-pressure semantics for the focused `2026-03-31-surface-pressure-semantics-audit` bundle at `artifacts/validation/2026-03-31-surface-pressure-semantics-audit/`.
 
+Retention status: `current`
+
 ## Code-backed current state
 
 - `outer_match_temperature_k(problem, model)` remains photospheric at the Eddington face.

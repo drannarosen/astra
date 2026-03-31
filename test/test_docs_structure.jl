@@ -71,19 +71,21 @@
         "docs/website/planning/differentiable-astra-roadmap.md",
         "docs/website/planning/migration-notes-from-stellax.md",
         "docs/website/development/development-guide.md",
+        "docs/website/development/dev-journal/index.md",
+        "docs/website/development/dev-journal/progress-summary.md",
+        "docs/website/development/dev-journal/lessons-learned.md",
         "docs/website/development/checklists.md",
         "docs/website/development/checklists/solar-first-lane.md",
-        "docs/website/development/progress-summary.md",
-        "docs/website/development/bohm-vitense-mlt-hard-cutover-2026-03-31.md",
-        "docs/website/development/armijo-merit-validation-2026-03-30.md",
-        "docs/website/development/transport-outer-boundary-hardening-2026-03-30.md",
-        "docs/website/development/outer-boundary-fitting-point-ownership-2026-03-30.md",
-        "docs/website/development/surface-owner-localization-2026-03-30.md",
-        "docs/website/development/surface-temperature-semantics-2026-03-30.md",
-        "docs/website/development/surface-pressure-semantics-2026-03-31.md",
-        "docs/website/development/seed-strategy-audit-2026-03-31.md",
-        "docs/website/development/pressure-closure-control-audit-2026-03-31.md",
-        "docs/website/development/outer-transport-pressure-coupling-audit-2026-03-31.md",
+        "docs/website/development/dev-journal/bohm-vitense-mlt-hard-cutover-2026-03-31.md",
+        "docs/website/development/dev-journal/armijo-merit-validation-2026-03-30.md",
+        "docs/website/development/dev-journal/transport-outer-boundary-hardening-2026-03-30.md",
+        "docs/website/development/dev-journal/outer-boundary-fitting-point-ownership-2026-03-30.md",
+        "docs/website/development/dev-journal/surface-owner-localization-2026-03-30.md",
+        "docs/website/development/dev-journal/surface-temperature-semantics-2026-03-30.md",
+        "docs/website/development/dev-journal/surface-pressure-semantics-2026-03-31.md",
+        "docs/website/development/dev-journal/seed-strategy-audit-2026-03-31.md",
+        "docs/website/development/dev-journal/pressure-closure-control-audit-2026-03-31.md",
+        "docs/website/development/dev-journal/outer-transport-pressure-coupling-audit-2026-03-31.md",
         "docs/website/development/changelog.md",
         "docs/website/development/backlog.md",
         "docs/website/development/issues.md",
@@ -109,12 +111,12 @@
     @test !isfile(stale_surface_pressure_note)
     @test !occursin(
         "2026-03-30-surface-pressure-log-contract",
-        read(joinpath(root, "docs/website/development/progress-summary.md"), String),
+        read(joinpath(root, "docs/website/development/dev-journal/progress-summary.md"), String),
     )
 
     bohm_vitense_note = joinpath(
         root,
-        "docs/website/development/bohm-vitense-mlt-hard-cutover-2026-03-31.md",
+        "docs/website/development/dev-journal/bohm-vitense-mlt-hard-cutover-2026-03-31.md",
     )
     @test isfile(bohm_vitense_note)
     bohm_vitense_note_text = read(bohm_vitense_note, String)
@@ -170,7 +172,16 @@
             "implicit-function-theorem view",
             "backend-agnostic",
         ],
-        "docs/website/development/progress-summary.md" => [
+        "docs/website/development/dev-journal/index.md" => [
+            "dated development memory lane",
+            "Progress Summary",
+            "Lessons Learned",
+            "Retention workflow",
+            "`current`",
+            "`historical`",
+            "`archive-candidate`",
+        ],
+        "docs/website/development/dev-journal/progress-summary.md" => [
             "2026-03-29",
             "`StellarModel`",
             "Next step",
@@ -238,7 +249,13 @@
             "accepted_transport_hotspot_location = outer",
             "accepted_outer_boundary_dominant_family = surface_pressure",
         ],
-        "docs/website/development/outer-boundary-fitting-point-ownership-2026-03-30.md" => [
+        "docs/website/development/dev-journal/lessons-learned.md" => [
+            "durable lessons",
+            "Keep physical ownership and convergence diagnosis separate",
+            "wrong branch of the equations",
+            "does not by itself prove convergence",
+        ],
+        "docs/website/development/dev-journal/outer-boundary-fitting-point-ownership-2026-03-30.md" => [
             "2026-03-30-outer-boundary-fitting-point-ownership-audit",
             "temperature_contract_log_gap",
             "pressure_contract_log_gap",
@@ -247,8 +264,9 @@
             "converged = false",
             "used_regularized_fallback = true",
             "code-identical",
+            "Retention status: `historical`",
         ],
-        "docs/website/development/surface-owner-localization-2026-03-30.md" => [
+        "docs/website/development/dev-journal/surface-owner-localization-2026-03-30.md" => [
             "2026-03-30-surface-owner-localization-audit",
             "accepted_dominant_surface_family = surface_temperature",
             "outer transport hotspot",
@@ -256,8 +274,9 @@
             "what this does not prove",
             "converged = false",
             "used_regularized_fallback = true",
+            "Retention status: `historical`",
         ],
-        "docs/website/development/surface-temperature-semantics-2026-03-30.md" => [
+        "docs/website/development/dev-journal/surface-temperature-semantics-2026-03-30.md" => [
             "2026-03-30-surface-temperature-semantics-audit",
             "surface_to_photosphere_log_gap",
             "match_to_photosphere_log_gap",
@@ -268,8 +287,9 @@
             "what this does not prove",
             "converged = false",
             "used_regularized_fallback = true",
+            "Retention status: `historical`",
         ],
-        "docs/website/development/surface-pressure-semantics-2026-03-31.md" => [
+        "docs/website/development/dev-journal/surface-pressure-semantics-2026-03-31.md" => [
             "2026-03-31-surface-pressure-semantics-audit",
             "surface_pressure",
             "pressure_match_to_photosphere_log_gap",
@@ -278,8 +298,9 @@
             "what this does not prove",
             "converged = false",
             "used_regularized_fallback = true",
+            "Retention status: `current`",
         ],
-        "docs/website/development/seed-strategy-audit-2026-03-31.md" => [
+        "docs/website/development/dev-journal/seed-strategy-audit-2026-03-31.md" => [
             "2026-03-31-seed-strategy-audit",
             "bootstrap_default",
             "convective_pms_like",
@@ -288,16 +309,18 @@
             "accepted_surface_pressure_bridge_dominant",
             "saved ZAMS remains a later control lane only",
             "canonical science lane remains PMS-first",
+            "Retention status: `current`",
         ],
-        "docs/website/development/pressure-closure-control-audit-2026-03-31.md" => [
+        "docs/website/development/dev-journal/pressure-closure-control-audit-2026-03-31.md" => [
             "2026-03-31-pressure-closure-control-audit",
             "pressure_closure_label",
             "bridge",
             "photosphere_control",
             "accepted_surface_pressure_bridge_dominant",
             "what this does not prove",
+            "Retention status: `current`",
         ],
-        "docs/website/development/outer-transport-pressure-coupling-audit-2026-03-31.md" => [
+        "docs/website/development/dev-journal/outer-transport-pressure-coupling-audit-2026-03-31.md" => [
             "2026-03-31-outer-transport-pressure-coupling-audit",
             "outer_transport_pressure_label",
             "photospheric_face",
@@ -305,8 +328,9 @@
             "accepted_transport_hotspot_location",
             "accepted_outer_boundary_dominant_family",
             "what this does not prove",
+            "Retention status: `current`",
         ],
-        "docs/website/development/transport-outer-boundary-hardening-2026-03-30.md" => [
+        "docs/website/development/dev-journal/transport-outer-boundary-hardening-2026-03-30.md" => [
             "boundary ownership",
             "Boundary validity checks",
             "outer transport",
@@ -324,14 +348,16 @@
             "surface_pressure",
             "outer_transport",
             "2026-03-31-outer-transport-pressure-coupling-audit",
+            "Retention status: `historical`",
         ],
-        "docs/website/development/armijo-merit-validation-2026-03-30.md" => [
+        "docs/website/development/dev-journal/armijo-merit-validation-2026-03-30.md" => [
             "accepted step count",
             "rejected trial count",
             "decrease ratio",
             "best rejected trial",
             "conditioning",
             "row-family",
+            "Retention status: `historical`",
         ],
         "docs/website/development/checklists.md" => [
             "developer-facing checklists",
@@ -748,7 +774,7 @@
     transport_outer_boundary_note = read(
         joinpath(
             root,
-            "docs/website/development/transport-outer-boundary-hardening-2026-03-30.md",
+            "docs/website/development/dev-journal/transport-outer-boundary-hardening-2026-03-30.md",
         ),
         String,
     )

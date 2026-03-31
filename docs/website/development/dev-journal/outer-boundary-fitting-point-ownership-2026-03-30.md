@@ -2,6 +2,8 @@
 
 This note records the interpretation of the focused `2026-03-30-outer-boundary-fitting-point-ownership-audit` bundle at `artifacts/validation/2026-03-30-outer-boundary-fitting-point-ownership-audit/`.
 
+Retention status: `historical`
+
 ## Code-backed helper decomposition
 
 ASTRA's current outer-boundary helpers are split into two distinct bridges:

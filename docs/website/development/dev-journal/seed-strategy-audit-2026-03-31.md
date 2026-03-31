@@ -2,6 +2,8 @@
 
 Artifact bundle: `artifacts/validation/2026-03-31-seed-strategy-audit`
 
+Retention status: `current`
+
 This page records ASTRA's first seed-family comparison after the focused
 surface-pressure audit. The compared seed labels are `bootstrap_default` and
 `convective_pms_like`.
