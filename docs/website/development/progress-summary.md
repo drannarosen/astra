@@ -14,6 +14,160 @@ For each update, record:
 
 ## 2026-03-31
 
+### Bohm-Vitense MLT hard cutover
+
+The new development note is `2026-03-31-bohm-vitense-mlt-hard-cutover`, and it
+records the measured transport diagnostics for the accepted `default-12`
+bundle.
+
+ASTRA now owns the active transport branch through Bohm-Vitense local MLT
+instead of a radiative-only fallback in the residual. The canonical default
+bundle still does not converge, but the transport row on the accepted
+`default-12` state is now convective and branch-owned rather than just
+criterion-labeled.
+
+Code-backed fact:
+
+- `cell_transport_state(...)` feeds the transport row with branch-owned
+  `active_gradient` and branch diagnostics,
+- the default microphysics bundle uses `BohmVitenseMLTConvection(1.8)`,
+- and the transport residual now reads the active gradient instead of the
+  radiative candidate.
+
+Measured result:
+
+- `default-12` has `initial_merit = 7.365057367071724`,
+- `default-12` has `final_merit = 6.80399934664248`,
+- `default-12` has `accepted_dominant_family = surface`,
+- `default-12` has `accepted_transport_hotspot_location = outer`,
+- `default-12` still has `used_regularized_fallback = true`,
+- the accepted outer row reports `transport_regime = convective`,
+- `transport_guarded = false`,
+- `nabla_radiative = 37.387981274479316`,
+- `nabla_transport = 0.3998977412791282`,
+- `convective_velocity_cm_s = 2034.6002870572959`,
+- and `convective_flux_fraction = 0.9893041098329614`.
+
+Interpretation:
+
+- the wrong-branch transport owner was a real piece of the burden because the
+  accepted outer row is now genuinely convective,
+- but the bundle still does not converge and still uses fallback, so the
+  remaining failure is broader than transport alone,
+- and the current hotspot story still points to the outer boundary plus the
+  surface-pressure family rather than to a solved global basin.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. scripts/run_armijo_merit_validation.jl /tmp/astra-mlt-cutover-validation`
+- `~/.juliaup/bin/julia --project=. -e 'using ASTRA; problem = ASTRA.build_toy_problem(n_cells=12); result = ASTRA.solve_structure(problem); payload = ASTRA.build_armijo_merit_validation_payload("default-12", problem, result; seed_label="default"); residual = ASTRA.assemble_structure_residual(problem, result.state); weights = ASTRA.Solvers.residual_row_weights(problem, result.state); summary = ASTRA.Solvers.outer_boundary_row_summary(problem, result.state, residual; row_weights=weights); println(payload.initial_merit); println(payload.final_merit); println(payload.accepted_dominant_family); println(payload.accepted_transport_hotspot.location); println(payload.used_regularized_fallback); println(summary.transport_regime); println(summary.transport_guarded); println(summary.nabla_radiative); println(summary.nabla_transport); println(summary.convective_velocity_cm_s); println(summary.convective_flux_fraction)'`
+
+What this does not prove:
+
+- robust convergence,
+- that the outer boundary is now solved,
+- or that Ledoux-active transport, composition mixing, overshoot,
+  semiconvection, thermohaline transport, or Henyey loss physics are active.
+
+### Outer transport pressure coupling audit
+
+ASTRA's new `2026-03-31-outer-transport-pressure-coupling-audit` bundle tests
+whether the remaining near-term issue is owned by a pressure-target mismatch
+between the outer transport row and the surface-pressure row. The control lane
+does not change the bridge closure. It only aligns the outer transport row to
+the same selected pressure target already used by the surface-pressure row.
+
+The manifest uses the literal `outer_transport_pressure_label` field to
+separate the `photospheric_face` and `selected_pressure_target` payloads.
+
+Measured headline facts:
+
+- `photospheric_face-default-12` has `initial_merit = 7.606095159786209`,
+- `photospheric_face-default-12` has `final_merit = 7.137553468301087`,
+- `photospheric_face-default-12` has `accepted_transport_hotspot_location = outer`,
+- `photospheric_face-default-12` has `accepted_outer_boundary_dominant_family = surface_pressure`,
+- `selected_pressure_target-default-12` has `initial_merit = 7.542577331627505`,
+- `selected_pressure_target-default-12` has `final_merit = 4.407889109608119`,
+- `selected_pressure_target-default-12` has `accepted_transport_hotspot_location = outer`,
+- `selected_pressure_target-default-12` has `accepted_outer_boundary_dominant_family = surface_pressure`,
+- and both outer-transport pressure labels remain `converged = false` and `used_regularized_fallback = true`.
+
+Why this mattered:
+
+- it turns the pressure/transport coupling suspicion into a measured control
+  lane rather than a verbal hypothesis,
+- it shows that outer-row pressure-target alignment is numerically live for
+  `default-12`,
+- and it shows that target alignment alone does not change the accepted owner
+  away from `surface_pressure`.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. scripts/run_outer_transport_pressure_coupling_audit.jl artifacts/validation/2026-03-31-outer-transport-pressure-coupling-audit`
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_outer_transport_pressure_semantics.jl"); include("test/test_outer_transport_pressure_mode.jl"); include("test/test_outer_transport_pressure_coupling_audit_artifacts.jl"); include("test/test_transport_row_terms.jl"); include("test/test_transport_hotspot_diagnostics.jl"); include("test/test_outer_boundary_row_diagnostics.jl"); include("test/test_boundary_conditions.jl"); include("test/test_surface_pressure_semantics.jl"); include("test/test_pressure_closure_control_audit_artifacts.jl"); include("test/test_surface_pressure_semantics_audit_artifacts.jl"); include("test/test_docs_structure.jl")'`
+
+what this does not prove:
+
+- that `selected_pressure_target` should become the live outer transport
+  default,
+- that target alignment alone explains the remaining failure,
+- or that the deeper bridge pressure semantics are physically final.
+
+Next step:
+
+- keep the alignment lane internal and diagnostic-only, and move the next slice
+  one layer deeper into outer transport / pressure-side coupling rather than
+  widening the control matrix.
+
+### Pressure closure control audit
+
+ASTRA's new `2026-03-31-pressure-closure-control-audit` bundle compares the
+current bridge pressure target against an internal `photosphere_control` lane
+on the same `bootstrap_default` seed family and the same `default-12` focused
+bundle. The control lane changes the magnitude of the residuals, but it does
+not recover convergence and it does not remove the bridge-dominated
+surface-pressure owner.
+
+The manifest uses the literal `pressure_closure_label` field to separate the
+bridge and photosphere-control payloads.
+
+Measured headline facts:
+
+- `bridge-default-12` has `initial_merit = 7.606095159786209`,
+- `bridge-default-12` has `final_merit = 7.137553468301087`,
+- `bridge-default-12` has `accepted_surface_pressure_bridge_dominant = true`,
+- `photosphere_control-default-12` has `initial_merit = 929.4997975183256`,
+- `photosphere_control-default-12` has `final_merit = 414.1399030307972`,
+- `photosphere_control-default-12` has `accepted_surface_pressure_bridge_dominant = true`,
+- and both closure modes remain `converged = false`.
+
+Why this mattered:
+
+- it gives ASTRA a negative control on the current pressure semantics instead
+  of relying on seed-only discrimination,
+- it shows that the photospheric-pressure control lane is numerically distinct
+  but not a basin escape hatch,
+- and it keeps the near-term interpretation focused on the live
+  bridge-dominated surface-pressure row.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. scripts/run_pressure_closure_control_audit.jl artifacts/validation/2026-03-31-pressure-closure-control-audit`
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_pressure_closure_control_audit_artifacts.jl"); include("test/test_pressure_closure_mode.jl"); include("test/test_boundary_conditions.jl"); include("test/test_surface_pressure_semantics.jl"); include("test/test_outer_boundary_row_diagnostics.jl"); include("test/test_atmosphere_match_point.jl"); include("test/test_docs_structure.jl")'`
+
+what this does not prove:
+
+- that the bridge target is physically correct,
+- that photospheric control is the right long-term boundary condition,
+- or that pressure semantics are the only remaining issue.
+
+Next step:
+
+- keep the pressure control lane internal and diagnostic-only; after the new
+  outer transport pressure coupling audit, the next pressure-side change should
+  move deeper into pressure/transport coupling rather than re-running a pure
+  closure-target swap.
+
 ### Seed strategy audit
 
 ASTRA's new `2026-03-31-seed-strategy-audit` bundle compares the live

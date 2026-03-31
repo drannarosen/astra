@@ -67,7 +67,7 @@ $$
 
 If the inequality is not satisfied, the layer is radiatively stable and the radiative branch remains admissible.
 
-That is exactly what the current `SchwarzschildConvectionHook` does in code: it compares `nabla_rad` against `nabla_ad`, returns a regime label, and returns a temperature-gradient hint.
+That is exactly what the current `SchwarzschildConvectionHook` did in the historical radiative-only lane. The present residual now consumes the branch-owned active gradient from the convection closure, but this page still documents the criterion and Ledoux-ready mathematics that feed that decision.
 
 ## Ledoux-ready extension
 
@@ -99,7 +99,9 @@ $$
 \nabla_\mathrm{rad} > \nabla_\mathrm{L}.
 $$
 
-The docs also spell these quantities as `nabla_mu` and `nabla_L` so the future code and diagnostics can keep a literal symbol vocabulary that is easy to grep.
+The docs also spell these quantities as `nabla_rad`, `nabla_ad`, `nabla_mu`,
+and `nabla_L` so the future code and diagnostics can keep a literal symbol
+vocabulary that is easy to grep.
 
 ASTRA does not yet solve with that criterion, but the documentation and future interfaces should be built so this extension is natural rather than invasive.
 
@@ -124,7 +126,7 @@ The docs also spell these as `dκ/dT`, `dκ/drho`, `dP/dT`, and `dP/drho` so the
 
 ## How it enters ASTRA
 
-The current classical solve still writes the transport residual in radiative form:
+Historically, the current classical solve wrote the transport residual in radiative form:
 
 $$
 \log T_{k+1} - \log T_k - \nabla_k \left(\log P_{k+1} - \log P_k\right) = 0.
@@ -132,10 +134,10 @@ $$
 
 That sign convention matches the transport documentation in [Energy Transport](../stellar-structure/energy-transport.md) and the methods derivation in [Residual Assembly](../../methods/residual-assembly.md).
 
-Today, the hook's returned regime and hint do not yet own $\nabla_k$ in that row. So the current residual still uses radiative transport even when the instability hook says the layer is convective. That is a code-backed fact about the current bootstrap lane, not a statement of the intended long-term physics.
+Today, the hook's returned regime and hint are no longer the final owner of $\nabla_k$ in that row. The transport residual now uses the branch-owned active gradient from the convective closure when the layer is unstable. That is the current code-backed state of the bootstrap lane, not just the intended long-term physics.
 
 The derivative handling for the current helper lane is summarized in [Jacobian Construction](../../methods/jacobian-construction.md).
 
 ## What is deferred
 
-Real local MLT, Ledoux-active transport, convective mixing, overshoot, semiconvection, thermohaline transport, and turbulent pressure are deferred from the active residual today. This page therefore documents the current radiative-gradient helper, the current Schwarzschild criterion hook, and the Ledoux-ready mathematical target only.
+Real local MLT is now implemented in the active residual, but Ledoux-active transport, convective mixing, overshoot, semiconvection, thermohaline transport, and turbulent pressure remain deferred from the active residual today. This page therefore documents the current radiative-gradient helper, the current Schwarzschild criterion hook, and the Ledoux-ready mathematical target only.

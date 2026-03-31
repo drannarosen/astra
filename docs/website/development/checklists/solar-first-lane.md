@@ -53,7 +53,7 @@ This checklist tracks ASTRA's first serious science lane:
 - [x] Surface closure upgraded from guessed thermodynamic values to one-sided Phase 2 `T(\tau)` atmosphere matching
 - [x] Weak-screening analytical nuclear option implemented and tested
 - [x] Flag-gated degeneracy and Coulomb EOS enrichments implemented and tested
-- [ ] Real baseline MLT closure implemented
+- [x] Real baseline MLT closure implemented
 
 ## Evolution lane
 

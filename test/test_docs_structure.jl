@@ -74,6 +74,7 @@
         "docs/website/development/checklists.md",
         "docs/website/development/checklists/solar-first-lane.md",
         "docs/website/development/progress-summary.md",
+        "docs/website/development/bohm-vitense-mlt-hard-cutover-2026-03-31.md",
         "docs/website/development/armijo-merit-validation-2026-03-30.md",
         "docs/website/development/transport-outer-boundary-hardening-2026-03-30.md",
         "docs/website/development/outer-boundary-fitting-point-ownership-2026-03-30.md",
@@ -81,6 +82,8 @@
         "docs/website/development/surface-temperature-semantics-2026-03-30.md",
         "docs/website/development/surface-pressure-semantics-2026-03-31.md",
         "docs/website/development/seed-strategy-audit-2026-03-31.md",
+        "docs/website/development/pressure-closure-control-audit-2026-03-31.md",
+        "docs/website/development/outer-transport-pressure-coupling-audit-2026-03-31.md",
         "docs/website/development/changelog.md",
         "docs/website/development/backlog.md",
         "docs/website/development/issues.md",
@@ -108,6 +111,25 @@
         "2026-03-30-surface-pressure-log-contract",
         read(joinpath(root, "docs/website/development/progress-summary.md"), String),
     )
+
+    bohm_vitense_note = joinpath(
+        root,
+        "docs/website/development/bohm-vitense-mlt-hard-cutover-2026-03-31.md",
+    )
+    @test isfile(bohm_vitense_note)
+    bohm_vitense_note_text = read(bohm_vitense_note, String)
+    @test occursin("code-backed fact", bohm_vitense_note_text)
+    @test occursin("measured result", bohm_vitense_note_text)
+    @test occursin("interpretation", bohm_vitense_note_text)
+    @test occursin("initial_merit", bohm_vitense_note_text)
+    @test occursin("final_merit", bohm_vitense_note_text)
+    @test occursin("accepted_transport_hotspot_location", bohm_vitense_note_text)
+    @test occursin("accepted_dominant_family", bohm_vitense_note_text)
+    @test occursin("used_regularized_fallback", bohm_vitense_note_text)
+    @test occursin("nabla_radiative", bohm_vitense_note_text)
+    @test occursin("nabla_transport", bohm_vitense_note_text)
+    @test occursin("transport_regime", bohm_vitense_note_text)
+    @test occursin("convective_flux_fraction", bohm_vitense_note_text)
 
     contract_docs = Dict(
         "docs/website/index.md" => [
@@ -184,12 +206,18 @@
             "Historically, before the photospheric cutover, the surface thermodynamic rows used the shared outer match-point helper layer.",
             "2026-03-31-surface-pressure-semantics-audit",
             "2026-03-31-seed-strategy-audit",
+            "2026-03-31-pressure-closure-control-audit",
+            "2026-03-31-outer-transport-pressure-coupling-audit",
+            "2026-03-31-bohm-vitense-mlt-hard-cutover",
+            "Bohm-Vitense MLT hard cutover",
             "pressure_match_to_photosphere_log_gap",
             "pressure_surface_to_match_log_gap",
             "hydrostatic_pressure_offset_fraction",
             "surface_pressure",
             "converged = false",
             "used_regularized_fallback = true",
+            "transport_regime = convective",
+            "convective_flux_fraction = 0.9893041098329614",
             "bootstrap_default",
             "convective_pms_like",
             "accepted_surface_pressure_bridge_dominant = true",
@@ -202,6 +230,13 @@
             "match_to_photosphere_log_gap",
             "transport_temperature_offset_fraction",
             "surface_pressure",
+            "photosphere_control-default-12",
+            "accepted_surface_pressure_bridge_dominant = true",
+            "outer_transport_pressure_label",
+            "photospheric_face-default-12",
+            "selected_pressure_target-default-12",
+            "accepted_transport_hotspot_location = outer",
+            "accepted_outer_boundary_dominant_family = surface_pressure",
         ],
         "docs/website/development/outer-boundary-fitting-point-ownership-2026-03-30.md" => [
             "2026-03-30-outer-boundary-fitting-point-ownership-audit",
@@ -254,6 +289,23 @@
             "saved ZAMS remains a later control lane only",
             "canonical science lane remains PMS-first",
         ],
+        "docs/website/development/pressure-closure-control-audit-2026-03-31.md" => [
+            "2026-03-31-pressure-closure-control-audit",
+            "pressure_closure_label",
+            "bridge",
+            "photosphere_control",
+            "accepted_surface_pressure_bridge_dominant",
+            "what this does not prove",
+        ],
+        "docs/website/development/outer-transport-pressure-coupling-audit-2026-03-31.md" => [
+            "2026-03-31-outer-transport-pressure-coupling-audit",
+            "outer_transport_pressure_label",
+            "photospheric_face",
+            "selected_pressure_target",
+            "accepted_transport_hotspot_location",
+            "accepted_outer_boundary_dominant_family",
+            "what this does not prove",
+        ],
         "docs/website/development/transport-outer-boundary-hardening-2026-03-30.md" => [
             "boundary ownership",
             "Boundary validity checks",
@@ -271,6 +323,7 @@
             "surface_temperature",
             "surface_pressure",
             "outer_transport",
+            "2026-03-31-outer-transport-pressure-coupling-audit",
         ],
         "docs/website/development/armijo-merit-validation-2026-03-30.md" => [
             "accepted step count",
@@ -302,6 +355,8 @@
             "Active issues",
             "Classical residual convergence basin is still provisional",
             "Surface closure is now staged, not finished",
+            "pressure-closure control audit",
+            "photosphere_control",
             "Evolution remains intentionally stubbed",
             "Phase 2 one-sided `T(\\tau)` atmosphere boundary",
             "outer transport row remains one-sided to the photospheric face",
@@ -384,11 +439,13 @@
         ],
         "docs/website/physics/convection.md" => [
             "Current ASTRA implementation",
+            "Bohm-Vitense local MLT is now implemented",
             "Numerical realization in ASTRA",
             "What is deferred",
-            "Bohm-Vitense local MLT",
             "Ledoux-ready",
-            "radiative-only in the residual",
+            "Ledoux-active transport",
+            "composition mixing",
+            "historical",
         ],
         "docs/website/physics/convection/radiative-gradient-and-criterion-hook.md" => [
             "nabla_rad",
@@ -397,13 +454,15 @@
             "nabla_L",
             "Schwarzschild",
             "Ledoux",
-            "residual still uses radiative transport",
+            "branch-owned active gradient",
+            "historical",
             "../../methods/jacobian-construction.md",
         ],
         "docs/website/physics/convection/mixing-length-theory.md" => [
             "Bohm-Vitense local MLT",
             "Schwarzschild-active",
             "Ledoux-ready",
+            "implemented",
             "alpha_MLT",
             "superadiabatic excess",
             "convective velocity",
@@ -566,6 +625,9 @@
             "pressure and optical-depth helpers still reference the deeper matching concept",
             "temperature is photospheric while pressure and optical-depth helpers still reference the deeper matching concept",
             "shared outer match-point pressure contract",
+            "photospheric-pressure control lane",
+            "outer-transport pressure-coupling audit",
+            "outer_transport_pressure_label",
             "log form",
             "outer transport row remains one-sided to the photospheric face",
             "pressure bridge is code-identical",

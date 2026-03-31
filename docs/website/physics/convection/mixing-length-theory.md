@@ -1,6 +1,6 @@
 # Mixing-Length Theory Target
 
-This page records ASTRA's canonical target for the convective transport branch. It is not a claim that local MLT already exists in the solver. It is the physics specification the future implementation is expected to realize.
+This page records ASTRA's canonical target for the convective transport branch. It is now also the physics specification that the active solver implementation is expected to realize.
 
 The intended first serious convective closure is **Bohm-Vitense local MLT**. The architecture should be Schwarzschild-active at first, but Ledoux-ready and mixing-ready from the start.
 
@@ -12,12 +12,12 @@ Current ASTRA behavior is still narrower than real convection:
 - the convection hook only classifies the regime,
 - and the returned temperature-gradient hint is not yet the active transport law.
 
-The canonical target is different:
+The canonical target is now the active implementation:
 
 - every transport row computes the radiative candidate $\nabla_\mathrm{rad}$,
 - every transport row evaluates the local stability criterion,
 - radiative cells use $\nabla = \nabla_\mathrm{rad}$,
-- unstable cells use a real local MLT closure to determine $\nabla = \nabla_\mathrm{conv}$.
+- unstable cells use the Bohm-Vitense local MLT closure to determine $\nabla = \nabla_\mathrm{conv}$.
 
 That is the scientific point of this page: in a real stellar model, the active $\nabla$ in an unstable zone should be supplied by the convective closure, not by radiative diffusion alone.
 
@@ -181,7 +181,7 @@ That design choice matters because branch selection and composition mixing shoul
 
 ## Bohm-Vitense first, Henyey later
 
-ASTRA's canonical first closure should be Bohm-Vitense local MLT. That is the right initial target because it gives a real convective branch without forcing the code to solve the optically thin surface-loss problem in the same slice.
+ASTRA's canonical first closure is Bohm-Vitense local MLT. That is the right initial target because it gives a real convective branch without forcing the code to solve the optically thin surface-loss problem in the same slice.
 
 Later refinements may include Henyey-style radiative-loss corrections near the surface, where optically thin effects make the simple optically thick local closure less trustworthy. Those later refinements should be presented as extensions of the convection module, not as reasons to keep the current radiative-only residual alive.
 
@@ -193,7 +193,7 @@ The future MLT lane should make the following quantities explicit rather than im
 - transport-owned: $\nabla_\mathrm{rad}$, $\nabla_\mathrm{conv}$, superadiabatic excess, convective regime,
 - diagnostics-owned: convective flux fraction, convective velocity, and later $\mu$-gradient diagnostics.
 
-Those are the minimum quantities needed to keep the solver scientifically legible once convection stops being a placeholder.
+Those are the minimum quantities needed to keep the solver scientifically legible now that convection is no longer just a placeholder.
 
 ## What is deferred
 
