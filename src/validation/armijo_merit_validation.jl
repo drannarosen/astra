@@ -214,6 +214,36 @@ function _write_armijo_merit_validation_outer_boundary_summary(
         prefix * ".match_pressure_dyn_cm2 = ",
         repr(summary.match_pressure_dyn_cm2),
     )
+    println(
+        io,
+        prefix * ".current_match_temperature_k = ",
+        repr(summary.current_match_temperature_k),
+    )
+    println(
+        io,
+        prefix * ".fitting_point_temperature_k = ",
+        repr(summary.fitting_point_temperature_k),
+    )
+    println(
+        io,
+        prefix * ".temperature_contract_log_gap = ",
+        repr(summary.temperature_contract_log_gap),
+    )
+    println(
+        io,
+        prefix * ".current_match_pressure_dyn_cm2 = ",
+        repr(summary.current_match_pressure_dyn_cm2),
+    )
+    println(
+        io,
+        prefix * ".fitting_point_pressure_dyn_cm2 = ",
+        repr(summary.fitting_point_pressure_dyn_cm2),
+    )
+    println(
+        io,
+        prefix * ".pressure_contract_log_gap = ",
+        repr(summary.pressure_contract_log_gap),
+    )
 end
 
 function _write_armijo_merit_validation_payload(
@@ -550,6 +580,57 @@ function run_armijo_merit_validation_suite(output_dir::AbstractString)
     open(manifest_path, "w") do io
         for (payload, payload_path) in zip(payloads, payload_paths)
             _write_armijo_merit_validation_manifest_entry(io, payload, payload_path)
+        end
+    end
+
+    return ArmijoMeritValidationBundle(String(manifest_path), payload_paths)
+end
+
+function run_outer_boundary_ownership_audit(output_dir::AbstractString)
+    mkpath(output_dir)
+
+    payloads = ArmijoMeritValidationPayload[]
+
+    default_problem = build_toy_problem(n_cells = 12)
+    default_guess = initialize_state(default_problem)
+    default_result = solve_structure(default_problem; state = default_guess)
+    push!(
+        payloads,
+        build_armijo_merit_validation_payload(
+            "default-12",
+            default_problem,
+            default_result;
+            seed_label = "default",
+        ),
+    )
+
+    for case_index in 1:3
+        push!(
+            payloads,
+            _try_build_armijo_merit_validation_perturbation_payload(
+                default_problem,
+                default_guess,
+                1.0e-6,
+                case_index,
+            ),
+        )
+    end
+
+    payload_paths = String[]
+    for payload in payloads
+        payload_path = _armijo_merit_validation_payload_path(output_dir, payload.fixture_label)
+        open(payload_path, "w") do io
+            _write_armijo_merit_validation_payload(io, payload)
+        end
+        push!(payload_paths, payload_path)
+    end
+
+    manifest_path = joinpath(output_dir, "manifest.txt")
+    open(manifest_path, "w") do io
+        for (payload, payload_path) in zip(payloads, payload_paths)
+            println(io, "fixture_label = ", payload.fixture_label)
+            println(io, "payload_path = ", basename(payload_path))
+            println(io)
         end
     end
 
