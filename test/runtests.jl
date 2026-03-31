@@ -42,6 +42,7 @@ using ASTRA
     include("test_transport_row_weights.jl")
     include("test_outer_boundary_domain_guard.jl")
     include("test_outer_boundary_validation_artifacts.jl")
+    include("test_outer_boundary_fitting_point_terms.jl")
     include("test_center_asymptotic_scaling.jl")
     include("test_weighted_solver_metrics.jl")
     include("test_atmosphere_boundary_helpers.jl")

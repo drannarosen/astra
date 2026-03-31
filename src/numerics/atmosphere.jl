@@ -105,3 +105,67 @@ function outer_match_pressure_dyn_cm2(problem::StructureProblem, model::StellarM
         outer_half_cell_column_density_g_cm2(problem.grid.dm_cell_g[end], radius_surface_cm)
     return p_ph + clip_positive(g_surface_cgs) * sigma_half_g_cm2
 end
+
+"""
+    outer_boundary_fitting_point_terms(problem, model)
+
+Return diagnostic-only outer-boundary terms that compare the current match
+point against the photospheric fitting point.
+"""
+function outer_boundary_fitting_point_terms(problem::StructureProblem, model::StellarModel)
+    n = problem.grid.n_cells
+    state = model.structure
+    radius_surface_cm = exp(state.log_radius_face_cm[end])
+    luminosity_surface_erg_s = state.luminosity_face_erg_s[end]
+    pressure_surface_dyn_cm2 = cell_eos_state(problem, model, n).pressure_dyn_cm2
+    temperature_surface_k = exp(state.log_temperature_cell_k[n])
+
+    photospheric_face_temperature_k = surface_effective_temperature_k(
+        radius_surface_cm,
+        luminosity_surface_erg_s,
+    )
+    opacity_outer_cm2_g = cell_opacity_state(problem, model, n).opacity_cm2_g
+    g_surface_cgs = surface_gravity_cgs(problem.parameters.mass_g, radius_surface_cm)
+    photospheric_face_pressure_dyn_cm2 = eddington_photospheric_pressure_dyn_cm2(
+        g_surface_cgs,
+        opacity_outer_cm2_g,
+    )
+    half_cell_column_density_g_cm2 = outer_half_cell_column_density_g_cm2(
+        problem.grid.dm_cell_g[end],
+        radius_surface_cm,
+    )
+    half_cell_optical_depth = outer_half_cell_optical_depth(
+        opacity_outer_cm2_g,
+        half_cell_column_density_g_cm2,
+    )
+    hydrostatic_pressure_offset_dyn_cm2 = g_surface_cgs * half_cell_column_density_g_cm2
+    outer_terms = transport_row_terms(problem, model, n - 1)
+    transport_nabla_outer = outer_terms.nabla_transport
+    transport_temperature_offset_k =
+        hydrostatic_pressure_offset_dyn_cm2 *
+        transport_nabla_outer *
+        temperature_surface_k /
+        pressure_surface_dyn_cm2
+    current_match_temperature_k = outer_match_temperature_k(problem, model)
+    current_match_pressure_dyn_cm2 = outer_match_pressure_dyn_cm2(problem, model)
+    fitting_point_temperature_k =
+        photospheric_face_temperature_k + transport_temperature_offset_k
+    fitting_point_pressure_dyn_cm2 =
+        photospheric_face_pressure_dyn_cm2 + hydrostatic_pressure_offset_dyn_cm2
+
+    return OuterBoundaryFittingPointTerms(
+        photospheric_face_temperature_k,
+        photospheric_face_pressure_dyn_cm2,
+        half_cell_column_density_g_cm2,
+        half_cell_optical_depth,
+        hydrostatic_pressure_offset_dyn_cm2,
+        transport_nabla_outer,
+        transport_temperature_offset_k,
+        current_match_temperature_k,
+        current_match_pressure_dyn_cm2,
+        fitting_point_temperature_k,
+        fitting_point_pressure_dyn_cm2,
+        positive_log(current_match_temperature_k) - positive_log(fitting_point_temperature_k),
+        positive_log(current_match_pressure_dyn_cm2) - positive_log(fitting_point_pressure_dyn_cm2),
+    )
+end

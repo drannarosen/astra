@@ -294,6 +294,28 @@ struct RowFamilyMeritSummary
 end
 
 """
+    OuterBoundaryFittingPointTerms(...)
+
+Diagnostic-only outer boundary terms that separate the current match point from
+the photospheric fitting point without changing solver ownership.
+"""
+struct OuterBoundaryFittingPointTerms
+    photospheric_face_temperature_k::Float64
+    photospheric_face_pressure_dyn_cm2::Float64
+    half_cell_column_density_g_cm2::Float64
+    half_cell_optical_depth::Float64
+    hydrostatic_pressure_offset_dyn_cm2::Float64
+    transport_nabla_outer::Float64
+    transport_temperature_offset_k::Float64
+    current_match_temperature_k::Float64
+    current_match_pressure_dyn_cm2::Float64
+    fitting_point_temperature_k::Float64
+    fitting_point_pressure_dyn_cm2::Float64
+    temperature_contract_log_gap::Float64
+    pressure_contract_log_gap::Float64
+end
+
+"""
     OuterBoundaryRowSummary(...)
 
 Diagnostic-only summary for the one-sided outer transport row and the paired
