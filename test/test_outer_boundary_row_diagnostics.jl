@@ -39,6 +39,7 @@
     @test summary.photospheric_face_pressure_dyn_cm2 > 0.0
     @test summary.match_pressure_dyn_cm2 > 0.0
     semantics = ASTRA.surface_temperature_semantics(problem, model)
+    pressure_semantics = ASTRA.surface_pressure_semantics(problem, model)
     terms = ASTRA.outer_boundary_fitting_point_terms(problem, model)
     @test summary.surface_temperature_k ≈ semantics.surface_temperature_k
     @test summary.transport_temperature_offset_k ≈ semantics.transport_temperature_offset_k
@@ -52,6 +53,19 @@
     @test summary.temperature_contract_log_gap ≈ terms.temperature_contract_log_gap
     @test summary.match_to_photosphere_log_gap ≈ 0.0 atol = 1.0e-12
     @test summary.surface_to_match_log_gap ≈ summary.surface_to_photosphere_log_gap
+    @test summary.surface_pressure_dyn_cm2 ≈ pressure_semantics.surface_pressure_dyn_cm2
+    @test summary.hydrostatic_pressure_offset_dyn_cm2 ≈
+          pressure_semantics.hydrostatic_pressure_offset_dyn_cm2
+    @test summary.pressure_surface_to_photosphere_log_gap ≈
+          pressure_semantics.surface_to_photosphere_log_gap
+    @test summary.pressure_match_to_photosphere_log_gap ≈
+          pressure_semantics.match_to_photosphere_log_gap
+    @test summary.pressure_surface_to_match_log_gap ≈
+          pressure_semantics.surface_to_match_log_gap
+    @test summary.hydrostatic_pressure_offset_fraction ≈
+          pressure_semantics.hydrostatic_pressure_offset_fraction
+    @test summary.pressure_surface_to_match_log_gap ≈ summary.surface_pressure_log_mismatch
+    @test summary.pressure_match_to_photosphere_log_gap > 0.0
     @test summary.current_match_pressure_dyn_cm2 ≈ terms.current_match_pressure_dyn_cm2
     @test summary.fitting_point_pressure_dyn_cm2 ≈ terms.fitting_point_pressure_dyn_cm2
     @test summary.pressure_contract_log_gap ≈ terms.pressure_contract_log_gap

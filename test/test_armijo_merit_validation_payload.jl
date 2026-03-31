@@ -33,6 +33,18 @@
            result.diagnostics.accepted_trial_history[end].outer_boundary.surface_temperature_weighted &&
            payload.accepted_outer_boundary.surface_pressure_weighted ==
            result.diagnostics.accepted_trial_history[end].outer_boundary.surface_pressure_weighted &&
+           payload.accepted_outer_boundary.surface_pressure_dyn_cm2 ==
+           result.diagnostics.accepted_trial_history[end].outer_boundary.surface_pressure_dyn_cm2 &&
+           payload.accepted_outer_boundary.hydrostatic_pressure_offset_dyn_cm2 ==
+           result.diagnostics.accepted_trial_history[end].outer_boundary.hydrostatic_pressure_offset_dyn_cm2 &&
+           payload.accepted_outer_boundary.pressure_surface_to_photosphere_log_gap ==
+           result.diagnostics.accepted_trial_history[end].outer_boundary.pressure_surface_to_photosphere_log_gap &&
+           payload.accepted_outer_boundary.pressure_match_to_photosphere_log_gap ==
+           result.diagnostics.accepted_trial_history[end].outer_boundary.pressure_match_to_photosphere_log_gap &&
+           payload.accepted_outer_boundary.pressure_surface_to_match_log_gap ==
+           result.diagnostics.accepted_trial_history[end].outer_boundary.pressure_surface_to_match_log_gap &&
+           payload.accepted_outer_boundary.hydrostatic_pressure_offset_fraction ==
+           result.diagnostics.accepted_trial_history[end].outer_boundary.hydrostatic_pressure_offset_fraction &&
            payload.accepted_outer_boundary.surface_pressure_ratio ==
            result.diagnostics.accepted_trial_history[end].outer_boundary.surface_pressure_ratio &&
            payload.accepted_outer_boundary.surface_pressure_log_mismatch ==
@@ -56,6 +68,18 @@
            result.diagnostics.best_rejected_trial.outer_boundary.surface_temperature_weighted &&
            payload.best_rejected_outer_boundary.surface_pressure_weighted ==
            result.diagnostics.best_rejected_trial.outer_boundary.surface_pressure_weighted &&
+           payload.best_rejected_outer_boundary.surface_pressure_dyn_cm2 ==
+           result.diagnostics.best_rejected_trial.outer_boundary.surface_pressure_dyn_cm2 &&
+           payload.best_rejected_outer_boundary.hydrostatic_pressure_offset_dyn_cm2 ==
+           result.diagnostics.best_rejected_trial.outer_boundary.hydrostatic_pressure_offset_dyn_cm2 &&
+           payload.best_rejected_outer_boundary.pressure_surface_to_photosphere_log_gap ==
+           result.diagnostics.best_rejected_trial.outer_boundary.pressure_surface_to_photosphere_log_gap &&
+           payload.best_rejected_outer_boundary.pressure_match_to_photosphere_log_gap ==
+           result.diagnostics.best_rejected_trial.outer_boundary.pressure_match_to_photosphere_log_gap &&
+           payload.best_rejected_outer_boundary.pressure_surface_to_match_log_gap ==
+           result.diagnostics.best_rejected_trial.outer_boundary.pressure_surface_to_match_log_gap &&
+           payload.best_rejected_outer_boundary.hydrostatic_pressure_offset_fraction ==
+           result.diagnostics.best_rejected_trial.outer_boundary.hydrostatic_pressure_offset_fraction &&
            payload.best_rejected_outer_boundary.surface_pressure_ratio ==
            result.diagnostics.best_rejected_trial.outer_boundary.surface_pressure_ratio &&
            payload.best_rejected_outer_boundary.surface_pressure_log_mismatch ==

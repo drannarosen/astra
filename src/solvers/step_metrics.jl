@@ -319,6 +319,17 @@ function outer_boundary_row_summary(
             0.0,
             0.0,
             0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
         )
     end
 
@@ -353,6 +364,7 @@ function outer_boundary_row_summary(
     )
     fitting_point_terms = _ASTRA_MODULE.outer_boundary_fitting_point_terms(problem, model)
     temperature_semantics = _ASTRA_MODULE.surface_temperature_semantics(problem, model)
+    pressure_semantics = _ASTRA_MODULE.surface_pressure_semantics(problem, model)
 
     outer_transport_raw = residual_f64[outer_transport_row_index]
     surface_temperature_raw = residual_f64[surface_temperature_row_index]
@@ -387,6 +399,12 @@ function outer_boundary_row_summary(
         fitting_point_terms.current_match_pressure_dyn_cm2,
         fitting_point_terms.fitting_point_pressure_dyn_cm2,
         fitting_point_terms.pressure_contract_log_gap,
+        pressure_semantics.surface_pressure_dyn_cm2,
+        pressure_semantics.hydrostatic_pressure_offset_dyn_cm2,
+        pressure_semantics.surface_to_photosphere_log_gap,
+        pressure_semantics.match_to_photosphere_log_gap,
+        pressure_semantics.surface_to_match_log_gap,
+        pressure_semantics.hydrostatic_pressure_offset_fraction,
     )
 end
 

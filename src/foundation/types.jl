@@ -385,6 +385,12 @@ struct OuterBoundaryRowSummary
     current_match_pressure_dyn_cm2::Float64
     fitting_point_pressure_dyn_cm2::Float64
     pressure_contract_log_gap::Float64
+    surface_pressure_dyn_cm2::Float64
+    hydrostatic_pressure_offset_dyn_cm2::Float64
+    pressure_surface_to_photosphere_log_gap::Float64
+    pressure_match_to_photosphere_log_gap::Float64
+    pressure_surface_to_match_log_gap::Float64
+    hydrostatic_pressure_offset_fraction::Float64
 end
 
 """

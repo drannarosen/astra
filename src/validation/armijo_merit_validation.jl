@@ -270,6 +270,38 @@ function _write_armijo_merit_validation_outer_boundary_summary(
         prefix * ".pressure_contract_log_gap = ",
         repr(summary.pressure_contract_log_gap),
     )
+    println(io, prefix * ".surface_pressure_dyn_cm2 = ", repr(summary.surface_pressure_dyn_cm2))
+    println(
+        io,
+        prefix * ".photospheric_face_pressure_dyn_cm2 = ",
+        repr(summary.photospheric_face_pressure_dyn_cm2),
+    )
+    println(io, prefix * ".match_pressure_dyn_cm2 = ", repr(summary.match_pressure_dyn_cm2))
+    println(
+        io,
+        prefix * ".hydrostatic_pressure_offset_dyn_cm2 = ",
+        repr(summary.hydrostatic_pressure_offset_dyn_cm2),
+    )
+    println(
+        io,
+        prefix * ".pressure_surface_to_photosphere_log_gap = ",
+        repr(summary.pressure_surface_to_photosphere_log_gap),
+    )
+    println(
+        io,
+        prefix * ".pressure_match_to_photosphere_log_gap = ",
+        repr(summary.pressure_match_to_photosphere_log_gap),
+    )
+    println(
+        io,
+        prefix * ".pressure_surface_to_match_log_gap = ",
+        repr(summary.pressure_surface_to_match_log_gap),
+    )
+    println(
+        io,
+        prefix * ".hydrostatic_pressure_offset_fraction = ",
+        repr(summary.hydrostatic_pressure_offset_fraction),
+    )
 end
 
 function _write_armijo_merit_validation_payload(
