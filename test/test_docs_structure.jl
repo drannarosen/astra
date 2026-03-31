@@ -168,6 +168,13 @@
             "default-12",
             "outer-boundary-fitting-point-ownership",
         ],
+        "docs/website/development/outer-boundary-fitting-point-ownership-2026-03-30.md" => [
+            "2026-03-30-outer-boundary-fitting-point-ownership-audit",
+            "temperature_contract_log_gap",
+            "pressure_contract_log_gap",
+            "default-12",
+            "what this does not prove",
+        ],
         "docs/website/development/transport-outer-boundary-hardening-2026-03-30.md" => [
             "boundary ownership",
             "Boundary validity checks",
