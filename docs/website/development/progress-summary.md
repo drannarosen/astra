@@ -12,6 +12,45 @@ For each update, record:
 - the verification that was run,
 - and the next intended step.
 
+## 2026-03-31
+
+### Surface pressure semantics audit
+
+ASTRA's new `2026-03-31-surface-pressure-semantics-audit` bundle now says the live `surface_pressure` row is bridge-dominated rather than photosphere-dominated. In all four focused payloads the accepted dominant surface family is `surface_pressure`, `pressure_match_to_photosphere_log_gap` stays large and positive, `pressure_surface_to_match_log_gap` stays negative, and the deeper hydrostatic bridge sets the effective pressure scale.
+
+Measured facts:
+
+- `default-12` has `accepted_dominant_surface_family = surface_pressure`,
+- `default-12` has `pressure_surface_to_photosphere_log_gap = 43.05941271760913`,
+- `default-12` has `pressure_match_to_photosphere_log_gap = 46.46031816695854`,
+- `default-12` has `pressure_surface_to_match_log_gap = -3.4009054493494055`,
+- `default-12` has `hydrostatic_pressure_offset_fraction = 1.504734253824455e20`,
+- all four focused cases have `accepted_dominant_surface_family = surface_pressure`,
+- all four focused cases remain `converged = false`,
+- all four focused cases remain `used_regularized_fallback = true`,
+- and all four focused cases keep the accepted transport hotspot on the outer row at cell index `11`.
+
+Why this mattered:
+
+- it separates the photospheric pressure anchor from the deeper pressure bridge instead of lumping them into one row label,
+- it shows that the surviving live pressure mismatch sits against the deeper match point rather than the tiny photospheric pressure scale,
+- and it keeps the next slice focused on pressure-side semantics instead of widening scope into seeds or richer atmosphere models too early.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. scripts/run_surface_pressure_semantics_audit.jl artifacts/validation/2026-03-31-surface-pressure-semantics-audit`
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_surface_pressure_semantics.jl"); include("test/test_outer_boundary_row_diagnostics.jl"); include("test/test_armijo_merit_validation_payload.jl"); include("test/test_surface_pressure_semantics_audit_artifacts.jl"); include("test/test_docs_structure.jl")'`
+
+What this does not prove:
+
+- robust convergence,
+- that Hopf is needed,
+- or that the current pressure bridge semantics are already correct.
+
+Next step:
+
+- keep the current Eddington-grey lane fixed, keep the one-sided outer transport row fixed, and decide whether the next pressure-side change should be a bridge reinterpretation or a better-seed study.
+
 ## 2026-03-30
 
 ### Surface temperature photospheric cutover
