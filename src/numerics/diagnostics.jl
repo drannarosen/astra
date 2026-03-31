@@ -39,6 +39,15 @@ function build_diagnostics(
     density = exp(state.log_density_cell_g_cm3[1])
     temperature = exp(state.log_temperature_cell_k[1])
     eos_state = problem.microphysics.eos(density, temperature, cell_composition(problem, model, 1))
+    current_row_weights = Solvers.residual_row_weights(problem, model)
+    published_weighted_residual_norm = Solvers.weighted_residual_norm(residual, current_row_weights)
+    published_merit_value = Solvers.weighted_residual_merit(residual, current_row_weights)
+    published_final_row_family_merit = Solvers.row_family_merit_summary(
+        problem,
+        model,
+        residual;
+        row_weights = current_row_weights,
+    )
     notes = String[
         "Residual now uses the first classical structure equations with simple placeholder closures.",
         "EOS, opacity, convection, and surface closure remain provisional at this milestone.",
@@ -47,8 +56,9 @@ function build_diagnostics(
         "Solve boundary: solve_structure(problem; state = guess) is the current public solve boundary for future sensitivities, with only model.structure treated as solve-owned.",
         "Atmosphere boundary note: surface temperature is matched in log form to T_eff and the surface pressure row is weighted on a pressure scale, not the old density guess.",
         "Solver acceptance now uses the frozen-weight merit controller while convergence still tracks the weighted residual metric; raw residual histories are still reported for scientific honesty.",
-        "Weighted residual histories report the frozen acceptance metric used for globalization decisions.",
-        "Diagnostics now also report the frozen-weight merit history, initial/final grouped row-family merit summaries, and per-trial predicted/actual merit attribution.",
+        "Weighted residual and merit histories report the frozen accepted-step controller metrics used for globalization decisions.",
+        "Published final weighted residual, merit, and grouped row-family scalars are recomputed from the returned state rather than copied from the last frozen accepted-step history entry.",
+        "Diagnostics now also report the frozen-weight merit history, current-state initial/final grouped row-family merit summaries, and per-trial predicted/actual merit attribution.",
     ]
     append!(notes, String.(extra_notes))
 
@@ -56,9 +66,9 @@ function build_diagnostics(
         residual_norm(residual),
         Float64(initial_residual_norm),
         Float64.(residual_history),
-        Float64(weighted_residual_norm_value),
+        Float64(published_weighted_residual_norm),
         Float64.(weighted_residual_history),
-        Float64(merit_value),
+        Float64(published_merit_value),
         Float64.(merit_history),
         Float64.(predicted_decrease_history),
         Float64.(actual_decrease_history),
@@ -76,7 +86,7 @@ function build_diagnostics(
         state.luminosity_face_erg_s[end],
         formulation_symbol(problem),
         initial_row_family_merit,
-        final_row_family_merit,
+        published_final_row_family_merit,
         notes,
     )
 end

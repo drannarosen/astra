@@ -201,6 +201,13 @@ The diagnostics surface currently exposes:
 - the best rejected trial,
 - and the original initial/final row-family merit summaries.
 
+The important contract detail is that those histories are still the
+**frozen accepted-step controller metrics** used inside globalization. By
+contrast, the published final diagnostics scalars for weighted residual,
+merit, and grouped row-family total are recomputed from the returned state and
+residual, so the final summary is not silently frozen to the last accepted-step
+weights.
+
 That is still intentionally modest. ASTRA now has accepted-step row-family attribution and a best rejected trial, but it does **not** yet claim trust-region maturity or adaptive regularization.
 
 ## What a fuller merit-based globalization method would add

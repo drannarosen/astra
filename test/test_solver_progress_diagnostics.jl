@@ -82,6 +82,13 @@ end
     surface_match_pressure_dyn_cm2 = ASTRA.outer_match_pressure_dyn_cm2(problem, guess)
 
     result = solve_structure(problem; state = guess)
+    final_residual = ASTRA.assemble_structure_residual(problem, result.state)
+    final_row_weights = ASTRA.Solvers.residual_row_weights(problem, result.state)
+    final_weighted_residual = ASTRA.Solvers.weighted_residual_norm(
+        final_residual,
+        final_row_weights,
+    )
+    final_merit = ASTRA.Solvers.weighted_residual_merit(final_residual, final_row_weights)
 
     @test surface_weights[3] == 1.0
     @test surface_weights[4] == 1.0
@@ -97,12 +104,12 @@ end
               guess,
               ASTRA.assemble_structure_residual(problem, guess),
           )
-    @test last(result.diagnostics.weighted_residual_history) == result.diagnostics.weighted_residual_norm
+    @test result.diagnostics.weighted_residual_norm ≈ final_weighted_residual rtol = 1e-12
     @test first(result.diagnostics.merit_history) ≈ initial_merit
-    @test last(result.diagnostics.merit_history) ≈ result.diagnostics.merit_value
+    @test result.diagnostics.merit_value ≈ final_merit rtol = 1e-12
     @test result.diagnostics.initial_row_family_merit.total ≈
           first(result.diagnostics.merit_history)
-    @test result.diagnostics.final_row_family_merit.total ≈ result.diagnostics.merit_value
+    @test result.diagnostics.final_row_family_merit.total ≈ final_merit rtol = 1e-12
     @test result.diagnostics.initial_row_family_merit.dominant_family in
           (:center, :geometry, :hydrostatic, :luminosity, :interior_transport, :outer_transport, :surface)
     @test result.diagnostics.final_row_family_merit.dominant_family in
@@ -203,14 +210,46 @@ end
     @test first(capped_result.diagnostics.residual_history) ≈ capped_initial_residual
     @test last(capped_result.diagnostics.residual_history) ≈
           capped_result.diagnostics.residual_norm
-    @test last(capped_result.diagnostics.weighted_residual_history) ≈
-          capped_result.diagnostics.weighted_residual_norm
-    @test last(capped_result.diagnostics.merit_history) ≈ capped_result.diagnostics.merit_value
+    capped_final_residual = ASTRA.assemble_structure_residual(capped_problem, capped_result.state)
+    capped_final_row_weights = ASTRA.Solvers.residual_row_weights(
+        capped_problem,
+        capped_result.state,
+    )
+    @test capped_result.diagnostics.weighted_residual_norm ≈
+          ASTRA.Solvers.weighted_residual_norm(
+              capped_final_residual,
+              capped_final_row_weights,
+          ) rtol = 1e-12
+    @test capped_result.diagnostics.merit_value ≈
+          ASTRA.Solvers.weighted_residual_merit(
+              capped_final_residual,
+              capped_final_row_weights,
+          ) rtol = 1e-12
 
     mismatch_problem, mismatch_state, mismatch_result = _weighted_history_consistency_fixture()
     @test mismatch_result.diagnostics.accepted_step_count > 0
-    @test mismatch_result.diagnostics.weighted_residual_history[end] ==
+    mismatch_final_residual = ASTRA.assemble_structure_residual(
+        mismatch_problem,
+        mismatch_result.state,
+    )
+    mismatch_final_row_weights = ASTRA.Solvers.residual_row_weights(
+        mismatch_problem,
+        mismatch_result.state,
+    )
+    @test mismatch_result.diagnostics.weighted_residual_norm ≈
+          ASTRA.Solvers.weighted_residual_norm(
+              mismatch_final_residual,
+              mismatch_final_row_weights,
+          ) rtol = 1e-12
+    @test mismatch_result.diagnostics.merit_value ≈
+          ASTRA.Solvers.weighted_residual_merit(
+              mismatch_final_residual,
+              mismatch_final_row_weights,
+          ) rtol = 1e-12
+    @test mismatch_result.diagnostics.final_row_family_merit.total ≈
+          mismatch_result.diagnostics.merit_value rtol = 1e-12
+    @test mismatch_result.diagnostics.weighted_residual_history[end] !=
           mismatch_result.diagnostics.weighted_residual_norm
-    @test mismatch_result.diagnostics.merit_history[end] ==
+    @test mismatch_result.diagnostics.merit_history[end] !=
           mismatch_result.diagnostics.merit_value
 end

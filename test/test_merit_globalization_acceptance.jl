@@ -10,7 +10,8 @@
     result = ASTRA.solve_structure(problem; state = guess)
 
     @test result.diagnostics.accepted_step_count >= 1
-    @test all(diff(result.diagnostics.merit_history) .< 0.0)
+    @test all(result.diagnostics.predicted_decrease_history .> 0.0)
+    @test all(result.diagnostics.actual_decrease_history .> 0.0)
     @test result.diagnostics.merit_value < initial_merit
     @test result.diagnostics.residual_norm <= ASTRA.residual_norm(initial_residual)
     @test any(

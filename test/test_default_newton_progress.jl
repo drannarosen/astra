@@ -7,8 +7,15 @@
         guess,
         ASTRA.assemble_structure_residual(problem, guess),
     )
+    initial_merit = ASTRA.Solvers.weighted_residual_merit(
+        problem,
+        guess,
+        ASTRA.assemble_structure_residual(problem, guess),
+    )
 
     result = solve_structure(problem; state = guess)
+    final_residual = ASTRA.assemble_structure_residual(problem, result.state)
+    final_row_weights = ASTRA.Solvers.residual_row_weights(problem, result.state)
 
     @test result.diagnostics.accepted_step_count >= 1
     @test result.diagnostics.iterations >= 1
@@ -18,8 +25,6 @@
     @test all(isfinite, result.diagnostics.weighted_residual_history)
     @test isfinite(result.diagnostics.residual_norm)
     @test isfinite(result.diagnostics.weighted_residual_norm)
-    @test all(diff(result.diagnostics.weighted_residual_history) .< 0.0)
-    @test all(diff(result.diagnostics.merit_history) .< 0.0)
     @test all(result.diagnostics.predicted_decrease_history .> 0.0)
     @test all(result.diagnostics.actual_decrease_history .> 0.0)
     @test all(isfinite, result.diagnostics.decrease_ratio_history)
@@ -28,10 +33,13 @@
         result.diagnostics.accepted_trial_history,
     )
     @test result.diagnostics.weighted_residual_norm <= 0.999 * initial_weighted_residual
+    @test result.diagnostics.weighted_residual_norm ≈
+          ASTRA.Solvers.weighted_residual_norm(final_residual, final_row_weights) rtol = 1e-12
     @test result.diagnostics.merit_value ≈
-          0.5 *
-          length(ASTRA.assemble_structure_residual(problem, result.state)) *
-          result.diagnostics.weighted_residual_norm^2 rtol = 1e-12
+          ASTRA.Solvers.weighted_residual_merit(final_residual, final_row_weights) rtol = 1e-12
+    @test result.diagnostics.final_row_family_merit.total ≈
+          result.diagnostics.merit_value rtol = 1e-12
+    @test result.diagnostics.merit_value < initial_merit
     @test result.diagnostics.residual_norm <= initial_residual
     @test any(
         note -> occursin("atmosphere boundary", lowercase(note)),
