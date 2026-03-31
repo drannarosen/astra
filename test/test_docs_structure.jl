@@ -542,6 +542,18 @@
         @test all(needle -> occursin(needle, content), needles)
     end
 
+    transport_outer_boundary_note = read(
+        joinpath(
+            root,
+            "docs/website/development/transport-outer-boundary-hardening-2026-03-30.md",
+        ),
+        String,
+    )
+    @test !occursin(
+        "accepted_transport_hotspot.weighted_contribution = 0.8444699228014957",
+        transport_outer_boundary_note,
+    )
+
     checklist_contracts = Dict(
         "docs/website/physics/overview.md" => "Physics handbook checklist",
         "docs/website/physics/stellar-structure.md" => "Implementation checklist",

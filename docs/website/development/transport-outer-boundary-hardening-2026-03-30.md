@@ -12,14 +12,13 @@ The bundle covers the default-12 fixture, the `n_cells = 6, 8, 12, 16, 24` ladde
 
 - `default-12`: `converged = false`, `accepted_step_count = 6`, `rejected_trial_count = 735`, `final_weighted_residual_norm = 0.26449516386740546`, `final_merit = 1.7489422927311415`, `accepted_dominant_family = surface`, `accepted_dominant_surface_family = surface_pressure`, `accepted_outer_boundary.outer_transport_weighted = 0.8444699228014957`, `accepted_outer_boundary.surface_temperature_weighted = 0.6854069474453723`, `accepted_outer_boundary.surface_pressure_weighted = -0.7960701554689767`, `accepted_outer_boundary.match_temperature_k = 1.1733423492649216e6`, `accepted_outer_boundary.match_pressure_dyn_cm2 = 3.9370078676338625e13`, `accepted_transport_hotspot.location = outer`, `accepted_transport_hotspot.cell_index = 11`
 - `best-rejected default-12`: `best_rejected_dominant_family = surface`, `best_rejected_dominant_surface_family = surface_pressure`, `best_rejected_outer_boundary.outer_transport_weighted = 0.9023026625735826`, `best_rejected_outer_boundary.surface_temperature_weighted = 0.6845184249650771`, `best_rejected_outer_boundary.surface_pressure_weighted = -0.7946999023083491`, `best_rejected_outer_boundary.match_temperature_k = 1.1744034147186459e6`, `best_rejected_outer_boundary.match_pressure_dyn_cm2 = 3.936737935411116e13`, `best_rejected_transport_hotspot.location = outer`, `best_rejected_transport_hotspot.cell_index = 11`
-
-- `default-12`: `converged = false`, `accepted_step_count = 6`, `rejected_trial_count = 735`, `final_weighted_residual_norm = 0.26449516386740546`, `final_merit = 1.7489422927311415`, `accepted_dominant_family = surface`, `accepted_transport_hotspot.location = outer`, `accepted_transport_hotspot.cell_index = 11`, `accepted_transport_hotspot.weighted_contribution = 0.8444699228014957`, `best_rejected_transport_hotspot.location = outer`, `best_rejected_transport_hotspot.cell_index = 11`, `used_regularized_fallback = true`
 - `cells-6`: `accepted_dominant_family = hydrostatic`, but the accepted transport hotspot is `interior` at cell index `4`
 - `cells-8`: `accepted_dominant_family = hydrostatic`, while the accepted transport hotspot stays `outer` at cell index `7`
 - `cells-12`: matches `default-12`, with the accepted transport hotspot on the outer row at cell index `11`
 - `cells-16`: `accepted_dominant_family = outer_transport`, and the accepted transport hotspot is `outer` at cell index `15`
 - `cells-24`: `accepted_dominant_family = interior_transport`, but the accepted transport hotspot is still `outer` at cell index `23`
-- `perturb-a1e-6-case-01`, `perturb-a1e-6-case-02`, and `perturb-a1e-6-case-03`: `accepted_dominant_family = surface`, and the accepted transport hotspot is `outer` at cell index `11`
+- `perturb-a1e-6-case-01`: `accepted_dominant_surface_family = surface_pressure`, and the accepted transport hotspot is `outer` at cell index `11`
+- `perturb-a1e-6-case-02` and `perturb-a1e-6-case-03`: `accepted_dominant_surface_family = surface_temperature`, while the accepted transport hotspot remains `outer` at cell index `11`
 
 The transport hotspot language matters here. It names the single transport row with the largest weighted contribution and records both its location and cell index. That is diagnostic-only evidence; it does not redefine any residual row family.
 
