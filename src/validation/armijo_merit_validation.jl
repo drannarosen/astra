@@ -20,9 +20,21 @@ function build_armijo_merit_validation_payload(
     accepted_dominant_family = isempty(diagnostics.accepted_trial_history) ?
         nothing :
         diagnostics.accepted_trial_history[end].row_family_merit.dominant_family
+    accepted_dominant_surface_family = isempty(diagnostics.accepted_trial_history) ?
+        nothing :
+        diagnostics.accepted_trial_history[end].row_family_merit.dominant_surface_family
+    accepted_outer_boundary = isempty(diagnostics.accepted_trial_history) ?
+        nothing :
+        diagnostics.accepted_trial_history[end].outer_boundary
     accepted_transport_hotspot = isempty(diagnostics.accepted_trial_history) ?
         nothing :
         diagnostics.accepted_trial_history[end].transport_hotspot
+    best_rejected_dominant_surface_family = isnothing(diagnostics.best_rejected_trial) ?
+        nothing :
+        diagnostics.best_rejected_trial.row_family_merit.dominant_surface_family
+    best_rejected_outer_boundary = isnothing(diagnostics.best_rejected_trial) ?
+        nothing :
+        diagnostics.best_rejected_trial.outer_boundary
     used_regularized_fallback = any(
         note -> begin
             lowered = lowercase(note)
@@ -46,8 +58,12 @@ function build_armijo_merit_validation_payload(
         copy(diagnostics.actual_decrease_history),
         copy(diagnostics.decrease_ratio_history),
         accepted_dominant_family,
+        accepted_dominant_surface_family,
+        accepted_outer_boundary,
         accepted_transport_hotspot,
         diagnostics.best_rejected_trial,
+        best_rejected_dominant_surface_family,
+        best_rejected_outer_boundary,
         isnothing(diagnostics.best_rejected_trial) ? nothing : diagnostics.best_rejected_trial.transport_hotspot,
         used_regularized_fallback,
     )
@@ -149,6 +165,51 @@ function _write_armijo_merit_validation_transport_hotspot_summary(
     println(io, prefix * ".gradient_term = ", repr(hotspot.gradient_term))
 end
 
+function _write_armijo_merit_validation_outer_boundary_summary(
+    io::IO,
+    prefix::AbstractString,
+    summary::OuterBoundaryRowSummary,
+)
+    println(io, prefix * ".present = ", _format_armijo_merit_validation_scalar(summary.present))
+    println(io, prefix * ".outer_transport_row_index = ", summary.outer_transport_row_index)
+    println(io, prefix * ".surface_temperature_row_index = ", summary.surface_temperature_row_index)
+    println(io, prefix * ".surface_pressure_row_index = ", summary.surface_pressure_row_index)
+    println(io, prefix * ".outer_transport_raw = ", repr(summary.outer_transport_raw))
+    println(io, prefix * ".surface_temperature_raw = ", repr(summary.surface_temperature_raw))
+    println(io, prefix * ".surface_pressure_raw = ", repr(summary.surface_pressure_raw))
+    println(
+        io,
+        prefix * ".outer_transport_weighted = ",
+        repr(summary.outer_transport_weighted),
+    )
+    println(
+        io,
+        prefix * ".surface_temperature_weighted = ",
+        repr(summary.surface_temperature_weighted),
+    )
+    println(
+        io,
+        prefix * ".surface_pressure_weighted = ",
+        repr(summary.surface_pressure_weighted),
+    )
+    println(
+        io,
+        prefix * ".photospheric_face_temperature_k = ",
+        repr(summary.photospheric_face_temperature_k),
+    )
+    println(io, prefix * ".match_temperature_k = ", repr(summary.match_temperature_k))
+    println(
+        io,
+        prefix * ".photospheric_face_pressure_dyn_cm2 = ",
+        repr(summary.photospheric_face_pressure_dyn_cm2),
+    )
+    println(
+        io,
+        prefix * ".match_pressure_dyn_cm2 = ",
+        repr(summary.match_pressure_dyn_cm2),
+    )
+end
+
 function _write_armijo_merit_validation_payload(
     io::IO,
     payload::ArmijoMeritValidationPayload,
@@ -188,11 +249,25 @@ function _write_armijo_merit_validation_payload(
     )
     println(
         io,
+        "accepted_dominant_surface_family = ",
+        _format_armijo_merit_validation_scalar(payload.accepted_dominant_surface_family),
+    )
+    println(
+        io,
         "accepted_transport_dominant_family = ",
         _format_armijo_merit_validation_scalar(
             _armijo_merit_validation_transport_family(payload.accepted_dominant_family),
         ),
     )
+    if payload.accepted_outer_boundary === nothing
+        println(io, "accepted_outer_boundary.present = false")
+    else
+        _write_armijo_merit_validation_outer_boundary_summary(
+            io,
+            "accepted_outer_boundary",
+            payload.accepted_outer_boundary,
+        )
+    end
     if payload.accepted_transport_hotspot === nothing
         println(io, "accepted_transport_hotspot.present = false")
     else
@@ -207,6 +282,20 @@ function _write_armijo_merit_validation_payload(
         println(io, "best_rejected_trial.present = false")
     else
         _write_armijo_merit_validation_trial_summary(io, payload.best_rejected_trial)
+    end
+    println(
+        io,
+        "best_rejected_dominant_surface_family = ",
+        _format_armijo_merit_validation_scalar(payload.best_rejected_dominant_surface_family),
+    )
+    if payload.best_rejected_outer_boundary === nothing
+        println(io, "best_rejected_outer_boundary.present = false")
+    else
+        _write_armijo_merit_validation_outer_boundary_summary(
+            io,
+            "best_rejected_outer_boundary",
+            payload.best_rejected_outer_boundary,
+        )
     end
     println(
         io,
@@ -284,6 +373,11 @@ function _write_armijo_merit_validation_manifest_entry(io::IO, payload, payload_
     )
     println(
         io,
+        "accepted_dominant_surface_family = ",
+        _format_armijo_merit_validation_scalar(payload.accepted_dominant_surface_family),
+    )
+    println(
+        io,
         "accepted_transport_dominant_family = ",
         _format_armijo_merit_validation_scalar(
             _armijo_merit_validation_transport_family(payload.accepted_dominant_family),
@@ -307,6 +401,11 @@ function _write_armijo_merit_validation_manifest_entry(io::IO, payload, payload_
         _format_armijo_merit_validation_scalar(
             _armijo_merit_validation_best_rejected_family(payload),
         ),
+    )
+    println(
+        io,
+        "best_rejected_dominant_surface_family = ",
+        _format_armijo_merit_validation_scalar(payload.best_rejected_dominant_surface_family),
     )
     println(
         io,

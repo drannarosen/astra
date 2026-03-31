@@ -148,6 +148,7 @@ end
         @test accepted_trial.row_family_merit.dominant_family in
               (:center, :geometry, :hydrostatic, :luminosity, :interior_transport, :outer_transport, :surface)
         @test accepted_trial.transport_hotspot.present
+        @test accepted_trial.outer_boundary.present
         @test accepted_trial.transport_hotspot.cell_index in 1:(problem.grid.n_cells - 1)
         @test accepted_trial.transport_hotspot.location in (:interior, :outer)
         @test accepted_trial.transport_hotspot.weighted_contribution ≈
@@ -168,6 +169,7 @@ end
         @test rejected_trial.row_family_merit.dominant_family in
               (:center, :geometry, :hydrostatic, :luminosity, :interior_transport, :outer_transport, :surface)
         @test rejected_trial.transport_hotspot.present
+        @test rejected_trial.outer_boundary.present
         @test rejected_trial.transport_hotspot.cell_index in 1:(problem.grid.n_cells - 1)
         @test rejected_trial.transport_hotspot.location in (:interior, :outer)
         @test rejected_trial.transport_hotspot.raw_residual ≈

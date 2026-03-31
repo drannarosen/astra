@@ -23,11 +23,39 @@
     @test payload.decrease_ratio_history == result.diagnostics.decrease_ratio_history
     @test payload.accepted_dominant_family in
           Union{Nothing,Symbol}[(nothing), :center, :geometry, :hydrostatic, :luminosity, :interior_transport, :outer_transport, :surface]
+    @test payload.accepted_dominant_surface_family in
+          Union{Nothing,Symbol}[(nothing), :surface_radius, :surface_luminosity, :surface_temperature, :surface_pressure]
+    @test payload.accepted_outer_boundary === nothing ||
+          (payload.accepted_outer_boundary.present &&
+           payload.accepted_outer_boundary.outer_transport_weighted ==
+           result.diagnostics.accepted_trial_history[end].outer_boundary.outer_transport_weighted &&
+           payload.accepted_outer_boundary.surface_temperature_weighted ==
+           result.diagnostics.accepted_trial_history[end].outer_boundary.surface_temperature_weighted &&
+           payload.accepted_outer_boundary.surface_pressure_weighted ==
+           result.diagnostics.accepted_trial_history[end].outer_boundary.surface_pressure_weighted &&
+           payload.accepted_outer_boundary.match_temperature_k ==
+           result.diagnostics.accepted_trial_history[end].outer_boundary.match_temperature_k &&
+           payload.accepted_outer_boundary.match_pressure_dyn_cm2 ==
+           result.diagnostics.accepted_trial_history[end].outer_boundary.match_pressure_dyn_cm2)
     @test payload.accepted_transport_hotspot === nothing ||
           payload.accepted_transport_hotspot.location in (:interior, :outer)
     @test payload.best_rejected_trial === nothing ||
           payload.best_rejected_trial.row_family_merit.dominant_family in
           (:center, :geometry, :hydrostatic, :luminosity, :interior_transport, :outer_transport, :surface)
+    @test payload.best_rejected_dominant_surface_family in
+          Union{Nothing,Symbol}[(nothing), :surface_radius, :surface_luminosity, :surface_temperature, :surface_pressure]
+    @test payload.best_rejected_outer_boundary === nothing ||
+          (payload.best_rejected_outer_boundary.present &&
+           payload.best_rejected_outer_boundary.outer_transport_weighted ==
+           result.diagnostics.best_rejected_trial.outer_boundary.outer_transport_weighted &&
+           payload.best_rejected_outer_boundary.surface_temperature_weighted ==
+           result.diagnostics.best_rejected_trial.outer_boundary.surface_temperature_weighted &&
+           payload.best_rejected_outer_boundary.surface_pressure_weighted ==
+           result.diagnostics.best_rejected_trial.outer_boundary.surface_pressure_weighted &&
+           payload.best_rejected_outer_boundary.match_temperature_k ==
+           result.diagnostics.best_rejected_trial.outer_boundary.match_temperature_k &&
+           payload.best_rejected_outer_boundary.match_pressure_dyn_cm2 ==
+           result.diagnostics.best_rejected_trial.outer_boundary.match_pressure_dyn_cm2)
     @test payload.best_rejected_transport_hotspot === nothing ||
           payload.best_rejected_transport_hotspot.location in (:interior, :outer)
     @test payload.used_regularized_fallback isa Bool

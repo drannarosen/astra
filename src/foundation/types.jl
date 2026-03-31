@@ -352,6 +352,7 @@ struct TrialMeritSummary
     decrease_ratio::Float64
     row_family_merit::RowFamilyMeritSummary
     transport_hotspot::TransportHotspotSummary
+    outer_boundary::OuterBoundaryRowSummary
 end
 
 """
@@ -417,8 +418,12 @@ struct ArmijoMeritValidationPayload
     actual_decrease_history::Vector{Float64}
     decrease_ratio_history::Vector{Float64}
     accepted_dominant_family::Union{Nothing,Symbol}
+    accepted_dominant_surface_family::Union{Nothing,Symbol}
+    accepted_outer_boundary::Union{Nothing,OuterBoundaryRowSummary}
     accepted_transport_hotspot::Union{Nothing,TransportHotspotSummary}
     best_rejected_trial::Union{Nothing,TrialMeritSummary}
+    best_rejected_dominant_surface_family::Union{Nothing,Symbol}
+    best_rejected_outer_boundary::Union{Nothing,OuterBoundaryRowSummary}
     best_rejected_transport_hotspot::Union{Nothing,TransportHotspotSummary}
     used_regularized_fallback::Bool
 end

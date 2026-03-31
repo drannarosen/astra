@@ -134,6 +134,12 @@ function _accepted_trial_step(
                 next_residual;
                 row_weights = base_row_weights,
             ),
+            outer_boundary_row_summary(
+                problem,
+                next_model,
+                next_residual;
+                row_weights = base_row_weights,
+            ),
         )
 
         if isfinite(base_slope) &&
