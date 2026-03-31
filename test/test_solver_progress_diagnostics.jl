@@ -153,7 +153,7 @@ end
         @test accepted_trial.transport_hotspot.weighted_contribution ≈
               accepted_trial.transport_hotspot.row_weight * accepted_trial.transport_hotspot.raw_residual
         @test accepted_trial.transport_hotspot.raw_residual ≈
-              accepted_trial.transport_hotspot.delta_log_temperature +
+              accepted_trial.transport_hotspot.delta_log_temperature -
               accepted_trial.transport_hotspot.gradient_term
         @test accepted_trial.transport_hotspot.gradient_term ≈
               accepted_trial.transport_hotspot.nabla_transport *

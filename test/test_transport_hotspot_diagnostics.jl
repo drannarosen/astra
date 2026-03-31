@@ -15,6 +15,6 @@
     @test hotspot.cell_index in 1:(problem.grid.n_cells - 1)
     @test hotspot.location in (:interior, :outer)
     @test hotspot.weighted_contribution ≈ hotspot.row_weight * hotspot.raw_residual
-    @test hotspot.raw_residual ≈ hotspot.delta_log_temperature + hotspot.gradient_term
+    @test hotspot.raw_residual ≈ hotspot.delta_log_temperature - hotspot.gradient_term
     @test hotspot.gradient_term ≈ hotspot.nabla_transport * hotspot.delta_log_pressure
 end
