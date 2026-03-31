@@ -47,6 +47,9 @@ function surface_boundary_residual(problem::StructureProblem, model::StellarMode
         radius_surface_cm - problem.parameters.radius_guess_cm,
         luminosity_surface_erg_s - problem.parameters.luminosity_guess_erg_s,
         positive_log(temperature_surface_k) - positive_log(temperature_match_k),
-        pressure_surface_dyn_cm2 - pressure_match_dyn_cm2,
+        surface_pressure_log_mismatch(
+            pressure_surface_dyn_cm2,
+            pressure_match_dyn_cm2,
+        ),
     ]
 end

@@ -69,7 +69,10 @@
     p_match_dyn_cm2 = ASTRA.outer_match_pressure_dyn_cm2(problem, surface_model)
 
     @test surface_residual[3] ≈ log(outer_temperature_k) - log(outer_match_temperature_k)
-    @test surface_residual[4] ≈ outer_eos_state.pressure_dyn_cm2 - p_match_dyn_cm2
+    @test surface_residual[4] ≈ ASTRA.surface_pressure_log_mismatch(
+        outer_eos_state.pressure_dyn_cm2,
+        p_match_dyn_cm2,
+    )
     @test outer_match_temperature_k > ASTRA.surface_effective_temperature_k(
         surface_radius_cm,
         surface_luminosity_erg_s,
