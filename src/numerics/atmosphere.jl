@@ -79,7 +79,8 @@ end
 """
     outer_match_temperature_k(problem, model)
 
-Return the outer-cell temperature at ASTRA's Eddington photosphere.
+Return the photospheric-face temperature target at ASTRA's Eddington
+photosphere.
 """
 function outer_match_temperature_k(problem::StructureProblem, model::StellarModel)
     radius_surface_cm = exp(model.structure.log_radius_face_cm[end])

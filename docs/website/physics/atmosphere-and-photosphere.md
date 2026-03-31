@@ -8,7 +8,7 @@ $$
 
 That choice is not arbitrary. It is the standard Eddington-grey reference point where the atmosphere is thin enough that a single surface match is a useful first approximation, but still deep enough that the outer layer is not yet free space.
 
-This page is ASTRA's canonical atmosphere reference for the classical lane. It explains what the photosphere means, what the current one-sided Eddington `T(\tau)` closure does at the photosphere, and how the outer-cell temperature is bridged inward by the local half-cell transport offset.
+This page is ASTRA's canonical atmosphere reference for the classical lane. It explains what the photosphere means, what the current one-sided Eddington `T(\tau)` closure does at the photosphere, and how the temperature is photospheric while the pressure and optical-depth helpers still reference the deeper matching concept.
 
 ## Why atmospheres matter
 
@@ -40,18 +40,18 @@ Here `\kappa_\mathrm{surf}` is the local Rosseland-mean opacity at the outer cel
 
 ## Current ASTRA implementation
 
-ASTRA's current Phase 2 atmosphere implementation keeps the existing outer radius and luminosity target rows; the surface thermodynamic rows use the shared outer match-point helper layer, and the outer transport row remains one-sided to the photospheric face:
+ASTRA's current Phase 2 atmosphere implementation keeps the existing outer radius and luminosity target rows; the literal phrase `temperature is photospheric` is now true at the surface, while the pressure and optical-depth helpers still reference the deeper matching concept, and the outer transport row remains one-sided to the photospheric face:
 
-- the outer cell temperature is matched in log form to `outer_match_temperature_k(...)`, which now equals the photospheric face temperature plus the local half-cell transport offset,
+- the outer cell temperature is matched in log form to `outer_match_temperature_k(...)`, which now equals the photospheric face temperature directly,
 - the outer cell pressure is matched in log form to `outer_match_pressure_dyn_cm2(...)`,
 - the surface pressure row uses the shared outer match-point pressure contract in log form,
 - the outer transport row remains one-sided to the photospheric face and uses `surface_effective_temperature_k(...)` plus `eddington_photospheric_pressure_dyn_cm2(...)`.
 
-This is still a one-sided `T(\tau)` reconstruction at the photosphere. The difference is that the live outer-cell temperature owner now uses the local fitting-point bridge, so the outermost cell is attached to the photospheric reference by the same half-cell transport semantics used in the diagnostic comparison.
+This is still a one-sided `T(\tau)` reconstruction at the photosphere. The difference is that the live outer-cell temperature owner now lands directly on the photospheric face, while the deeper match-point helpers remain in use for pressure and optical-depth diagnostics.
 
 The focused bundle is still `converged = false` and `used_regularized_fallback = true`.
 
-The 2026-03-30 outer-boundary fitting-point audit separated the two helper bridges before the temperature-owner cutover. In the live code path, the pressure bridge is code-identical because the current comparison is built from the same `P_ph + g σ_half` bridge on both sides, and the temperature bridge is now code-identical as well because `outer_match_temperature_k(...)` uses the fitting-point temperature owner directly. That removes the old helper-gap mismatch, but it does not prove the outer boundary is solved: the default solve is still unconverged and surface-owned.
+The 2026-03-30 outer-boundary fitting-point audit separated the two helper bridges before the temperature-owner cutover. In the live code path, the pressure bridge is code-identical because the current comparison is built from the same `P_ph + g σ_half` bridge on both sides, and the temperature bridge is now photospheric because `outer_match_temperature_k(...)` uses the photospheric face directly. That removes the old helper-gap mismatch, but it does not prove the outer boundary is solved: the default solve is still unconverged and surface-owned.
 
 Why this is a reasonable slice:
 

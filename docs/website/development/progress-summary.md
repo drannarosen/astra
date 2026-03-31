@@ -14,21 +14,56 @@ For each update, record:
 
 ## 2026-03-30
 
+### Surface temperature photospheric cutover
+
+ASTRA's refreshed `2026-03-30-surface-temperature-semantics-audit` bundle now says the live temperature owner is photospheric, not bridge-dominated. In all four focused payloads the accepted dominant surface family is `surface_pressure`, `match_to_photosphere_log_gap = 0.0`, and the live temperature row sits on the Eddington photosphere while the pressure and optical-depth helpers still reference the deeper matching concept.
+
+Measured post-cutover facts:
+
+- `default-12` has `accepted_dominant_surface_family = surface_pressure`,
+- `default-12` has `surface_to_photosphere_log_gap = 0.06615610172518238`,
+- `default-12` has `surface_to_match_log_gap = 0.06615610172518238`,
+- `default-12` keeps `accepted_transport_hotspot.location = outer` at cell index `11`,
+- all four focused cases have `accepted_dominant_surface_family = surface_pressure`,
+- all four focused cases have `match_to_photosphere_log_gap = 0.0`,
+- and all four focused cases keep `transport_temperature_offset_fraction >> 1`.
+
+Why this mattered:
+
+- it removes the old bridge-dominated temperature interpretation from the live bundle,
+- it keeps the split semantics explicit: temperature is photospheric while pressure and optical-depth helpers still reference the deeper matching concept,
+- and it leaves the remaining sharp owner on the surface pressure row rather than on the temperature helper.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. scripts/run_surface_temperature_semantics_audit.jl artifacts/validation/2026-03-30-surface-temperature-semantics-audit`
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_surface_temperature_semantics_audit_artifacts.jl"); include("test/test_docs_structure.jl")'`
+
+What this does not prove:
+
+- robust convergence,
+- that Hopf is needed,
+- or that the deeper matching layer is already correct.
+
+Next step:
+
+- keep the corrected photospheric temperature owner fixed, and inspect the surviving `surface_pressure` semantics before widening scope to richer atmosphere models.
+
 ### Surface temperature semantics audit
 
-ASTRA's rebuilt `2026-03-30-surface-temperature-semantics-audit` bundle now records the live semantics of the corrected surface-temperature row in the same focused four-case view. The structural pattern is consistent in every focused payload: `match_to_photosphere_log_gap` is larger than `surface_to_photosphere_log_gap`, `surface_to_match_log_gap` stays large and negative, and `transport_temperature_offset_fraction` remains far above unity. In plain language, the live `surface_temperature` failure is bridge-dominated across the focused bundle.
+ASTRA's rebuilt `2026-03-30-surface-temperature-semantics-audit` bundle now records the live semantics of the corrected surface-temperature row in the same focused four-case view. The structural pattern is consistent in every focused payload: `match_to_photosphere_log_gap` is zero, `surface_to_match_log_gap` stays small and positive, and `transport_temperature_offset_fraction` remains far above unity. In plain language, the live temperature owner is now photospheric across the focused bundle, while the remaining sharp surface owner is `surface_pressure`.
 
 Measured post-fix facts:
 
 - all four focused cases are still `converged = false`,
 - all four focused cases still have `used_regularized_fallback = true`,
-- all four focused cases keep `accepted_dominant_surface_family = surface_temperature`,
-- all four focused cases satisfy `match_to_photosphere_log_gap > surface_to_photosphere_log_gap`,
+- all four focused cases keep `accepted_dominant_surface_family = surface_pressure`,
+- all four focused cases satisfy `match_to_photosphere_log_gap = 0.0`,
 - and all four focused cases keep `transport_temperature_offset_fraction >> 1`.
 
 Why this mattered:
 
-- it distinguishes a bridge-dominated temperature failure from a simple cell-versus-photosphere mismatch,
+- it distinguishes a photospheric temperature owner from the remaining surface-pressure mismatch,
 - it gives the next slice a sharper scientific target than the broader `surface_temperature` label alone,
 - and it does so without changing solver behavior.
 
@@ -45,7 +80,7 @@ What this does not prove:
 
 Next step:
 
-- keep the corrected Eddington-grey photosphere and the one-sided outer transport row fixed, and test the live temperature-bridge semantics directly before widening scope to richer atmosphere models.
+- keep the corrected Eddington-grey photosphere and the one-sided outer transport row fixed, and test the surviving `surface_pressure` semantics directly before widening scope to richer atmosphere models.
 
 ### Surface owner localization audit
 

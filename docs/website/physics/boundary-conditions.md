@@ -10,7 +10,7 @@ That is the physical reason boundary conditions matter. The numerical reason is 
 
 Near the center, symmetry requires the solution to stay regular rather than diverge. In practice that means the innermost radius and luminosity must behave like leading-order series quantities, not like generic interior unknowns. The center is therefore a special asymptotic limit, not merely "the first cell."
 
-At the surface, the continuous stellar-structure equations need a matching condition to some outer-layer or atmosphere model. Production stellar codes often use atmosphere integrations, optical-depth conditions, or tabulated surface relations. ASTRA now owns a staged outer atmosphere closure, and the current implementation uses a one-sided Phase 2 `T(\tau)` match-point reconstruction at the Eddington photosphere, with the outer-cell temperature bridged inward by the local half-cell transport offset rather than by a direct deeper-atmosphere continuation.
+At the surface, the continuous stellar-structure equations need a matching condition to some outer-layer or atmosphere model. Production stellar codes often use atmosphere integrations, optical-depth conditions, or tabulated surface relations. ASTRA now owns a staged outer atmosphere closure, and the current implementation uses a one-sided Phase 2 `T(\tau)` reconstruction at the Eddington photosphere, with the literal phrase `temperature is photospheric` preserved in the surface contract while the pressure and optical-depth helpers still reference the deeper matching concept.
 
 ## Current ASTRA implementation
 
@@ -51,7 +51,7 @@ The 2026-03-30 transport-family validation bundle says the boundary story is mix
 
 Phase 3 richer atmosphere options and a more explicit benchmark campaign are deferred. ASTRA currently needs the surface to be explicit, numerically stable, and scientifically legible, not yet astrophysically complete.
 
-The approved next step is to keep the current outer radius and luminosity target rows while the surface thermodynamic rows use the shared outer match-point helper layer, the surface pressure scale uses the shared outer match-point pressure scale, and the outer transport row remains one-sided to the photospheric face. That keeps the atmosphere question separate from the larger future question of whether ASTRA should continue to target both outer `R` and `L` in the long run.
+The approved next step is to keep the current outer radius and luminosity target rows while the temperature stays photospheric, the pressure and optical-depth helpers continue to reference the deeper matching concept, the surface pressure scale uses the shared outer match-point pressure scale, and the outer transport row remains one-sided to the photospheric face. That keeps the atmosphere question separate from the larger future question of whether ASTRA should continue to target both outer `R` and `L` in the long run.
 
 ## Implementation checklist
 

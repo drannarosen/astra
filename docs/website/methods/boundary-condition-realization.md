@@ -38,11 +38,11 @@ The row ownership is deliberately simple. The center radius row is owned by geom
 
 ## Surface closure
 
-The surface rows now use a one-sided Phase 2 `T(\tau)` atmosphere closure rather than hard guesses. They keep the problem square and numerically stable while giving the outer boundary a physically interpretable temperature and pressure scale. The temperature row is anchored at the Eddington photosphere and then bridged inward by the local half-cell transport offset, so it is no longer a direct deeper-atmosphere continuation.
+The surface rows now use a one-sided Phase 2 `T(\tau)` atmosphere closure rather than hard guesses. They keep the problem square and numerically stable while giving the outer boundary a physically interpretable temperature and pressure scale. The literal phrase `temperature is photospheric` now describes the temperature owner at the Eddington face, while the pressure and optical-depth helpers still reference the deeper matching concept.
 
 The focused bundle is still `converged = false` and `used_regularized_fallback = true`.
 
-The 2026-03-30 outer-boundary fitting-point audit made one more distinction explicit before the temperature-owner cutover: the pressure bridge is code-identical because the comparison was built from the same `P_ph + g σ_half` bridge on both sides. In the live code path, the temperature bridge is now code-identical as well because the outer temperature row uses the fitting-point bridge directly. The current surface rows should therefore be read as explicit helper owners whose remaining failure is no longer a helper-gap disagreement but an unconverged surface-owned solve.
+The 2026-03-30 outer-boundary fitting-point audit made one more distinction explicit before the temperature-owner cutover: the pressure bridge is code-identical because the comparison was built from the same `P_ph + g σ_half` bridge on both sides. In the live code path, the temperature bridge is now photospheric, so the current surface rows should be read as explicit helper owners whose remaining failure is no longer a helper-gap disagreement but an unconverged surface-owned solve.
 
 ## Normative surface-boundary contract
 
@@ -50,14 +50,14 @@ For the current classical lane, the outer boundary is closed by four explicit re
 
 1. outer radius,
 2. outer luminosity,
-3. surface temperature matched to the shared outer match-point temperature, which is the Eddington photosphere plus the local half-cell transport bridge,
+3. surface temperature matched directly to the photospheric face,
 4. surface pressure matched in log form to the shared outer match-point pressure contract.
 
 Those rows are intentionally staged. They are part of the canonical current solve, but they are still a one-sided `T(\tau)` atmosphere approximation rather than a production atmosphere or photosphere specification.
 
 For the physics-side explanation of the photosphere, tau `= 2/3`, and the planned `T(\tau)` path, see [Atmosphere and Photosphere](../physics/atmosphere-and-photosphere.md).
 
-The approved next step is more specific than that short phrase suggests. Phase 2 preserves the current outer radius and luminosity target rows; the surface thermodynamic rows use the shared outer match-point helper layer, the surface pressure row is matched in log form to the shared outer match-point pressure contract, and the outer transport row remains one-sided to the photospheric face. In other words, the implementation changes the atmosphere semantics, not the global bootstrap family definition.
+The approved next step is more specific than that short phrase suggests. Phase 2 preserves the current outer radius and luminosity target rows; the temperature is photospheric, the pressure and optical-depth helpers still reference the deeper matching concept, the surface pressure row is matched in log form to the shared outer match-point pressure contract, and the outer transport row remains one-sided to the photospheric face. In other words, the implementation changes the atmosphere semantics, not the global bootstrap family definition.
 
 ## Why this matters
 
