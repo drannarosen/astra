@@ -71,7 +71,7 @@ The continuous boundary story is summarized in [Physics: Boundary Conditions](..
 - [x] The surface closure is identified as explicit and one-sided.
 - [x] The page states that these rows are the current ASTRA equations, not only design goals.
 - [x] The current surface row formulas are written explicitly.
-- [x] The surface thermodynamic rows use the shared outer match-point helper layer.
+- [x] The temperature is photospheric while pressure and optical-depth helpers still reference the deeper matching concept.
 - [x] The surface pressure row is matched in log form to the shared outer match-point pressure contract.
 - [x] The outer transport row remains one-sided to the photospheric face.
 - [x] The Phase 2 `T(\tau)` path is documented as implemented.

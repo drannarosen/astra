@@ -70,7 +70,7 @@ Status: implemented.
 - keep the same public solve contract and packed basis `[\ln R, L, \ln T, \ln \rho]`,
 - treat the outer face as the photosphere at `tau = 2/3`,
 - reconstruct the outermost thermodynamic cell from a half-cell optical-depth estimate and hydrostatic column estimate.
-- the surface thermodynamic rows use the shared outer match-point helper layer,
+- temperature is photospheric while pressure and optical-depth helpers still reference the deeper matching concept,
 - route the surface pressure row through the shared outer match-point pressure contract in log form,
 - keep the outer transport row one-sided to the photospheric face.
 
@@ -98,7 +98,7 @@ The current approved atmosphere slice is:
 
 - keep the current outer radius target row,
 - keep the current outer luminosity target row,
-- the surface thermodynamic rows use the shared outer match-point helper layer,
+- temperature is photospheric while pressure and optical-depth helpers still reference the deeper matching concept,
 - keep the surface pressure scale aligned with the shared outer match-point pressure scale,
 - keep the outer transport row one-sided to the photospheric face,
 - keep richer atmosphere options and global-closure redesign out of scope for this implementation.
@@ -115,7 +115,7 @@ The reasoning is simple. ASTRA's current outer `R` and `L` rows still define the
 - [x] The Phase 3 richer-atmosphere path is named explicitly.
 - [x] The page distinguishes current implementation from planned atmosphere work.
 - [x] The approved Phase 2 choice to preserve outer `R` and `L` in that slice is recorded explicitly.
-- [x] The shared outer match-point helper layer for the surface thermodynamic rows is recorded explicitly.
+- [x] The temperature is photospheric while pressure and optical-depth helpers still reference the deeper matching concept.
 - [x] The solver-side surface-pressure row is matched in log form to the same match-point helper layer.
 - [ ] Add a source-backed `T(\tau)` comparison note for the implemented Phase 2 closure.
 - [ ] Add a benchmark artifact showing how the atmosphere closure changes the classical convergence basin.

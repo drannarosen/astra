@@ -356,7 +356,7 @@ Next step:
 
 ### Phase 2 atmosphere contract recorded
 
-ASTRA's atmosphere slice now records the one-sided Phase 2 `T(\tau)` contract directly in the website. The current classical lane still keeps the outer radius and luminosity target rows, preserves the packed structure basis `[\ln R, L, \ln T, \ln \rho]`, and the surface thermodynamic rows use the shared outer match-point helper layer while the outer transport row remains one-sided to the photospheric face. The surface pressure scale also uses the shared outer match-point pressure scale.
+ASTRA's atmosphere slice now records the one-sided Phase 2 `T(\tau)` contract directly in the website. Historically, before the photospheric cutover, the surface thermodynamic rows used the shared outer match-point helper layer. The current classical lane still keeps the outer radius and luminosity target rows, preserves the packed structure basis `[\ln R, L, \ln T, \ln \rho]`, and the temperature is photospheric while pressure and optical-depth helpers still reference the deeper matching concept. The surface pressure scale also uses the shared outer match-point pressure scale.
 
 Why this mattered:
 
