@@ -75,6 +75,7 @@
         "docs/website/development/progress-summary.md",
         "docs/website/development/armijo-merit-validation-2026-03-30.md",
         "docs/website/development/transport-outer-boundary-hardening-2026-03-30.md",
+        "docs/website/development/outer-boundary-fitting-point-ownership-2026-03-30.md",
         "docs/website/development/changelog.md",
         "docs/website/development/backlog.md",
         "docs/website/development/issues.md",
@@ -157,6 +158,7 @@
             "transport sign contract",
             "outer row at cell index `11`",
             "2026-03-30-outer-surface-coupling-audit",
+            "2026-03-30-outer-boundary-fitting-point-ownership-audit",
             "dominant surface family",
             "best rejected dominant surface family",
             "outer boundary",
@@ -164,6 +166,7 @@
             "surface_pressure",
             "outer_transport",
             "default-12",
+            "outer-boundary-fitting-point-ownership",
         ],
         "docs/website/development/transport-outer-boundary-hardening-2026-03-30.md" => [
             "boundary ownership",

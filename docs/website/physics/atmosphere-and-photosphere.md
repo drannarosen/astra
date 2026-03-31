@@ -49,6 +49,8 @@ ASTRA's current Phase 2 atmosphere implementation keeps the existing outer radiu
 
 This is a one-sided `T(\tau)` reconstruction. It keeps the outer face as the photospheric reference while treating the outermost cell as a deeper match point instead of the photosphere itself.
 
+The 2026-03-30 outer-boundary fitting-point audit separates the two helper bridges: `pressure_contract_log_gap = 0.0` across the focused bundle, while `temperature_contract_log_gap` stays nonzero. That means the pressure helper is currently exact by measurement, but the temperature helper is still the mixed bridge candidate.
+
 Why this is a reasonable slice:
 
 - it preserves ASTRA's current public structure-state contract,

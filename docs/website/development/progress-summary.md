@@ -14,6 +14,31 @@ For each update, record:
 
 ## 2026-03-30
 
+### Outer boundary fitting-point ownership audit
+
+ASTRA's refreshed `2026-03-30-outer-boundary-fitting-point-ownership-audit` bundle separates the pressure bridge from the temperature bridge. In `default-12`, `pressure_contract_log_gap = 0.0` while `temperature_contract_log_gap = -2.599766419592937`, and the accepted dominant surface family is `surface_pressure`. The perturbation cases stay mixed: `perturb-a1e-6-case-01` and `perturb-a1e-6-case-03` accept on `surface_temperature`, `perturb-a1e-6-case-02` accepts on `surface_pressure`, and the accepted transport hotspot still sits on the outer row at cell index `11`.
+
+Why this mattered:
+
+- it records the current `outer-boundary-fitting-point-ownership` interpretation as a mixed bridge story instead of a single outer-boundary lump,
+- it deprioritizes the pressure bridge because the measured log gap is zero across the bundle,
+- and it leaves the temperature bridge mismatch as the sharper remaining non-pressure candidate.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. scripts/run_outer_boundary_ownership_audit.jl artifacts/validation/2026-03-30-outer-boundary-fitting-point-ownership-audit`
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_docs_structure.jl")'`
+
+What this does not prove:
+
+- a solver rewrite,
+- a parity claim,
+- or that the temperature bridge alone explains the outer-boundary behavior.
+
+Next step:
+
+- keep the pressure bridge exact, keep the temperature bridge under targeted review, and do not widen scope into adaptive regularization from this evidence alone.
+
 ### Outer surface coupling audit evidence
 
 ASTRA's refreshed `2026-03-30-outer-surface-coupling-audit` bundle sharpens the remaining near-surface diagnosis after the transport sign contract correction. In `default-12`, the accepted and best-rejected dominant surface family is `surface_pressure`, the accepted transport hotspot still sits on the outer row at cell index `11`, and the accepted outer-boundary summary reports `outer_transport_weighted = 0.8444699228014957`, `surface_temperature_weighted = 0.6854069474453723`, `surface_pressure_weighted = -0.7960701554689767`, `match_temperature_k = 1.1733423492649216e6`, and `match_pressure_dyn_cm2 = 3.9370078676338625e13`.

@@ -1,0 +1,12 @@
+fixture_label = default-12
+payload_path = default-12.toml
+
+fixture_label = perturb-a1e-6-case-01
+payload_path = perturb-a1e-6-case-01.toml
+
+fixture_label = perturb-a1e-6-case-02
+payload_path = perturb-a1e-6-case-02.toml
+
+fixture_label = perturb-a1e-6-case-03
+payload_path = perturb-a1e-6-case-03.toml
+
