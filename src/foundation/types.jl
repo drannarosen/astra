@@ -294,6 +294,29 @@ struct RowFamilyMeritSummary
 end
 
 """
+    OuterBoundaryRowSummary(...)
+
+Diagnostic-only summary for the one-sided outer transport row and the paired
+surface temperature and pressure rows at the outer edge.
+"""
+struct OuterBoundaryRowSummary
+    present::Bool
+    outer_transport_row_index::Int
+    surface_temperature_row_index::Int
+    surface_pressure_row_index::Int
+    outer_transport_raw::Float64
+    surface_temperature_raw::Float64
+    surface_pressure_raw::Float64
+    outer_transport_weighted::Float64
+    surface_temperature_weighted::Float64
+    surface_pressure_weighted::Float64
+    photospheric_face_temperature_k::Float64
+    match_temperature_k::Float64
+    photospheric_face_pressure_dyn_cm2::Float64
+    match_pressure_dyn_cm2::Float64
+end
+
+"""
     TransportHotspotSummary(...)
 
 Row-level transport hotspot summary for the weighted residual at one model state.

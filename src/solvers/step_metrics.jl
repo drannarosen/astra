@@ -299,6 +299,78 @@ function row_family_merit_summary(
     )
 end
 
+function outer_boundary_row_summary(
+    problem::StructureProblem,
+    model::StellarModel,
+    residual::AbstractVector{<:Real};
+    row_weights::AbstractVector{<:Real} = residual_row_weights(problem, model),
+)
+    n = problem.grid.n_cells
+    if n <= 1
+        return _ASTRA_MODULE.OuterBoundaryRowSummary(
+            false,
+            0,
+            0,
+            0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        )
+    end
+
+    residual_f64 = Float64.(residual)
+    weight_f64 = Float64.(row_weights)
+
+    outer_transport_row_index = first(interior_structure_row_range(n - 1)) + 3
+    surface_rows = structure_surface_row_range(n)
+    surface_temperature_row_index = surface_rows[3]
+    surface_pressure_row_index = surface_rows[4]
+
+    state = model.structure
+    radius_surface_cm = exp(state.log_radius_face_cm[end])
+    luminosity_surface_erg_s = state.luminosity_face_erg_s[end]
+    opacity_outer_cm2_g = _ASTRA_MODULE.cell_opacity_state(problem, model, n).opacity_cm2_g
+    g_surface_cgs = _ASTRA_MODULE.surface_gravity_cgs(problem.parameters.mass_g, radius_surface_cm)
+    photospheric_face_temperature_k = _ASTRA_MODULE.surface_effective_temperature_k(
+        radius_surface_cm,
+        luminosity_surface_erg_s,
+    )
+    match_temperature_k = _ASTRA_MODULE.outer_match_temperature_k(problem, model)
+    photospheric_face_pressure_dyn_cm2 = _ASTRA_MODULE.eddington_photospheric_pressure_dyn_cm2(
+        g_surface_cgs,
+        opacity_outer_cm2_g,
+    )
+    match_pressure_dyn_cm2 = _ASTRA_MODULE.outer_match_pressure_dyn_cm2(problem, model)
+
+    outer_transport_raw = residual_f64[outer_transport_row_index]
+    surface_temperature_raw = residual_f64[surface_temperature_row_index]
+    surface_pressure_raw = residual_f64[surface_pressure_row_index]
+
+    return _ASTRA_MODULE.OuterBoundaryRowSummary(
+        true,
+        outer_transport_row_index,
+        surface_temperature_row_index,
+        surface_pressure_row_index,
+        outer_transport_raw,
+        surface_temperature_raw,
+        surface_pressure_raw,
+        weight_f64[outer_transport_row_index] * outer_transport_raw,
+        weight_f64[surface_temperature_row_index] * surface_temperature_raw,
+        weight_f64[surface_pressure_row_index] * surface_pressure_raw,
+        photospheric_face_temperature_k,
+        match_temperature_k,
+        photospheric_face_pressure_dyn_cm2,
+        match_pressure_dyn_cm2,
+    )
+end
+
 function transport_hotspot_summary(
     problem::StructureProblem,
     model::StellarModel,

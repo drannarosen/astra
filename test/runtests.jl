@@ -46,5 +46,6 @@ using ASTRA
     include("test_atmosphere_ttau_helpers.jl")
     include("test_atmosphere_match_point.jl")
     include("test_outer_transport_boundary.jl")
+    include("test_outer_boundary_row_diagnostics.jl")
     include("test_docs_structure.jl")
 end
