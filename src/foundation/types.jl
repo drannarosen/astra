@@ -85,6 +85,9 @@ struct StellarGrid
     end
 end
 
+Base.:(==)(lhs::StellarGrid, rhs::StellarGrid) =
+    lhs.m_face_g == rhs.m_face_g && lhs.dm_cell_g == rhs.dm_cell_g && lhs.n_cells == rhs.n_cells
+
 """
     StructureState(grid, log_radius_face_cm, luminosity_face_erg_s,
                    log_temperature_cell_k, log_density_cell_g_cm3)
@@ -129,6 +132,13 @@ struct StructureState
     end
 end
 
+Base.:(==)(lhs::StructureState, rhs::StructureState) =
+    lhs.grid == rhs.grid &&
+    lhs.log_radius_face_cm == rhs.log_radius_face_cm &&
+    lhs.luminosity_face_erg_s == rhs.luminosity_face_erg_s &&
+    lhs.log_temperature_cell_k == rhs.log_temperature_cell_k &&
+    lhs.log_density_cell_g_cm3 == rhs.log_density_cell_g_cm3
+
 """
     CompositionState(hydrogen_mass_fraction_cell, helium_mass_fraction_cell,
                      metal_mass_fraction_cell)
@@ -160,6 +170,11 @@ struct CompositionState
         )
     end
 end
+
+Base.:(==)(lhs::CompositionState, rhs::CompositionState) =
+    lhs.hydrogen_mass_fraction_cell == rhs.hydrogen_mass_fraction_cell &&
+    lhs.helium_mass_fraction_cell == rhs.helium_mass_fraction_cell &&
+    lhs.metal_mass_fraction_cell == rhs.metal_mass_fraction_cell
 
 """
     EvolutionState(age_s, timestep_s, previous_timestep_s, accepted_steps, rejected_steps)
@@ -228,6 +243,15 @@ struct EvolutionState
     end
 end
 
+Base.:(==)(lhs::EvolutionState, rhs::EvolutionState) =
+    lhs.age_s == rhs.age_s &&
+    lhs.timestep_s == rhs.timestep_s &&
+    lhs.previous_timestep_s == rhs.previous_timestep_s &&
+    lhs.accepted_steps == rhs.accepted_steps &&
+    lhs.rejected_steps == rhs.rejected_steps &&
+    lhs.previous_log_temperature_cell_k == rhs.previous_log_temperature_cell_k &&
+    lhs.previous_log_density_cell_g_cm3 == rhs.previous_log_density_cell_g_cm3
+
 """
     StellarModel(structure, composition, evolution)
 
@@ -239,6 +263,11 @@ struct StellarModel{S,C,E}
     composition::C
     evolution::E
 end
+
+Base.:(==)(lhs::StellarModel, rhs::StellarModel) =
+    lhs.structure == rhs.structure &&
+    lhs.composition == rhs.composition &&
+    lhs.evolution == rhs.evolution
 
 """
     MicrophysicsBundle(eos, opacity, nuclear, convection)
@@ -503,4 +532,9 @@ struct ArmijoMeritValidationPayload
     best_rejected_outer_boundary::Union{Nothing,OuterBoundaryRowSummary}
     best_rejected_transport_hotspot::Union{Nothing,TransportHotspotSummary}
     used_regularized_fallback::Bool
+    initial_residual_norm::Float64
+    initial_weighted_residual_norm::Float64
+    initial_merit::Float64
+    initial_dominant_family::Symbol
+    initial_dominant_surface_family::Symbol
 end

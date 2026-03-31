@@ -66,6 +66,11 @@ function build_armijo_merit_validation_payload(
         best_rejected_outer_boundary,
         isnothing(diagnostics.best_rejected_trial) ? nothing : diagnostics.best_rejected_trial.transport_hotspot,
         used_regularized_fallback,
+        diagnostics.initial_residual_norm,
+        diagnostics.weighted_residual_history[1],
+        diagnostics.merit_history[1],
+        diagnostics.initial_row_family_merit.dominant_family,
+        diagnostics.initial_row_family_merit.dominant_surface_family,
     )
 end
 
@@ -425,6 +430,27 @@ function _armijo_merit_validation_transport_family(
     return family
 end
 
+function _armijo_merit_validation_outer_boundary_dominant_family(
+    summary::Union{Nothing,OuterBoundaryRowSummary},
+)
+    summary === nothing && return nothing
+    contributions = abs.(
+        (
+            summary.outer_transport_weighted,
+            summary.surface_temperature_weighted,
+            summary.surface_pressure_weighted,
+        ),
+    )
+    names = (:outer_transport, :surface_temperature, :surface_pressure)
+    return names[argmax(contributions)]
+end
+
+function _armijo_merit_validation_surface_pressure_bridge_dominant(
+    summary::Union{Nothing,OuterBoundaryRowSummary},
+)
+    return _armijo_merit_validation_outer_boundary_dominant_family(summary) == :surface_pressure
+end
+
 function _armijo_merit_validation_amplitude_label(amplitude::Real)
     return replace(repr(Float64(amplitude)), "1.0e-" => "1e-")
 end
@@ -529,7 +555,9 @@ function _try_build_armijo_merit_validation_perturbation_payload(
     problem::StructureProblem,
     base_state::StellarModel,
     amplitude::Real,
-    case_index::Int,
+    case_index::Int;
+    seed_label::AbstractString = "perturb",
+    fixture_prefix::AbstractString = "",
 )
     base_vector = pack_state(base_state.structure)
     perturbation = _armijo_merit_validation_perturbation(base_vector, amplitude, case_index)
@@ -543,11 +571,12 @@ function _try_build_armijo_merit_validation_perturbation_payload(
     result = solve_structure(problem; state = perturbed_state)
     label = "perturb-a$(_armijo_merit_validation_amplitude_label(amplitude))" *
             "-case-$(lpad(case_index, 2, '0'))"
+    fixture_label = isempty(fixture_prefix) ? label : "$(fixture_prefix)-$(label)"
     return build_armijo_merit_validation_payload(
-        label,
+        fixture_label,
         problem,
         result;
-        seed_label = "perturb",
+        seed_label = String(seed_label),
     )
 end
 
@@ -684,6 +713,156 @@ function run_outer_boundary_ownership_audit(output_dir::AbstractString)
             println(io, "fixture_label = ", payload.fixture_label)
             println(io, "payload_path = ", basename(payload_path))
             println(io)
+        end
+    end
+
+    return ArmijoMeritValidationBundle(String(manifest_path), payload_paths)
+end
+
+function _write_seed_strategy_payload(io::IO, payload::ArmijoMeritValidationPayload)
+    _write_armijo_merit_validation_payload(io, payload)
+    println(io, "initial_residual_norm = ", repr(payload.initial_residual_norm))
+    println(
+        io,
+        "initial_weighted_residual_norm = ",
+        repr(payload.initial_weighted_residual_norm),
+    )
+    println(io, "initial_merit = ", repr(payload.initial_merit))
+    println(
+        io,
+        "initial_dominant_family = ",
+        _format_armijo_merit_validation_scalar(payload.initial_dominant_family),
+    )
+    println(
+        io,
+        "initial_dominant_surface_family = ",
+        _format_armijo_merit_validation_scalar(payload.initial_dominant_surface_family),
+    )
+    println(
+        io,
+        "accepted_outer_boundary_dominant_family = ",
+        _format_armijo_merit_validation_scalar(
+            _armijo_merit_validation_outer_boundary_dominant_family(
+                payload.accepted_outer_boundary,
+            ),
+        ),
+    )
+    println(
+        io,
+        "accepted_surface_pressure_bridge_dominant = ",
+        _format_armijo_merit_validation_scalar(
+            _armijo_merit_validation_surface_pressure_bridge_dominant(
+                payload.accepted_outer_boundary,
+            ),
+        ),
+    )
+end
+
+function _write_seed_strategy_manifest_entry(
+    io::IO,
+    payload::ArmijoMeritValidationPayload,
+    payload_path::AbstractString,
+)
+    println(io, "payload = ", payload.fixture_label)
+    println(io, "payload_path = ", payload_path)
+    println(io, "seed_label = ", payload.seed_label)
+    println(io, "converged = ", _format_armijo_merit_validation_scalar(payload.converged))
+    println(io, "accepted_step_count = ", payload.accepted_step_count)
+    println(io, "rejected_trial_count = ", payload.rejected_trial_count)
+    println(io, "initial_merit = ", repr(payload.initial_merit))
+    println(io, "final_merit = ", repr(payload.final_merit))
+    println(
+        io,
+        "initial_dominant_family = ",
+        _format_armijo_merit_validation_scalar(payload.initial_dominant_family),
+    )
+    println(
+        io,
+        "accepted_dominant_family = ",
+        _format_armijo_merit_validation_scalar(payload.accepted_dominant_family),
+    )
+    println(
+        io,
+        "accepted_dominant_surface_family = ",
+        _format_armijo_merit_validation_scalar(payload.accepted_dominant_surface_family),
+    )
+    println(
+        io,
+        "accepted_outer_boundary_dominant_family = ",
+        _format_armijo_merit_validation_scalar(
+            _armijo_merit_validation_outer_boundary_dominant_family(
+                payload.accepted_outer_boundary,
+            ),
+        ),
+    )
+    println(
+        io,
+        "accepted_surface_pressure_bridge_dominant = ",
+        _format_armijo_merit_validation_scalar(
+            _armijo_merit_validation_surface_pressure_bridge_dominant(
+                payload.accepted_outer_boundary,
+            ),
+        ),
+    )
+    println(
+        io,
+        "used_regularized_fallback = ",
+        _format_armijo_merit_validation_scalar(payload.used_regularized_fallback),
+    )
+    println(io)
+end
+
+function run_seed_strategy_audit(output_dir::AbstractString)
+    mkpath(output_dir)
+    _clear_outer_boundary_ownership_audit_payloads(output_dir)
+
+    problem = build_toy_problem(n_cells = 12)
+    seed_builders = (
+        ("bootstrap_default", _bootstrap_default_initial_state),
+        ("convective_pms_like", _convective_pms_like_initial_state),
+    )
+
+    payloads = ArmijoMeritValidationPayload[]
+    payload_paths = String[]
+    for (seed_label, seed_builder) in seed_builders
+        seed_state = seed_builder(problem)
+        default_result = solve_structure(problem; state = seed_state)
+        push!(
+            payloads,
+            build_armijo_merit_validation_payload(
+                "$(seed_label)-default-12",
+                problem,
+                default_result;
+                seed_label = seed_label,
+            ),
+        )
+        for case_index in 1:3
+            push!(
+                payloads,
+                _try_build_armijo_merit_validation_perturbation_payload(
+                    problem,
+                    seed_state,
+                    1.0e-6,
+                    case_index;
+                    seed_label = seed_label,
+                    fixture_prefix = seed_label,
+                ),
+            )
+        end
+    end
+
+    for payload in payloads
+        payload_path = _armijo_merit_validation_payload_path(output_dir, payload.fixture_label)
+        open(payload_path, "w") do io
+            _write_seed_strategy_payload(io, payload)
+        end
+        push!(payload_paths, payload_path)
+    end
+
+    manifest_path = joinpath(output_dir, "manifest.txt")
+    open(manifest_path, "w") do io
+        for (payload, payload_path) in zip(payloads, payload_paths)
+            _write_seed_strategy_manifest_entry(io, payload, basename(payload_path))
         end
     end
 

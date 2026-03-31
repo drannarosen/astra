@@ -1,6 +1,6 @@
 # Solar-First Lane Checklist
 
-Last updated: **2026-03-30**
+Last updated: **2026-03-31**
 
 This checklist tracks ASTRA's first serious science lane:
 
@@ -36,6 +36,7 @@ This checklist tracks ASTRA's first serious science lane:
 
 ## Initialization lane
 
+- [x] diagnostic-only PMS-like seed comparison recorded against the live bootstrap seed
 - [ ] Low-mass convective PMS seed builder implemented
 - [ ] Relaxation pseudo-evolution stage implemented
 - [ ] Mixed relaxation acceptance criteria implemented

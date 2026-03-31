@@ -14,6 +14,56 @@ For each update, record:
 
 ## 2026-03-31
 
+### Seed strategy audit
+
+ASTRA's new `2026-03-31-seed-strategy-audit` bundle compares the live
+`bootstrap_default` seed against the internal diagnostic-only
+`convective_pms_like` seed on the same focused four-case bundle. The result is
+not a seed promotion. `bootstrap_default` keeps the same sharp surface-pressure
+story as the boundary audit: `accepted_surface_pressure_bridge_dominant = true`
+in all four focused payloads, all four cases remain `converged = false`, and
+all four cases remain `used_regularized_fallback = true`.
+
+Measured comparison facts:
+
+- `bootstrap_default-default-12` has `initial_merit = 7.606095159786209`,
+- `bootstrap_default-default-12` has `final_merit = 7.137553468301087`,
+- `bootstrap_default-default-12` has `accepted_dominant_surface_family = surface_pressure`,
+- `bootstrap_default-default-12` has `accepted_surface_pressure_bridge_dominant = true`,
+- `convective_pms_like-default-12` has `initial_merit = 1.4652955562551198e83`,
+- `convective_pms_like-default-12` has `final_merit = 3.228091380703186e81`,
+- `convective_pms_like-default-12` has `accepted_dominant_family = center`,
+- `convective_pms_like-default-12` has `accepted_outer_boundary_dominant_family = outer_transport`,
+- `convective_pms_like-default-12` has `accepted_surface_pressure_bridge_dominant = false`,
+- and the PMS-like focused cases do not converge either.
+
+Why this mattered:
+
+- it gives ASTRA a real seed-family discrimination lane without widening scope
+  into saved ZAMS startup or full relaxation,
+- it records a measured negative result for immediate PMS-like promotion rather
+  than assuming that "more physical" always means "better basin",
+- and it keeps the long-term architecture unchanged: the canonical science lane
+  remains PMS-first, while saved ZAMS remains deferred as a later control lane.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. scripts/run_seed_strategy_audit.jl artifacts/validation/2026-03-31-seed-strategy-audit`
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_seed_strategy_initial_states.jl"); include("test/test_seed_strategy_audit_artifacts.jl"); include("test/test_docs_structure.jl")'`
+
+What this does not prove:
+
+- that the current bootstrap seed is good enough,
+- that PMS-like startup is wrong in the long term,
+- or that boundary and closure issues have stopped dominating the live solve.
+
+Next step:
+
+- keep saved ZAMS remains deferred as a later control lane, keep the canonical
+  PMS-first architecture unchanged, and decide whether the next slice should
+  refine the diagnostic PMS-like seed or return to the still-live
+  boundary/closure owner.
+
 ### Surface pressure semantics audit
 
 ASTRA's new `2026-03-31-surface-pressure-semantics-audit` bundle now says the live `surface_pressure` row is bridge-dominated rather than photosphere-dominated. In all four focused payloads the accepted dominant surface family is `surface_pressure`, `pressure_match_to_photosphere_log_gap` stays large and positive, `pressure_surface_to_match_log_gap` stays negative, and the deeper hydrostatic bridge sets the effective pressure scale.

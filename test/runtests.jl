@@ -48,6 +48,8 @@ using ASTRA
     include("test_surface_temperature_semantics_audit_artifacts.jl")
     include("test_surface_pressure_semantics.jl")
     include("test_surface_pressure_semantics_audit_artifacts.jl")
+    include("test_seed_strategy_initial_states.jl")
+    include("test_seed_strategy_audit_artifacts.jl")
     include("test_outer_boundary_fitting_point_terms.jl")
     include("test_center_asymptotic_scaling.jl")
     include("test_weighted_solver_metrics.jl")

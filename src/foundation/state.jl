@@ -284,7 +284,36 @@ function _source_matched_luminosity_profile(
     return luminosity_face_erg_s
 end
 
-function _problem_aware_initial_state(problem::StructureProblem)
+function _uniform_composition_state(composition::Composition, n_cells::Int)
+    return CompositionState(
+        fill(composition.X, n_cells),
+        fill(composition.Y, n_cells),
+        fill(composition.Z, n_cells),
+    )
+end
+
+_zeroed_evolution_state() = EvolutionState(0.0, 0.0, 0.0, 0, 0)
+
+function _stellar_model_from_profiles(
+    problem::StructureProblem,
+    radius_face_cm::AbstractVector{<:Real},
+    luminosity_face_erg_s::AbstractVector{<:Real},
+    temperature_cell_k::AbstractVector{<:Real},
+    density_cell_g_cm3::AbstractVector{<:Real},
+)
+    n = problem.grid.n_cells
+    structure = StructureState(
+        problem.grid,
+        positive_log.(Float64.(radius_face_cm)),
+        Float64.(luminosity_face_erg_s),
+        positive_log.(Float64.(temperature_cell_k)),
+        positive_log.(Float64.(density_cell_g_cm3)),
+    )
+    composition_state = _uniform_composition_state(problem.composition, n)
+    return StellarModel(structure, composition_state, _zeroed_evolution_state())
+end
+
+function _bootstrap_default_initial_state(problem::StructureProblem)
     radius_face_cm = _target_radius_faces(problem.parameters, problem.grid)
     density_cell_g_cm3 = _geometry_consistent_density_profile(problem.grid, radius_face_cm)
     hydrostatic_temperature_cell_k =
@@ -299,23 +328,68 @@ function _problem_aware_initial_state(problem::StructureProblem)
         density_cell_g_cm3,
         temperature_cell_k,
     )
-
-    n = problem.grid.n_cells
-    structure = StructureState(
-        problem.grid,
-        positive_log.(radius_face_cm),
+    return _stellar_model_from_profiles(
+        problem,
+        radius_face_cm,
         luminosity_face_erg_s,
-        positive_log.(temperature_cell_k),
-        positive_log.(density_cell_g_cm3),
+        temperature_cell_k,
+        density_cell_g_cm3,
     )
-    composition_state = CompositionState(
-        fill(problem.composition.X, n),
-        fill(problem.composition.Y, n),
-        fill(problem.composition.Z, n),
-    )
-    evolution = EvolutionState(0.0, 0.0, 0.0, 0, 0)
-    return StellarModel(structure, composition_state, evolution)
 end
+
+function _pms_like_center_temperature_target(parameters::StellarParameters)
+    return max(
+        8.0 * parameters.surface_temperature_guess_k,
+        min(3.0e5, 0.1 * parameters.center_temperature_guess_k),
+    )
+end
+
+function _near_adiabatic_temperature_profile(
+    problem::StructureProblem,
+    density_cell_g_cm3::AbstractVector{<:Real},
+)
+    surface_temperature_k = problem.parameters.surface_temperature_guess_k
+    center_temperature_k = _pms_like_center_temperature_target(problem.parameters)
+    density_surface_g_cm3 = clip_positive(density_cell_g_cm3[end])
+    adiabatic_proxy_k =
+        surface_temperature_k .* (Float64.(density_cell_g_cm3) ./ density_surface_g_cm3) .^ (2.0 / 3.0)
+    normalized_proxy =
+        (adiabatic_proxy_k .- surface_temperature_k) ./
+        clip_positive(adiabatic_proxy_k[1] - surface_temperature_k)
+    normalized_proxy = clamp.(normalized_proxy, 0.0, 1.0)
+    temperature_cell_k =
+        surface_temperature_k .+
+        (center_temperature_k - surface_temperature_k) .* normalized_proxy
+    temperature_cell_k[end] = surface_temperature_k
+    return temperature_cell_k
+end
+
+function _contraction_powered_luminosity_profile(problem::StructureProblem)
+    contraction_timescale_s = 1.0e7 * YEAR_S
+    target_surface_luminosity_erg_s = max(
+        1.5 * problem.parameters.luminosity_guess_erg_s,
+        GRAVITATIONAL_CONSTANT_CGS * problem.parameters.mass_g^2 /
+        (clip_positive(problem.parameters.radius_guess_cm) * contraction_timescale_s),
+    )
+    mass_fraction_face = problem.grid.m_face_g ./ problem.parameters.mass_g
+    return target_surface_luminosity_erg_s .* mass_fraction_face
+end
+
+function _convective_pms_like_initial_state(problem::StructureProblem)
+    radius_face_cm = _target_radius_faces(problem.parameters, problem.grid)
+    density_cell_g_cm3 = _geometry_consistent_density_profile(problem.grid, radius_face_cm)
+    temperature_cell_k = _near_adiabatic_temperature_profile(problem, density_cell_g_cm3)
+    luminosity_face_erg_s = _contraction_powered_luminosity_profile(problem)
+    return _stellar_model_from_profiles(
+        problem,
+        radius_face_cm,
+        luminosity_face_erg_s,
+        temperature_cell_k,
+        density_cell_g_cm3,
+    )
+end
+
+_problem_aware_initial_state(problem::StructureProblem) = _bootstrap_default_initial_state(problem)
 
 function _analytic_profile_state(
     parameters::StellarParameters,
@@ -352,7 +426,7 @@ function _analytic_profile_state(
     return StellarModel(structure, composition_state, evolution)
 end
 
-toy_reference_state(problem::StructureProblem) = _problem_aware_initial_state(problem)
+toy_reference_state(problem::StructureProblem) = _bootstrap_default_initial_state(problem)
 
 """
     with_previous_thermodynamic_state(model; kwargs...)
@@ -406,7 +480,7 @@ function initialize_state(
     return _analytic_profile_state(parameters, composition, grid)
 end
 
-initialize_state(problem::StructureProblem) = _problem_aware_initial_state(problem)
+initialize_state(problem::StructureProblem) = _bootstrap_default_initial_state(problem)
 
 pack_state(state::StructureState) = vcat(
     state.log_radius_face_cm,
