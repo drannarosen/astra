@@ -14,6 +14,40 @@ For each update, record:
 
 ## 2026-03-30
 
+### Surface owner localization audit
+
+ASTRA's rebuilt `2026-03-30-surface-owner-localization-audit` bundle now records the live post-temperature-fix state in a focused four-case view. Unlike the earlier mixed ownership story, all four focused cases now accept on `surface` with `accepted_dominant_surface_family = surface_temperature`, and the outer transport hotspot stays on the outer row at cell index `11`. The focused bundle therefore says something sharper than the pre-cutover audit did: under the corrected temperature owner, the surviving near-surface failure is temperature-dominated in this four-case bundle.
+
+Measured post-fix facts:
+
+- all four focused cases are still `converged = false`,
+- all four focused cases still have `used_regularized_fallback = true`,
+- `default-12` has `accepted_step_count = 8`, `rejected_trial_count = 680`, `final_weighted_residual_norm = 0.812065048601674`, and `final_merit = 16.48624107901098`,
+- all four focused cases have `accepted_dominant_surface_family = surface_temperature`,
+- all four focused cases keep the outer transport hotspot on the outer row at cell index `11`,
+- and in every focused payload the magnitude ordering stays the same: `|surface_temperature_weighted| > |surface_pressure_weighted| > |outer_transport_weighted|`.
+
+Why this mattered:
+
+- it separates the live post-fix state from the earlier historical mixed-ownership audit,
+- it shows that the remaining focused failure is no longer split between `surface_pressure` and `surface_temperature`,
+- and it gives the next slice a sharper owner without pretending the solve is healthy.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. scripts/run_surface_owner_localization_audit.jl artifacts/validation/2026-03-30-surface-owner-localization-audit`
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_surface_owner_localization_audit_artifacts.jl"); include("test/test_docs_structure.jl")'`
+
+What this does not prove:
+
+- robust convergence,
+- that Hopf is needed,
+- or that the outer transport row has stopped mattering.
+
+Next step:
+
+- keep the corrected Eddington-grey temperature owner fixed, and inspect the live `surface_temperature` semantics before widening scope to richer atmosphere models.
+
 ### Bridge outer temperature through fitting point
 
 ASTRA now keeps the Eddington-grey photosphere at `tau = 2/3`, but the live outer-cell temperature owner no longer continues that atmosphere directly to `tau = 2/3 + tau_half`. Instead, `outer_match_temperature_k(...)` now uses the local fitting-point bridge, so the live `outer-boundary-fitting-point-ownership` helper gaps are both code-identical: `temperature_contract_log_gap = 0.0` and `pressure_contract_log_gap = 0.0` on `default-12`. In other words, the live code path now does exactly what the slice title says: bridge outer temperature through fitting point.
