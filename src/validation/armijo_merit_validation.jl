@@ -704,6 +704,10 @@ function run_surface_temperature_semantics_audit(output_dir::AbstractString)
     return run_surface_owner_localization_audit(output_dir)
 end
 
+function run_surface_pressure_semantics_audit(output_dir::AbstractString)
+    return run_surface_owner_localization_audit(output_dir)
+end
+
 function _clear_outer_boundary_ownership_audit_payloads(output_dir::AbstractString)
     for entry in readdir(output_dir)
         if endswith(entry, ".toml") || entry == "manifest.txt"
