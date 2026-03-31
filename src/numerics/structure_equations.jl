@@ -104,6 +104,18 @@ Return the canonical transport-row decomposition for cell `k`, including the
 temperature term, the gradient term, and the assembled residual contribution.
 The final interior row uses the one-sided outer photospheric face.
 """
+function _selected_outer_transport_pressure_target_dyn_cm2(
+    problem::StructureProblem,
+    model::StellarModel,
+)
+    mode = problem.solver.outer_transport_pressure_mode
+    mode == :photospheric_face &&
+        return _photospheric_outer_transport_pressure_target_dyn_cm2(problem, model)
+    mode == :selected_pressure_target &&
+        return _selected_pressure_target_dyn_cm2(problem, model)
+    throw(ArgumentError("Unsupported outer_transport_pressure_mode $(mode)."))
+end
+
 function transport_row_terms(problem::StructureProblem, model::StellarModel, k::Int)
     state = model.structure
     n = problem.grid.n_cells
@@ -119,14 +131,12 @@ function transport_row_terms(problem::StructureProblem, model::StellarModel, k::
             luminosity_surface_erg_s,
         )
         surface_gravity_cgs_value = surface_gravity_cgs(problem.parameters.mass_g, radius_surface_cm)
-        opacity_outer_cm2_g = cell_opacity_state(problem, model, n).opacity_cm2_g
-        face_pressure_dyn_cm2 = eddington_photospheric_pressure_dyn_cm2(
-            surface_gravity_cgs_value,
-            opacity_outer_cm2_g,
-        )
+        transport_pressure_target_dyn_cm2 =
+            _selected_outer_transport_pressure_target_dyn_cm2(problem, model)
         delta_log_temperature = positive_log(face_temperature_k) - state.log_temperature_cell_k[k]
         delta_log_pressure =
-            log(clip_positive(face_pressure_dyn_cm2)) - log(clip_positive(pressure_k_dyn_cm2))
+            log(clip_positive(transport_pressure_target_dyn_cm2)) -
+            log(clip_positive(pressure_k_dyn_cm2))
         gradient_term = nabla_transport * delta_log_pressure
         return (
             cell_index = k,
@@ -136,6 +146,7 @@ function transport_row_terms(problem::StructureProblem, model::StellarModel, k::
             delta_log_pressure = delta_log_pressure,
             nabla_transport = nabla_transport,
             gradient_term = gradient_term,
+            transport_pressure_target_dyn_cm2 = transport_pressure_target_dyn_cm2,
             residual = delta_log_temperature - gradient_term,
         )
     end

@@ -14,4 +14,5 @@
     @test outer.is_outer
     @test outer.residual ≈ outer.delta_log_temperature - outer.gradient_term
     @test outer.gradient_term ≈ outer.nabla_transport * outer.delta_log_pressure
+    @test outer.transport_pressure_target_dyn_cm2 > 0.0
 end
