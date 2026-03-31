@@ -10,6 +10,11 @@
     result = ASTRA.solve_structure(problem; state = guess)
 
     @test result.diagnostics.accepted_step_count >= 1
+    @test all(
+        trial -> trial.merit_value <= trial.armijo_target,
+        result.diagnostics.accepted_trial_history,
+    )
+    @test all(diff(result.diagnostics.residual_history) .<= 0.0)
     @test all(result.diagnostics.predicted_decrease_history .> 0.0)
     @test all(result.diagnostics.actual_decrease_history .> 0.0)
     @test result.diagnostics.merit_value < initial_merit

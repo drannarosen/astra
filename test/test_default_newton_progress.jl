@@ -28,6 +28,11 @@
     @test all(result.diagnostics.predicted_decrease_history .> 0.0)
     @test all(result.diagnostics.actual_decrease_history .> 0.0)
     @test all(isfinite, result.diagnostics.decrease_ratio_history)
+    @test all(diff(result.diagnostics.residual_history) .<= 0.0)
+    @test all(
+        trial -> trial.merit_value <= trial.armijo_target,
+        result.diagnostics.accepted_trial_history,
+    )
     @test all(
         trial -> isapprox(trial.row_family_merit.total, trial.merit_value; rtol = 1e-12),
         result.diagnostics.accepted_trial_history,
