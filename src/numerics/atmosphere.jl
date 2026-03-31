@@ -168,7 +168,7 @@ function outer_boundary_fitting_point_terms(problem::StructureProblem, model::St
         temperature_surface_k /
         pressure_surface_dyn_cm2
     current_match_temperature_k = outer_match_temperature_k(problem, model)
-    current_match_pressure_dyn_cm2 = outer_match_pressure_dyn_cm2(problem, model)
+    current_match_pressure_dyn_cm2 = _selected_pressure_target_dyn_cm2(problem, model)
     fitting_point_temperature_k =
         photospheric_face_temperature_k + transport_temperature_offset_k
     fitting_point_pressure_dyn_cm2 =

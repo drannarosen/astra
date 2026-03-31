@@ -17,10 +17,10 @@ Every payload in the focused bundle is still `converged = false` and `used_regul
 
 | case | accepted dominant surface family | accepted `pressure_surface_to_photosphere_log_gap` | accepted `pressure_match_to_photosphere_log_gap` | accepted `pressure_surface_to_match_log_gap` | accepted `hydrostatic_pressure_offset_fraction` |
 | --- | --- | ---: | ---: | ---: | ---: |
-| `default-12` | `surface_pressure` | `43.05941271760913` | `46.46031816695854` | `-3.4009054493494055` | `1.504734253824455e20` |
-| `perturb-a1e-6-case-01` | `surface_pressure` | `42.52506488577517` | `46.061208622548605` | `-3.536143736773429` | `1.0095520954781055e20` |
-| `perturb-a1e-6-case-02` | `surface_pressure` | `43.08534563177976` | `46.62150309724491` | `-3.536157465465145` | `1.7679156209402085e20` |
-| `perturb-a1e-6-case-03` | `surface_pressure` | `42.671659891571636` | `46.20799013435291` | `-3.536330242781272` | `1.1691631944170842e20` |
+| `default-12` | `surface_pressure` | `46.97031727130823` | `50.25470107421815` | `-3.2843838029099146` | `6.688663787248943e21` |
+| `perturb-a1e-6-case-01` | `surface_pressure` | `43.307259814891026` | `46.732451454608366` | `-3.4251916397173403` | `1.975357895263058e20` |
+| `perturb-a1e-6-case-02` | `surface_pressure` | `43.21386663947494` | `46.685764359901654` | `-3.4718977204267176` | `1.885253887238918e20` |
+| `perturb-a1e-6-case-03` | `surface_pressure` | `42.53371150055234` | `46.06555604805966` | `-3.531844547507319` | `1.0139506021751634e20` |
 
 The log-gap identity holds in the live bundle:
 

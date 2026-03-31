@@ -247,6 +247,11 @@ function _write_armijo_merit_validation_outer_boundary_summary(
     )
     println(
         io,
+        prefix * ".transport_pressure_target_dyn_cm2 = ",
+        repr(summary.transport_pressure_target_dyn_cm2),
+    )
+    println(
+        io,
         prefix * ".current_match_temperature_k = ",
         repr(summary.current_match_temperature_k),
     )
@@ -812,6 +817,167 @@ function _write_seed_strategy_manifest_entry(
     println(io)
 end
 
+function _pressure_closure_control_problem(
+    base_problem::StructureProblem,
+    pressure_closure_mode::Symbol,
+)
+    solver = SolverConfig(
+        max_newton_iterations = base_problem.solver.max_newton_iterations,
+        damping = base_problem.solver.damping,
+        minimum_damping = base_problem.solver.minimum_damping,
+        tolerance = base_problem.solver.tolerance,
+        finite_difference_step = base_problem.solver.finite_difference_step,
+        linear_regularization = base_problem.solver.linear_regularization,
+        pressure_closure_mode = pressure_closure_mode,
+    )
+    return StructureProblem(
+        base_problem.formulation,
+        base_problem.parameters,
+        base_problem.composition,
+        base_problem.grid,
+        base_problem.microphysics,
+        solver,
+    )
+end
+
+function _outer_transport_pressure_control_problem(
+    base_problem::StructureProblem,
+    outer_transport_pressure_mode::Symbol,
+)
+    solver = SolverConfig(
+        max_newton_iterations = base_problem.solver.max_newton_iterations,
+        damping = base_problem.solver.damping,
+        minimum_damping = base_problem.solver.minimum_damping,
+        tolerance = base_problem.solver.tolerance,
+        finite_difference_step = base_problem.solver.finite_difference_step,
+        linear_regularization = base_problem.solver.linear_regularization,
+        pressure_closure_mode = base_problem.solver.pressure_closure_mode,
+        outer_transport_pressure_mode = outer_transport_pressure_mode,
+    )
+    return StructureProblem(
+        base_problem.formulation,
+        base_problem.parameters,
+        base_problem.composition,
+        base_problem.grid,
+        base_problem.microphysics,
+        solver,
+    )
+end
+
+function _write_pressure_closure_control_payload(
+    io::IO,
+    payload::ArmijoMeritValidationPayload,
+    pressure_closure_label::AbstractString,
+)
+    _write_seed_strategy_payload(io, payload)
+    println(io, "pressure_closure_label = ", pressure_closure_label)
+end
+
+function _write_outer_transport_pressure_coupling_payload(
+    io::IO,
+    payload::ArmijoMeritValidationPayload,
+    outer_transport_pressure_label::AbstractString,
+)
+    _write_seed_strategy_payload(io, payload)
+    println(io, "outer_transport_pressure_label = ", outer_transport_pressure_label)
+end
+
+function _write_pressure_closure_control_manifest_entry(
+    io::IO,
+    payload::ArmijoMeritValidationPayload,
+    payload_path::AbstractString,
+    pressure_closure_label::AbstractString,
+)
+    println(io, "payload = ", payload.fixture_label)
+    println(io, "payload_path = ", payload_path)
+    println(io, "seed_label = ", payload.seed_label)
+    println(io, "pressure_closure_label = ", pressure_closure_label)
+    println(io, "converged = ", _format_armijo_merit_validation_scalar(payload.converged))
+    println(io, "accepted_step_count = ", payload.accepted_step_count)
+    println(io, "rejected_trial_count = ", payload.rejected_trial_count)
+    println(io, "initial_merit = ", repr(payload.initial_merit))
+    println(io, "final_merit = ", repr(payload.final_merit))
+    println(
+        io,
+        "initial_dominant_family = ",
+        _format_armijo_merit_validation_scalar(payload.initial_dominant_family),
+    )
+    println(
+        io,
+        "accepted_dominant_family = ",
+        _format_armijo_merit_validation_scalar(payload.accepted_dominant_family),
+    )
+    println(
+        io,
+        "accepted_dominant_surface_family = ",
+        _format_armijo_merit_validation_scalar(payload.accepted_dominant_surface_family),
+    )
+    println(
+        io,
+        "accepted_outer_boundary_dominant_family = ",
+        _format_armijo_merit_validation_scalar(
+            _armijo_merit_validation_outer_boundary_dominant_family(
+                payload.accepted_outer_boundary,
+            ),
+        ),
+    )
+    println(
+        io,
+        "accepted_surface_pressure_bridge_dominant = ",
+        _format_armijo_merit_validation_scalar(
+            _armijo_merit_validation_surface_pressure_bridge_dominant(
+                payload.accepted_outer_boundary,
+            ),
+        ),
+    )
+    println(
+        io,
+        "used_regularized_fallback = ",
+        _format_armijo_merit_validation_scalar(payload.used_regularized_fallback),
+    )
+    println(io)
+end
+
+function _write_outer_transport_pressure_coupling_manifest_entry(
+    io::IO,
+    payload::ArmijoMeritValidationPayload,
+    payload_path::AbstractString,
+    outer_transport_pressure_label::AbstractString,
+)
+    println(io, "payload = ", payload.fixture_label)
+    println(io, "payload_path = ", payload_path)
+    println(io, "seed_label = ", payload.seed_label)
+    println(io, "outer_transport_pressure_label = ", outer_transport_pressure_label)
+    println(io, "converged = ", _format_armijo_merit_validation_scalar(payload.converged))
+    println(io, "accepted_step_count = ", payload.accepted_step_count)
+    println(io, "rejected_trial_count = ", payload.rejected_trial_count)
+    println(io, "initial_merit = ", repr(payload.initial_merit))
+    println(io, "final_merit = ", repr(payload.final_merit))
+    println(
+        io,
+        "accepted_transport_hotspot_location = ",
+        _format_armijo_merit_validation_scalar(
+            isnothing(payload.accepted_transport_hotspot) ? nothing :
+            payload.accepted_transport_hotspot.location,
+        ),
+    )
+    println(
+        io,
+        "accepted_outer_boundary_dominant_family = ",
+        _format_armijo_merit_validation_scalar(
+            _armijo_merit_validation_outer_boundary_dominant_family(
+                payload.accepted_outer_boundary,
+            ),
+        ),
+    )
+    println(
+        io,
+        "used_regularized_fallback = ",
+        _format_armijo_merit_validation_scalar(payload.used_regularized_fallback),
+    )
+    println(io)
+end
+
 function run_seed_strategy_audit(output_dir::AbstractString)
     mkpath(output_dir)
     _clear_outer_boundary_ownership_audit_payloads(output_dir)
@@ -863,6 +1029,154 @@ function run_seed_strategy_audit(output_dir::AbstractString)
     open(manifest_path, "w") do io
         for (payload, payload_path) in zip(payloads, payload_paths)
             _write_seed_strategy_manifest_entry(io, payload, basename(payload_path))
+        end
+    end
+
+    return ArmijoMeritValidationBundle(String(manifest_path), payload_paths)
+end
+
+function run_pressure_closure_control_audit(output_dir::AbstractString)
+    mkpath(output_dir)
+    _clear_outer_boundary_ownership_audit_payloads(output_dir)
+
+    base_problem = build_toy_problem(n_cells = 12)
+    control_problems = (
+        ("bridge", base_problem),
+        ("photosphere_control", _pressure_closure_control_problem(base_problem, :photosphere_control)),
+    )
+
+    payload_records = Tuple{String,ArmijoMeritValidationPayload}[]
+    for (pressure_closure_label, problem) in control_problems
+        default_state = initialize_state(problem)
+        default_result = solve_structure(problem; state = default_state)
+        push!(
+            payload_records,
+            (
+                pressure_closure_label,
+                build_armijo_merit_validation_payload(
+                    "$(pressure_closure_label)-default-12",
+                    problem,
+                    default_result;
+                    seed_label = "bootstrap_default",
+                ),
+            ),
+        )
+
+        for case_index in 1:3
+            push!(
+                payload_records,
+                (
+                    pressure_closure_label,
+                    _try_build_armijo_merit_validation_perturbation_payload(
+                        problem,
+                        default_state,
+                        1.0e-6,
+                        case_index;
+                        seed_label = "bootstrap_default",
+                        fixture_prefix = pressure_closure_label,
+                    ),
+                ),
+            )
+        end
+    end
+
+    payload_paths = String[]
+    for (pressure_closure_label, payload) in payload_records
+        payload_path = _armijo_merit_validation_payload_path(output_dir, payload.fixture_label)
+        open(payload_path, "w") do io
+            _write_pressure_closure_control_payload(io, payload, pressure_closure_label)
+        end
+        push!(payload_paths, payload_path)
+    end
+
+    manifest_path = joinpath(output_dir, "manifest.txt")
+    open(manifest_path, "w") do io
+        for ((pressure_closure_label, payload), payload_path) in zip(payload_records, payload_paths)
+            _write_pressure_closure_control_manifest_entry(
+                io,
+                payload,
+                basename(payload_path),
+                pressure_closure_label,
+            )
+        end
+    end
+
+    return ArmijoMeritValidationBundle(String(manifest_path), payload_paths)
+end
+
+function run_outer_transport_pressure_coupling_audit(output_dir::AbstractString)
+    mkpath(output_dir)
+    _clear_outer_boundary_ownership_audit_payloads(output_dir)
+
+    base_problem = build_toy_problem(n_cells = 12)
+    control_problems = (
+        ("photospheric_face", base_problem),
+        (
+            "selected_pressure_target",
+            _outer_transport_pressure_control_problem(
+                base_problem,
+                :selected_pressure_target,
+            ),
+        ),
+    )
+
+    payload_records = Tuple{String,ArmijoMeritValidationPayload}[]
+    for (outer_transport_pressure_label, problem) in control_problems
+        default_state = initialize_state(problem)
+        default_result = solve_structure(problem; state = default_state)
+        push!(
+            payload_records,
+            (
+                outer_transport_pressure_label,
+                build_armijo_merit_validation_payload(
+                    "$(outer_transport_pressure_label)-default-12",
+                    problem,
+                    default_result;
+                    seed_label = "bootstrap_default",
+                ),
+            ),
+        )
+        for case_index in 1:3
+            push!(
+                payload_records,
+                (
+                    outer_transport_pressure_label,
+                    _try_build_armijo_merit_validation_perturbation_payload(
+                        problem,
+                        default_state,
+                        1.0e-6,
+                        case_index;
+                        seed_label = "bootstrap_default",
+                        fixture_prefix = outer_transport_pressure_label,
+                    ),
+                ),
+            )
+        end
+    end
+
+    payload_paths = String[]
+    for (outer_transport_pressure_label, payload) in payload_records
+        payload_path = _armijo_merit_validation_payload_path(output_dir, payload.fixture_label)
+        open(payload_path, "w") do io
+            _write_outer_transport_pressure_coupling_payload(
+                io,
+                payload,
+                outer_transport_pressure_label,
+            )
+        end
+        push!(payload_paths, payload_path)
+    end
+
+    manifest_path = joinpath(output_dir, "manifest.txt")
+    open(manifest_path, "w") do io
+        for ((outer_transport_pressure_label, payload), payload_path) in
+            zip(payload_records, payload_paths)
+            _write_outer_transport_pressure_coupling_manifest_entry(
+                io,
+                payload,
+                basename(payload_path),
+                outer_transport_pressure_label,
+            )
         end
     end
 

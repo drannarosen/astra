@@ -9,7 +9,7 @@
     @test occursin("accepted_dominant_surface_family = surface_pressure", default_payload)
     @test occursin("accepted_outer_boundary.match_to_photosphere_log_gap = 0.0", default_payload)
     @test occursin(
-        "accepted_outer_boundary.surface_to_match_log_gap = 0.06615610172518238",
+        "accepted_outer_boundary.surface_to_match_log_gap = -0.7548222518324925",
         default_payload,
     )
     @test occursin("accepted_transport_hotspot.location = outer", default_payload)

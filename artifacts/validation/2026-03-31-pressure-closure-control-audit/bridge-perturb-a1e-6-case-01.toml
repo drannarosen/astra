@@ -1,4 +1,4 @@
-fixture_label = bootstrap_default-perturb-a1e-6-case-01
+fixture_label = bridge-perturb-a1e-6-case-01
 seed_label = bootstrap_default
 n_cells = 12
 converged = false
@@ -134,3 +134,4 @@ initial_dominant_family = surface
 initial_dominant_surface_family = surface_pressure
 accepted_outer_boundary_dominant_family = surface_pressure
 accepted_surface_pressure_bridge_dominant = true
+pressure_closure_label = bridge

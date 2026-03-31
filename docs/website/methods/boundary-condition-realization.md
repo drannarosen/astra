@@ -59,6 +59,32 @@ For the physics-side explanation of the photosphere, tau `= 2/3`, and the planne
 
 The approved next step is more specific than that short phrase suggests. Phase 2 preserves the current outer radius and luminosity target rows; the temperature is photospheric, the pressure and optical-depth helpers still reference the deeper matching concept, the surface pressure row is matched in log form to the shared outer match-point pressure contract, and the outer transport row remains one-sided to the photospheric face. In other words, the implementation changes the atmosphere semantics, not the global bootstrap family definition.
 
+The new pressure-closure control audit adds one more useful distinction. The
+internal `photosphere_control` lane changes the numeric burden, but it still
+does not recover convergence and it still leaves the focused bundle
+bridge-dominated in `surface_pressure`. That makes it a negative control rather
+than a new canonical boundary condition. The manifest's `pressure_closure_label`
+field is the control-lane tag that keeps the bridge and photosphere-control
+payloads separate.
+The audit note is dated `2026-03-31-pressure-closure-control-audit`, and the
+headline manifest field remains `accepted_surface_pressure_bridge_dominant`.
+The phrase `photospheric-pressure control lane` is the internal shorthand for
+that control path.
+
+The newer outer-transport pressure-coupling audit sharpens the remaining
+pressure-side question one layer further down. Its internal
+`selected_pressure_target` control lane aligns the outer transport row's
+pressure target to the same selected target used by the surface-pressure row.
+That lane lowers the `default-12` merit materially, so the pressure-side
+coupling mismatch is numerically live. But it still leaves the accepted
+transport hotspot on the outer row, still leaves the accepted outer-boundary
+dominant family at `surface_pressure`, and still does not recover convergence.
+The audit note is dated `2026-03-31-outer-transport-pressure-coupling-audit`,
+and the manifest field that separates the two lanes is
+`outer_transport_pressure_label`.
+
+what this does not prove:
+
 ## Why this matters
 
 The page exists so future readers can see the boundary conditions as explicit discrete residuals. That makes the center asymptotic choice and the surface closure tradeoff visible instead of hidden inside the solver.
@@ -85,3 +111,4 @@ The continuous boundary story is summarized in [Physics: Boundary Conditions](..
 
 - [x] Replace the provisional outer rows with a physically motivated surface match.
 - [ ] Demonstrate that the atmosphere boundary supports convergence without excessive rejected trials across representative models.
+- [ ] Decide whether the next boundary-side change should reinterpret the bridge target or proceed to a more complete atmosphere/relaxation slice.

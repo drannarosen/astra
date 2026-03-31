@@ -25,6 +25,15 @@ ASTRA is a Julia-first forward-model laboratory for stellar structure and evolut
 - The MystMD site is a first-class product: architecture memory, developer handbook, and teaching surface.
 - Docs should state what is real, what is stubbed, and what is intentionally deferred.
 
+## Communication contract
+
+- Treat the user as the astrophysicist-in-the-loop and scientific supervisor, not as a downstream reviewer of code churn.
+- For non-trivial work, default to the `explanatory-output-style` skill and explain what changed in terms of scientific ownership, numerical meaning, tradeoffs, and failure modes.
+- Do not lapse into GitHub-changelog voice when the user is asking for understanding. Prefer connected prose that explains why a result matters, what it does and does not imply, and what evidence would change the conclusion.
+- Distinguish clearly between code-backed facts, measured results, and hypotheses or interpretations.
+- When discussing next steps, explain why a slice is small, what question it falsifies, and why broader work would or would not be overengineering.
+- Tie explanations to concrete file paths, invariants, and verification, but do not let the response read like a file inventory unless the user explicitly wants that format.
+
 ## MESA reference contract
 
 - The local MESA source mirror lives at `/Users/anna/projects/jaxstro-dev/legacy/stellax-legacy/reference/mesa/`.

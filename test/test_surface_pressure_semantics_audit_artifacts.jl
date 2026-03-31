@@ -24,15 +24,15 @@
         default_payload = read(joinpath(audit_dir, "default-12.toml"), String)
         @test occursin("accepted_dominant_surface_family = surface_pressure", default_payload)
         @test occursin(
-            "accepted_outer_boundary.pressure_match_to_photosphere_log_gap = 46.46031816695854",
+            "accepted_outer_boundary.pressure_match_to_photosphere_log_gap = 50.25470107421815",
             default_payload,
         )
         @test occursin(
-            "accepted_outer_boundary.pressure_surface_to_match_log_gap = -3.4009054493494055",
+            "accepted_outer_boundary.pressure_surface_to_match_log_gap = -3.2843838029099146",
             default_payload,
         )
         @test occursin(
-            "accepted_outer_boundary.hydrostatic_pressure_offset_fraction = 1.504734253824455e20",
+            "accepted_outer_boundary.hydrostatic_pressure_offset_fraction = 6.688663787248943e21",
             default_payload,
         )
         @test occursin("accepted_transport_hotspot.location = outer", default_payload)

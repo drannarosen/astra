@@ -227,10 +227,10 @@ ASTRA's new `2026-03-31-surface-pressure-semantics-audit` bundle now says the li
 Measured facts:
 
 - `default-12` has `accepted_dominant_surface_family = surface_pressure`,
-- `default-12` has `pressure_surface_to_photosphere_log_gap = 43.05941271760913`,
-- `default-12` has `pressure_match_to_photosphere_log_gap = 46.46031816695854`,
-- `default-12` has `pressure_surface_to_match_log_gap = -3.4009054493494055`,
-- `default-12` has `hydrostatic_pressure_offset_fraction = 1.504734253824455e20`,
+- `default-12` has `pressure_surface_to_photosphere_log_gap = 46.97031727130823`,
+- `default-12` has `pressure_match_to_photosphere_log_gap = 50.25470107421815`,
+- `default-12` has `pressure_surface_to_match_log_gap = -3.2843838029099146`,
+- `default-12` has `hydrostatic_pressure_offset_fraction = 6.688663787248943e21`,
 - all four focused cases have `accepted_dominant_surface_family = surface_pressure`,
 - all four focused cases remain `converged = false`,
 - all four focused cases remain `used_regularized_fallback = true`,
@@ -266,8 +266,8 @@ ASTRA's refreshed `2026-03-30-surface-temperature-semantics-audit` bundle now sa
 Measured post-cutover facts:
 
 - `default-12` has `accepted_dominant_surface_family = surface_pressure`,
-- `default-12` has `surface_to_photosphere_log_gap = 0.06615610172518238`,
-- `default-12` has `surface_to_match_log_gap = 0.06615610172518238`,
+- `default-12` has `surface_to_photosphere_log_gap = -0.7548222518324925`,
+- `default-12` has `surface_to_match_log_gap = -0.7548222518324925`,
 - `default-12` keeps `accepted_transport_hotspot.location = outer` at cell index `11`,
 - all four focused cases have `accepted_dominant_surface_family = surface_pressure`,
 - all four focused cases have `match_to_photosphere_log_gap = 0.0`,
@@ -296,7 +296,7 @@ Next step:
 
 ### Surface temperature semantics audit
 
-ASTRA's rebuilt `2026-03-30-surface-temperature-semantics-audit` bundle now records the live semantics of the corrected surface-temperature row in the same focused four-case view. The structural pattern is consistent in every focused payload: `match_to_photosphere_log_gap` is zero, `surface_to_match_log_gap` stays small and positive, and `transport_temperature_offset_fraction` remains far above unity. In plain language, the live temperature owner is now photospheric across the focused bundle, while the remaining sharp surface owner is `surface_pressure`.
+ASTRA's rebuilt `2026-03-30-surface-temperature-semantics-audit` bundle now records the live semantics of the corrected surface-temperature row in the same focused four-case view. The structural pattern that survives the regenerated bundle is narrower and more honest: `match_to_photosphere_log_gap` is zero in every focused payload, `surface_to_match_log_gap` follows the direct photospheric residual rather than the deeper transport bridge, and `transport_temperature_offset_fraction` remains far above unity. In plain language, the live temperature owner is now photospheric across the focused bundle, while the remaining sharp surface owner is `surface_pressure`.
 
 Measured post-fix facts:
 

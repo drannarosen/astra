@@ -21,10 +21,10 @@ Every payload in the focused bundle is still `converged = false` and `used_regul
 
 | case | accepted dominant surface family | accepted `surface_to_photosphere_log_gap` | accepted `match_to_photosphere_log_gap` | accepted `surface_to_match_log_gap` | accepted `transport_temperature_offset_fraction` |
 | --- | --- | ---: | ---: | ---: | ---: |
-| `default-12` | `surface_pressure` | `0.06615610172518238` | `0.0` | `0.06615610172518238` | `1198.0024782432183` |
-| `perturb-a1e-6-case-01` | `surface_pressure` | `0.12500917600285` | `0.0` | `0.12500917600285` | `1454.1932286815659` |
-| `perturb-a1e-6-case-02` | `surface_pressure` | `8.093711789669555e-6` | `0.0` | `8.093711789669555e-6` | `1283.4091164759857` |
-| `perturb-a1e-6-case-03` | `surface_pressure` | `0.09223041340830207` | `0.0` | `0.09223041340830207` | `1407.719965864372` |
+| `default-12` | `surface_pressure` | `-0.7548222518324925` | `0.0` | `-0.7548222518324925` | `5.017918165987418` |
+| `perturb-a1e-6-case-01` | `surface_pressure` | `8.888091258540953e-6` | `0.0` | `8.888091258540953e-6` | `12.286690740446925` |
+| `perturb-a1e-6-case-02` | `surface_pressure` | `7.946631274791116e-6` | `0.0` | `7.946631274791116e-6` | `12.874716522164464` |
+| `perturb-a1e-6-case-03` | `surface_pressure` | `0.12500628503697975` | `0.0` | `0.12500628503697975` | `15.491783279088647` |
 
 The sign identity holds in the live bundle:
 
@@ -33,7 +33,7 @@ The sign identity holds in the live bundle:
 The important structural pattern is also consistent across all four cases:
 
 - `match_to_photosphere_log_gap = 0.0` in every focused payload,
-- `surface_to_match_log_gap` now tracks the small photospheric offset rather than a large transport bridge,
+- `surface_to_match_log_gap` now tracks the direct photospheric offset rather than a large transport bridge,
 - and `transport_temperature_offset_fraction` remains far above unity in every focused payload.
 
 ## Interpretation
@@ -49,6 +49,8 @@ That is the point of this slice. The current row is no longer failing because th
 `------------------------------------------------`
 
 This does not mean the outer transport row is irrelevant. It remains the largest transport hotspot in the focused bundle. But the temperature semantics audit now says the sharpest surviving owner is the pressure-side surface row, not a temperature bridge.
+
+The regenerated historical bundle is also a useful caution. The sign of the accepted temperature offset can move as the wider nonlinear state evolves; what survives this slice is the ownership result, not the old claim that every accepted case stayed slightly above the photosphere.
 
 what this does not prove is that the deeper match-point helpers are already correct.
 
