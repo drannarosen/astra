@@ -29,6 +29,10 @@
         ASTRA.cell_eos_state(problem, model, n).pressure_dyn_cm2,
         ASTRA.outer_match_pressure_dyn_cm2(problem, model),
     )
+    @test summary.surface_pressure_ratio ≈
+          ASTRA.cell_eos_state(problem, model, n).pressure_dyn_cm2 /
+          ASTRA.outer_match_pressure_dyn_cm2(problem, model)
+    @test summary.surface_pressure_log_mismatch ≈ summary.surface_pressure_raw
     @test summary.surface_pressure_weighted ≈ summary.surface_pressure_raw
     @test summary.photospheric_face_temperature_k > 0.0
     @test summary.match_temperature_k > 0.0

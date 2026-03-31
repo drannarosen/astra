@@ -84,13 +84,7 @@ end
     result = solve_structure(problem; state = guess)
 
     @test surface_weights[3] == 1.0
-    @test surface_weights[4] ≈
-          1.0 /
-          max(
-              abs(surface_pressure_dyn_cm2),
-              abs(surface_match_pressure_dyn_cm2),
-              eps(Float64),
-          )
+    @test surface_weights[4] == 1.0
     @test result.diagnostics.initial_residual_norm ≈ initial_residual
     @test !isempty(result.diagnostics.residual_history)
     @test !isempty(result.diagnostics.weighted_residual_history)

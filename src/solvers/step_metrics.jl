@@ -311,6 +311,8 @@ function outer_boundary_row_summary(
             0.0,
             0.0,
             0.0,
+            0.0,
+            0.0,
         )
     end
 
@@ -337,6 +339,12 @@ function outer_boundary_row_summary(
         opacity_outer_cm2_g,
     )
     match_pressure_dyn_cm2 = _ASTRA_MODULE.outer_match_pressure_dyn_cm2(problem, model)
+    surface_pressure_dyn_cm2 = _ASTRA_MODULE.cell_eos_state(problem, model, n).pressure_dyn_cm2
+    surface_pressure_ratio = surface_pressure_dyn_cm2 / match_pressure_dyn_cm2
+    surface_pressure_log_mismatch = _ASTRA_MODULE.surface_pressure_log_mismatch(
+        surface_pressure_dyn_cm2,
+        match_pressure_dyn_cm2,
+    )
 
     outer_transport_raw = residual_f64[outer_transport_row_index]
     surface_temperature_raw = residual_f64[surface_temperature_row_index]
@@ -350,6 +358,8 @@ function outer_boundary_row_summary(
         outer_transport_raw,
         surface_temperature_raw,
         surface_pressure_raw,
+        surface_pressure_ratio,
+        surface_pressure_log_mismatch,
         weight_f64[outer_transport_row_index] * outer_transport_raw,
         weight_f64[surface_temperature_row_index] * surface_temperature_raw,
         weight_f64[surface_pressure_row_index] * surface_pressure_raw,

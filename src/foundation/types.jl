@@ -307,6 +307,8 @@ struct OuterBoundaryRowSummary
     outer_transport_raw::Float64
     surface_temperature_raw::Float64
     surface_pressure_raw::Float64
+    surface_pressure_ratio::Float64
+    surface_pressure_log_mismatch::Float64
     outer_transport_weighted::Float64
     surface_temperature_weighted::Float64
     surface_pressure_weighted::Float64

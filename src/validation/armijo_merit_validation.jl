@@ -177,6 +177,12 @@ function _write_armijo_merit_validation_outer_boundary_summary(
     println(io, prefix * ".outer_transport_raw = ", repr(summary.outer_transport_raw))
     println(io, prefix * ".surface_temperature_raw = ", repr(summary.surface_temperature_raw))
     println(io, prefix * ".surface_pressure_raw = ", repr(summary.surface_pressure_raw))
+    println(io, prefix * ".surface_pressure_ratio = ", repr(summary.surface_pressure_ratio))
+    println(
+        io,
+        prefix * ".surface_pressure_log_mismatch = ",
+        repr(summary.surface_pressure_log_mismatch),
+    )
     println(
         io,
         prefix * ".outer_transport_weighted = ",
