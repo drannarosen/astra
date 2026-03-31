@@ -674,7 +674,7 @@ end
 
 function _clear_outer_boundary_ownership_audit_payloads(output_dir::AbstractString)
     for entry in readdir(output_dir)
-        if (startswith(entry, "cells-") || startswith(entry, "perturb-")) && endswith(entry, ".toml")
+        if endswith(entry, ".toml") || entry == "manifest.txt"
             rm(joinpath(output_dir, entry); force = true)
         end
     end
