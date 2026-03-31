@@ -102,7 +102,8 @@ end
 
 Return the canonical transport-row decomposition for cell `k`, including the
 temperature term, the gradient term, and the assembled residual contribution.
-The final interior row uses the one-sided outer photospheric face.
+The final interior row uses the one-sided outer face pressure target selected by
+the internal solver control.
 """
 function _selected_outer_transport_pressure_target_dyn_cm2(
     problem::StructureProblem,
@@ -130,7 +131,6 @@ function transport_row_terms(problem::StructureProblem, model::StellarModel, k::
             radius_surface_cm,
             luminosity_surface_erg_s,
         )
-        surface_gravity_cgs_value = surface_gravity_cgs(problem.parameters.mass_g, radius_surface_cm)
         transport_pressure_target_dyn_cm2 =
             _selected_outer_transport_pressure_target_dyn_cm2(problem, model)
         delta_log_temperature = positive_log(face_temperature_k) - state.log_temperature_cell_k[k]
