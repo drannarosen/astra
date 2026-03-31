@@ -41,7 +41,7 @@ function surface_boundary_residual(problem::StructureProblem, model::StellarMode
     luminosity_surface_erg_s = state.luminosity_face_erg_s[end]
     pressure_surface_dyn_cm2 = cell_eos_state(problem, model, n).pressure_dyn_cm2
     temperature_match_k = outer_match_temperature_k(problem, model)
-    pressure_match_dyn_cm2 = outer_match_pressure_dyn_cm2(problem, model)
+    pressure_match_dyn_cm2 = _selected_pressure_target_dyn_cm2(problem, model)
 
     return Float64[
         radius_surface_cm - problem.parameters.radius_guess_cm,

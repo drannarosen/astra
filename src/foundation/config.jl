@@ -30,6 +30,7 @@ struct SolverConfig
     tolerance::Float64
     finite_difference_step::Float64
     linear_regularization::Float64
+    pressure_closure_mode::Symbol
 
     function SolverConfig(;
         max_newton_iterations::Int = 8,
@@ -38,6 +39,7 @@ struct SolverConfig
         tolerance::Real = 1.0e-10,
         finite_difference_step::Real = 1.0e-6,
         linear_regularization::Real = 1.0e-8,
+        pressure_closure_mode::Symbol = :bridge,
     )
         max_newton_iterations > 0 || throw(
             ArgumentError("max_newton_iterations must be positive."),
@@ -53,6 +55,9 @@ struct SolverConfig
         linear_regularization > 0.0 || throw(
             ArgumentError("linear_regularization must be positive."),
         )
+        pressure_closure_mode in (:bridge, :photosphere_control) || throw(
+            ArgumentError("pressure_closure_mode must be :bridge or :photosphere_control."),
+        )
         return new(
             max_newton_iterations,
             Float64(damping),
@@ -60,6 +65,7 @@ struct SolverConfig
             Float64(tolerance),
             Float64(finite_difference_step),
             Float64(linear_regularization),
+            pressure_closure_mode,
         )
     end
 end

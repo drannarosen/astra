@@ -109,6 +109,14 @@ function _bridge_pressure_target_dyn_cm2(problem::StructureProblem, model::Stell
     return photospheric_face_pressure_dyn_cm2 + clip_positive(g_surface_cgs) * sigma_half_g_cm2
 end
 
+function _selected_pressure_target_dyn_cm2(problem::StructureProblem, model::StellarModel)
+    mode = problem.solver.pressure_closure_mode
+    mode == :bridge && return _bridge_pressure_target_dyn_cm2(problem, model)
+    mode == :photosphere_control &&
+        return _photospheric_face_pressure_target_dyn_cm2(problem, model)
+    throw(ArgumentError("Unsupported pressure_closure_mode $(mode)."))
+end
+
 """
     outer_match_pressure_dyn_cm2(problem, model)
 

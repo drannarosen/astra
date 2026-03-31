@@ -49,6 +49,7 @@ using ASTRA
     include("test_surface_pressure_semantics.jl")
     include("test_surface_pressure_semantics_audit_artifacts.jl")
     include("test_pressure_target_helpers.jl")
+    include("test_pressure_closure_mode.jl")
     include("test_seed_strategy_initial_states.jl")
     include("test_seed_strategy_audit_artifacts.jl")
     include("test_outer_boundary_fitting_point_terms.jl")
