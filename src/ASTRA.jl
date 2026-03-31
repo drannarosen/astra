@@ -46,6 +46,7 @@ include("validation/armijo_merit_validation.jl")
 
 module Microphysics
 using ..ASTRA: BOLTZMANN_CONSTANT_CGS,
+    GRAVITATIONAL_CONSTANT_CGS,
     HYDROGEN_MASS_CGS,
     RADIATION_CONSTANT_CGS,
     clip_positive,

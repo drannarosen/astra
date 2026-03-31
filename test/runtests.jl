@@ -8,6 +8,7 @@ using ASTRA
     include("test_grid.jl")
     include("test_state.jl")
     include("test_microphysics_interfaces.jl")
+    include("test_bohm_vitense_convection.jl")
     include("test_analytical_opacity.jl")
     include("test_analytical_nuclear.jl")
     include("test_analytical_eos.jl")
