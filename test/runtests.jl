@@ -35,6 +35,7 @@ using ASTRA
     include("test_transport_validation_artifacts.jl")
     include("test_transport_sign_contract.jl")
     include("test_surface_row_family_diagnostics.jl")
+    include("test_surface_pressure_log_contract.jl")
     include("test_transport_row_terms.jl")
     include("test_transport_hotspot_diagnostics.jl")
     include("test_transport_hotspot_artifacts.jl")

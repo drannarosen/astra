@@ -20,6 +20,19 @@ function center_boundary_residual(problem::StructureProblem, model::StellarModel
     ]
 end
 
+"""
+    surface_pressure_log_mismatch(surface_pressure_dyn_cm2, pressure_match_dyn_cm2)
+
+Return the dimensionless surface-pressure mismatch used by the outer boundary
+contract.
+"""
+function surface_pressure_log_mismatch(
+    surface_pressure_dyn_cm2::Real,
+    pressure_match_dyn_cm2::Real,
+)
+    return positive_log(surface_pressure_dyn_cm2) - positive_log(pressure_match_dyn_cm2)
+end
+
 function surface_boundary_residual(problem::StructureProblem, model::StellarModel)
     state = model.structure
     n = problem.grid.n_cells
