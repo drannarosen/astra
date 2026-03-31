@@ -167,6 +167,31 @@ function (closure::BohmVitenseMLTConvection)(local_state::ConvectionLocalState)
     return _convective_transport_state(closure, local_state)
 end
 
+function (closure::BohmVitenseMLTConvection)(
+    radiative_gradient::Real,
+    eos_state,
+    opacity_state,
+)
+    radiative_gradient_value = Float64(radiative_gradient)
+    adiabatic_gradient = Float64(eos_state.adiabatic_gradient)
+    ledoux_gradient = adiabatic_gradient
+    transport_regime = radiative_gradient_value > adiabatic_gradient ? :convective : :radiative
+    active_gradient =
+        transport_regime == :convective ? adiabatic_gradient : radiative_gradient_value
+    return ConvectionTransportState(
+        transport_regime,
+        false,
+        radiative_gradient_value,
+        adiabatic_gradient,
+        ledoux_gradient,
+        active_gradient,
+        active_gradient - ledoux_gradient,
+        0.0,
+        0.0,
+        0.0,
+    )
+end
+
 function (hook::SchwarzschildConvectionHook)(
     radiative_gradient::Real,
     eos_state,

@@ -133,7 +133,7 @@ function default_microphysics()
         Microphysics.AnalyticalGasRadiationEOS(),
         Microphysics.AnalyticalOpacity(),
         Microphysics.AnalyticalNuclear(),
-        Microphysics.SchwarzschildConvectionHook(),
+        Microphysics.BohmVitenseMLTConvection(1.8),
     )
 end
 

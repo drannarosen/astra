@@ -14,5 +14,7 @@
     @test opacity.source == :analytical_opacity
     @test nuclear.energy_rate_erg_g_s >= 0.0
     @test nuclear.source == :analytical_nuclear
+    @test bundle.convection isa ASTRA.Microphysics.BohmVitenseMLTConvection
+    @test bundle.convection.alpha_MLT == 1.8
     @test convection.transport_regime in (:radiative, :convective)
 end
