@@ -37,6 +37,19 @@
         )
         @test occursin("accepted_transport_hotspot.location = outer", default_payload)
         @test occursin("accepted_transport_hotspot.cell_index = 11", default_payload)
+        @test length(
+            collect(
+                eachmatch(
+                    r"accepted_outer_boundary\.photospheric_face_pressure_dyn_cm2 = ",
+                    default_payload,
+                ),
+            ),
+        ) == 1
+        @test length(
+            collect(
+                eachmatch(r"accepted_outer_boundary\.match_pressure_dyn_cm2 = ", default_payload),
+            ),
+        ) == 1
 
         for filename in committed_files
             @test read(joinpath(audit_dir, filename), String) ==
