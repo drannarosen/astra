@@ -66,7 +66,7 @@ _radiative_transport_state(local_state::ConvectionLocalState) = ConvectionTransp
     Float64(local_state.adiabatic_gradient),
     Float64(_ledoux_gradient(local_state)),
     Float64(local_state.radiative_gradient),
-    0.0,
+    Float64(local_state.radiative_gradient) - Float64(_ledoux_gradient(local_state)),
     0.0,
     0.0,
     0.0,
@@ -79,7 +79,7 @@ _guarded_radiative_transport_state(local_state::ConvectionLocalState) = Convecti
     Float64(local_state.adiabatic_gradient),
     Float64(_ledoux_gradient(local_state)),
     Float64(local_state.radiative_gradient),
-    0.0,
+    Float64(local_state.radiative_gradient) - Float64(_ledoux_gradient(local_state)),
     0.0,
     0.0,
     0.0,
@@ -135,7 +135,7 @@ function _convective_transport_state(
     _positive_finite(mixing_length_cm) || return _guarded_radiative_transport_state(local_state)
 
     radiative_conductivity =
-        4.0 * RADIATION_CONSTANT_CGS * temperature_k^3 /
+        4.0 * RADIATION_CONSTANT_CGS * SPEED_OF_LIGHT_CGS * temperature_k^3 /
         (3.0 * opacity_cm2_g * density_g_cm3)
     _positive_finite(radiative_conductivity) ||
         return _guarded_radiative_transport_state(local_state)
@@ -235,7 +235,7 @@ end
 function (closure::BohmVitenseMLTConvection)(
     radiative_gradient::Real,
     eos_state,
-    opacity_state,
+    _opacity_state,
 )
     adiabatic_gradient = Float64(eos_state.adiabatic_gradient)
     radiative_gradient_value = Float64(radiative_gradient)
@@ -247,7 +247,7 @@ function (closure::BohmVitenseMLTConvection)(
             adiabatic_gradient,
             adiabatic_gradient,
             radiative_gradient_value,
-            0.0,
+            radiative_gradient_value - adiabatic_gradient,
             0.0,
             0.0,
             0.0,
