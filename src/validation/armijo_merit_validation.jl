@@ -588,6 +588,7 @@ end
 
 function run_outer_boundary_ownership_audit(output_dir::AbstractString)
     mkpath(output_dir)
+    _clear_outer_boundary_ownership_audit_payloads(output_dir)
 
     payloads = ArmijoMeritValidationPayload[]
 
@@ -635,4 +636,12 @@ function run_outer_boundary_ownership_audit(output_dir::AbstractString)
     end
 
     return ArmijoMeritValidationBundle(String(manifest_path), payload_paths)
+end
+
+function _clear_outer_boundary_ownership_audit_payloads(output_dir::AbstractString)
+    for entry in readdir(output_dir)
+        if (startswith(entry, "cells-") || startswith(entry, "perturb-")) && endswith(entry, ".toml")
+            rm(joinpath(output_dir, entry); force = true)
+        end
+    end
 end
