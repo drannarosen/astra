@@ -138,6 +138,8 @@
             "outer transport row remains one-sided to the photospheric face",
             "transport hotspot",
             "cell index",
+            "transport sign contract",
+            "outer row at cell index `11`",
         ],
         "docs/website/development/transport-outer-boundary-hardening-2026-03-30.md" => [
             "boundary ownership",
@@ -147,6 +149,8 @@
             "transport hotspot",
             "cell index",
             "surface-adjacent",
+            "transport sign contract",
+            "outer row at cell index `11`",
         ],
         "docs/website/development/armijo-merit-validation-2026-03-30.md" => [
             "accepted step count",

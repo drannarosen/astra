@@ -14,6 +14,32 @@ For each update, record:
 
 ## 2026-03-30
 
+### Transport sign contract correction evidence
+
+ASTRA's refreshed `2026-03-30-transport-sign-correction` artifact bundle now records what changes once the transport sign contract is made physically consistent across code, tests, and docs. The default-12 payload no longer peaks on a surface-adjacent interior transport row. Instead, the accepted transport hotspot moves to the outer row at cell index `11`, with `accepted_dominant_family = surface`, `accepted_transport_hotspot.weighted_contribution = 0.8444699228014957`, `final_weighted_residual_norm = 0.26449516386740546`, and `final_merit = 1.7489422927311415`.
+
+Why this mattered:
+
+- it corrects a structural transport sign contract mismatch rather than treating the old hotspot attribution as a pure conditioning fact,
+- it shows the earlier surface-adjacent interior diagnosis was not stable under the corrected contract,
+- and it gives the next hardening slice new evidence that outer and surface-coupled rows now deserve first inspection.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. scripts/run_armijo_merit_validation.jl artifacts/validation/2026-03-30-transport-sign-correction`
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_docs_structure.jl")'`
+
+What this still does not prove:
+
+- every refreshed payload is still `converged = false`,
+- `used_regularized_fallback = true` is still present everywhere in the refreshed bundle,
+- most fixtures improve in weighted norm and merit, but `perturb-a1e-6-case-03` gets worse, so this is not a blanket solver-improvement claim,
+- and the refreshed outer hotspot does not yet prove whether the scientific owner is the one-sided transport stencil, the surface attachment semantics, or surface-row scaling.
+
+Next step:
+
+- keep the transport sign contract explicit and use the refreshed bundle to harden the outer transport and surface-coupled rows before widening scope into another generic conditioning pass.
+
 ### Transport hotspot diagnostics
 
 ASTRA's refreshed `2026-03-30-transport-hotspot-diagnostics` artifact bundle now records one explicit transport hotspot per payload: the transport row with the largest weighted contribution, together with its location and cell index. That turns the earlier blended family evidence into a row-level diagnosis. In the default-12 payload, the accepted transport hotspot is the surface-adjacent interior row at cell index `10`, with weighted contribution `-1.0085188425976508`. The smallest ladders still peak on the outer row, at cell index `5` for `cells-6` and `7` for `cells-8`.
