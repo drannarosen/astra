@@ -73,7 +73,6 @@
         "docs/website/development/checklists.md",
         "docs/website/development/checklists/solar-first-lane.md",
         "docs/website/development/progress-summary.md",
-        "docs/website/development/surface-pressure-log-contract-2026-03-30.md",
         "docs/website/development/armijo-merit-validation-2026-03-30.md",
         "docs/website/development/transport-outer-boundary-hardening-2026-03-30.md",
         "docs/website/development/changelog.md",
@@ -87,6 +86,22 @@
     ]
 
     @test all(path -> isfile(joinpath(root, path)), expected)
+
+    stale_surface_pressure_bundle = joinpath(
+        root,
+        "artifacts/validation/2026-03-30-surface-pressure-log-contract",
+    )
+    stale_surface_pressure_note = joinpath(
+        root,
+        "docs/website/development/surface-pressure-log-contract-2026-03-30.md",
+    )
+
+    @test !isdir(stale_surface_pressure_bundle)
+    @test !isfile(stale_surface_pressure_note)
+    @test !occursin(
+        "2026-03-30-surface-pressure-log-contract",
+        read(joinpath(root, "docs/website/development/progress-summary.md"), String),
+    )
 
     contract_docs = Dict(
         "docs/website/index.md" => [
@@ -148,12 +163,7 @@
             "surface_temperature",
             "surface_pressure",
             "outer_transport",
-            "2026-03-30-surface-pressure-log-contract",
-            "log-pressure",
-            "surface_pressure_ratio",
-            "surface_pressure_log_mismatch",
             "default-12",
-            "what this does not prove",
         ],
         "docs/website/development/transport-outer-boundary-hardening-2026-03-30.md" => [
             "boundary ownership",
@@ -172,14 +182,6 @@
             "surface_temperature",
             "surface_pressure",
             "outer_transport",
-        ],
-        "docs/website/development/surface-pressure-log-contract-2026-03-30.md" => [
-            "2026-03-30-surface-pressure-log-contract",
-            "log-pressure",
-            "surface_pressure_ratio",
-            "surface_pressure_log_mismatch",
-            "default-12",
-            "what this does not prove",
         ],
         "docs/website/development/armijo-merit-validation-2026-03-30.md" => [
             "accepted step count",
