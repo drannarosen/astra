@@ -4,7 +4,9 @@
         mkpath(audit_dir)
         write(joinpath(audit_dir, "cells-6.toml"), "stale = true\n")
         julia = joinpath(Sys.BINDIR, Base.julia_exename())
-        run(`$julia --project=. scripts/run_outer_boundary_ownership_audit.jl $audit_dir`)
+        project = normpath(joinpath(@__DIR__, ".."))
+        script = normpath(joinpath(@__DIR__, "..", "scripts", "run_outer_boundary_ownership_audit.jl"))
+        run(`$julia --project=$project $script $audit_dir`)
 
         default_payload = read(joinpath(audit_dir, "default-12.toml"), String)
         manifest = read(joinpath(audit_dir, "manifest.txt"), String)
