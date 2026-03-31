@@ -136,7 +136,7 @@ function transport_row_terms(problem::StructureProblem, model::StellarModel, k::
             delta_log_pressure = delta_log_pressure,
             nabla_transport = nabla_transport,
             gradient_term = gradient_term,
-            residual = delta_log_temperature + gradient_term,
+            residual = delta_log_temperature - gradient_term,
         )
     end
 
@@ -153,7 +153,7 @@ function transport_row_terms(problem::StructureProblem, model::StellarModel, k::
         delta_log_pressure = delta_log_pressure,
         nabla_transport = nabla_transport,
         gradient_term = gradient_term,
-        residual = delta_log_temperature + gradient_term,
+        residual = delta_log_temperature - gradient_term,
     )
 end
 
