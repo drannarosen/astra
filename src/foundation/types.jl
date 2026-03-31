@@ -177,6 +177,22 @@ Base.:(==)(lhs::CompositionState, rhs::CompositionState) =
     lhs.metal_mass_fraction_cell == rhs.metal_mass_fraction_cell
 
 """
+    OuterTransportPressureSemantics(photospheric_face_pressure_dyn_cm2,
+                                    selected_pressure_target_dyn_cm2,
+                                    transport_pressure_target_dyn_cm2,
+                                    selected_to_transport_log_gap)
+
+Diagnostic pressure semantics for the outer transport row versus the selected
+surface-pressure target.
+"""
+struct OuterTransportPressureSemantics
+    photospheric_face_pressure_dyn_cm2::Float64
+    selected_pressure_target_dyn_cm2::Float64
+    transport_pressure_target_dyn_cm2::Float64
+    selected_to_transport_log_gap::Float64
+end
+
+"""
     EvolutionState(age_s, timestep_s, previous_timestep_s, accepted_steps, rejected_steps)
 
 Persistent evolution-metadata block for ASTRA's bootstrap stellar model.

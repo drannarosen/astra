@@ -157,6 +157,32 @@ function transport_row_terms(problem::StructureProblem, model::StellarModel, k::
     )
 end
 
+function _photospheric_outer_transport_pressure_target_dyn_cm2(
+    problem::StructureProblem,
+    model::StellarModel,
+)
+    n = problem.grid.n_cells
+    radius_surface_cm = exp(model.structure.log_radius_face_cm[end])
+    opacity_outer_cm2_g = cell_opacity_state(problem, model, n).opacity_cm2_g
+    g_surface_cgs = surface_gravity_cgs(problem.parameters.mass_g, radius_surface_cm)
+    return eddington_photospheric_pressure_dyn_cm2(g_surface_cgs, opacity_outer_cm2_g)
+end
+
+function outer_transport_pressure_semantics(problem::StructureProblem, model::StellarModel)
+    photospheric_face_pressure_dyn_cm2 =
+        _photospheric_outer_transport_pressure_target_dyn_cm2(problem, model)
+    selected_pressure_target_dyn_cm2 = _selected_pressure_target_dyn_cm2(problem, model)
+    transport_pressure_target_dyn_cm2 =
+        _photospheric_outer_transport_pressure_target_dyn_cm2(problem, model)
+    return OuterTransportPressureSemantics(
+        photospheric_face_pressure_dyn_cm2,
+        selected_pressure_target_dyn_cm2,
+        transport_pressure_target_dyn_cm2,
+        positive_log(selected_pressure_target_dyn_cm2) -
+        positive_log(transport_pressure_target_dyn_cm2),
+    )
+end
+
 function _with_cell_temperature(
     model::StellarModel,
     k::Int,
