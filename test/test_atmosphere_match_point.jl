@@ -19,7 +19,7 @@ using ASTRA
     terms = ASTRA.outer_boundary_fitting_point_terms(problem, model)
 
     @test tau_match > 2.0 / 3.0
-    @test t_match > teff_k
-    @test t_match ≈ terms.fitting_point_temperature_k
+    @test t_match ≈ teff_k
+    @test t_match ≈ terms.current_match_temperature_k
     @test p_match > p_ph
 end

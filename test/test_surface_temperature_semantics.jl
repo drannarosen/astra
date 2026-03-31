@@ -23,7 +23,8 @@ using ASTRA
           semantics.surface_to_photosphere_log_gap - semantics.match_to_photosphere_log_gap
     @test semantics.surface_to_match_log_gap ≈ residual[summary.surface_temperature_row_index]
     @test abs(semantics.surface_to_photosphere_log_gap) < 1.0e-4
-    @test semantics.match_to_photosphere_log_gap > 1.0
+    @test abs(semantics.match_to_photosphere_log_gap) < 1.0e-4
+    @test semantics.surface_to_match_log_gap ≈ semantics.surface_to_photosphere_log_gap
     @test semantics.transport_temperature_offset_fraction > 0.0
 
     @test summary.surface_temperature_k ≈ semantics.surface_temperature_k

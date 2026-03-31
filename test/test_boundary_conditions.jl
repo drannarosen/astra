@@ -73,7 +73,7 @@
         outer_eos_state.pressure_dyn_cm2,
         p_match_dyn_cm2,
     )
-    @test outer_match_temperature_k > ASTRA.surface_effective_temperature_k(
+    @test outer_match_temperature_k ≈ ASTRA.surface_effective_temperature_k(
         surface_radius_cm,
         surface_luminosity_erg_s,
     )

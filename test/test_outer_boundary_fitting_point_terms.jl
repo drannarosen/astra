@@ -13,9 +13,9 @@ using ASTRA
     @test terms.hydrostatic_pressure_offset_dyn_cm2 > 0.0
     @test terms.current_match_pressure_dyn_cm2 ≈
           terms.photospheric_face_pressure_dyn_cm2 + terms.hydrostatic_pressure_offset_dyn_cm2
-    @test terms.current_match_temperature_k ≈ terms.fitting_point_temperature_k
+    @test terms.current_match_temperature_k ≈ terms.photospheric_face_temperature_k
     @test terms.fitting_point_temperature_k ≈
           terms.photospheric_face_temperature_k + terms.transport_temperature_offset_k
     @test terms.temperature_contract_log_gap ≈
-          0.0 atol = 1.0e-12
+          log(terms.current_match_temperature_k) - log(terms.fitting_point_temperature_k)
 end
