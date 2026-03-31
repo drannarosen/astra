@@ -406,6 +406,14 @@ struct OuterBoundaryRowSummary
     outer_transport_row_index::Int
     surface_temperature_row_index::Int
     surface_pressure_row_index::Int
+    transport_regime::Symbol
+    transport_guarded::Bool
+    nabla_radiative::Float64
+    nabla_ledoux::Float64
+    nabla_transport::Float64
+    superadiabatic_excess::Float64
+    convective_velocity_cm_s::Float64
+    convective_flux_fraction::Float64
     outer_transport_raw::Float64
     surface_temperature_raw::Float64
     surface_pressure_raw::Float64
@@ -449,12 +457,19 @@ struct TransportHotspotSummary
     cell_index::Int
     location::Symbol
     row_index::Int
+    transport_regime::Symbol
+    transport_guarded::Bool
     raw_residual::Float64
     row_weight::Float64
     weighted_contribution::Float64
     delta_log_temperature::Float64
     delta_log_pressure::Float64
+    nabla_radiative::Float64
+    nabla_ledoux::Float64
     nabla_transport::Float64
+    superadiabatic_excess::Float64
+    convective_velocity_cm_s::Float64
+    convective_flux_fraction::Float64
     gradient_term::Float64
 end
 

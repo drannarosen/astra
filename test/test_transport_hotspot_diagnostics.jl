@@ -14,7 +14,19 @@
     @test hotspot.present
     @test hotspot.cell_index in 1:(problem.grid.n_cells - 1)
     @test hotspot.location in (:interior, :outer)
+    @test hotspot.transport_regime in (:radiative, :convective)
+    @test isfinite(hotspot.nabla_radiative)
+    @test isfinite(hotspot.nabla_ledoux)
+    @test isfinite(hotspot.nabla_transport)
+    @test isfinite(hotspot.superadiabatic_excess)
+    @test hotspot.superadiabatic_excess ≈ hotspot.nabla_transport - hotspot.nabla_ledoux
+    @test 0.0 <= hotspot.convective_flux_fraction <= 1.0
+    @test hotspot.convective_velocity_cm_s >= 0.0
     @test hotspot.weighted_contribution ≈ hotspot.row_weight * hotspot.raw_residual
     @test hotspot.raw_residual ≈ hotspot.delta_log_temperature - hotspot.gradient_term
     @test hotspot.gradient_term ≈ hotspot.nabla_transport * hotspot.delta_log_pressure
+    if hotspot.transport_regime == :radiative
+        @test hotspot.convective_velocity_cm_s == 0.0
+        @test hotspot.convective_flux_fraction == 0.0
+    end
 end

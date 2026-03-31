@@ -19,6 +19,14 @@
     @test summary.outer_transport_row_index == outer_transport_row
     @test summary.surface_temperature_row_index == surface_rows[3]
     @test summary.surface_pressure_row_index == surface_rows[4]
+    @test summary.transport_regime in (:radiative, :convective)
+    @test isfinite(summary.nabla_radiative)
+    @test isfinite(summary.nabla_ledoux)
+    @test isfinite(summary.nabla_transport)
+    @test isfinite(summary.superadiabatic_excess)
+    @test summary.superadiabatic_excess ≈ summary.nabla_transport - summary.nabla_ledoux
+    @test 0.0 <= summary.convective_flux_fraction <= 1.0
+    @test summary.convective_velocity_cm_s >= 0.0
     @test summary.outer_transport_raw ≈ residual[outer_transport_row]
     @test summary.surface_temperature_raw ≈ residual[surface_rows[3]]
     @test summary.surface_pressure_raw ≈ residual[surface_rows[4]]
@@ -70,4 +78,8 @@
     @test summary.fitting_point_pressure_dyn_cm2 ≈ terms.fitting_point_pressure_dyn_cm2
     @test summary.pressure_contract_log_gap ≈ terms.pressure_contract_log_gap
     @test summary.pressure_contract_log_gap ≈ 0.0 atol = 1.0e-12
+    if summary.transport_regime == :radiative
+        @test summary.convective_velocity_cm_s == 0.0
+        @test summary.convective_flux_fraction == 0.0
+    end
 end
