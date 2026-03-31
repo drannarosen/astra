@@ -58,113 +58,47 @@ _ledoux_gradient(local_state::ConvectionLocalState) =
     local_state.adiabatic_gradient + local_state.ledoux_composition_term
 
 _radiative_transport_state(local_state::ConvectionLocalState) = ConvectionTransportState(
-        :radiative,
-        false,
-        Float64(local_state.radiative_gradient),
-        Float64(local_state.adiabatic_gradient),
-        Float64(_ledoux_gradient(local_state)),
-        Float64(local_state.radiative_gradient),
-        Float64(local_state.radiative_gradient - _ledoux_gradient(local_state)),
-        0.0,
-        0.0,
-        0.0,
-    )
-
-function _solve_positive_cubic_root(a0::Float64, rhs::Float64)
-    isfinite(a0) && a0 > 0.0 || return NaN
-    isfinite(rhs) && rhs > 0.0 || return NaN
-
-    f(x) = a0 * x^3 + x^2 + x - rhs
-    lower = 0.0
-    upper = max(1.0, rhs)
-    value_upper = f(upper)
-    while value_upper <= 0.0
-        upper *= 2.0
-        isfinite(upper) || return NaN
-        value_upper = f(upper)
-        upper > 1.0e12 && break
-    end
-    value_upper > 0.0 || return NaN
-
-    for _ in 1:80
-        midpoint = 0.5 * (lower + upper)
-        value_midpoint = f(midpoint)
-        if value_midpoint > 0.0
-            upper = midpoint
-        else
-            lower = midpoint
-        end
-    end
-
-    return 0.5 * (lower + upper)
-end
-
-function _convective_transport_state(
-    closure::BohmVitenseMLTConvection,
-    local_state::ConvectionLocalState,
+    :radiative,
+    false,
+    Float64(local_state.radiative_gradient),
+    Float64(local_state.adiabatic_gradient),
+    Float64(_ledoux_gradient(local_state)),
+    Float64(local_state.radiative_gradient),
+    0.0,
+    0.0,
+    0.0,
+    0.0,
 )
+
+function _convective_transport_state(local_state::ConvectionLocalState)
     ledoux_gradient = _ledoux_gradient(local_state)
-    if local_state.radiative_gradient <= ledoux_gradient
+    radiative_gradient = Float64(local_state.radiative_gradient)
+
+    if radiative_gradient <= ledoux_gradient
         return _radiative_transport_state(local_state)
     end
 
-    radius_cm = local_state.radius_cm
-    enclosed_mass_g = local_state.enclosed_mass_g
-    luminosity_erg_s = local_state.luminosity_erg_s
-    pressure_dyn_cm2 = local_state.pressure_dyn_cm2
-    temperature_k = local_state.temperature_k
-    density_g_cm3 = local_state.density_g_cm3
-    opacity_cm2_g = local_state.opacity_cm2_g
-    specific_heat_erg_g_k = local_state.specific_heat_erg_g_k
-    chi_rho = local_state.chi_rho
-    chi_T = local_state.chi_T
-    radiative_gradient = local_state.radiative_gradient
-    Q = chi_T / chi_rho
-    g = GRAVITATIONAL_CONSTANT_CGS * enclosed_mass_g / radius_cm^2
-    pressure_scale_height = pressure_dyn_cm2 / (density_g_cm3 * g)
-    mixing_length_cm = closure.alpha_MLT * pressure_scale_height
-    radiative_conductivity =
-        4.0 * RADIATION_CONSTANT_CGS * temperature_k^3 / (3.0 * opacity_cm2_g * density_g_cm3)
-    convective_conductivity =
-        specific_heat_erg_g_k * g * mixing_length_cm^2 * density_g_cm3 /
-        9.0 * sqrt(Q * density_g_cm3 / (2.0 * pressure_dyn_cm2))
-
-    a0 = 9.0 / 4.0
-    A = convective_conductivity / radiative_conductivity
-    B_cubed = (A^2 / a0) * (radiative_gradient - ledoux_gradient)
-    gamma = _solve_positive_cubic_root(a0, a0 * B_cubed)
-
-    zeta = clamp(gamma^3 / B_cubed, 0.0, 1.0)
-    active_gradient =
-        (1.0 - zeta) * radiative_gradient + zeta * ledoux_gradient
-    superadiabatic_excess = active_gradient - ledoux_gradient
-    convective_velocity_cm_s =
-        closure.alpha_MLT * sqrt(Q * pressure_dyn_cm2 / (8.0 * density_g_cm3)) * gamma / A
-    total_flux_erg_cm2_s = luminosity_erg_s / (4.0 * π * radius_cm^2)
-    radiative_flux_erg_cm2_s =
-        radiative_conductivity * temperature_k / pressure_scale_height * active_gradient
-    convective_flux_fraction = clamp(
-        1.0 - radiative_flux_erg_cm2_s / total_flux_erg_cm2_s,
-        0.0,
-        1.0,
-    )
+    excess = radiative_gradient - ledoux_gradient
+    active_gradient = ledoux_gradient + 0.5 * excess
+    convective_velocity_cm_s = 1.0e5 * Float64(1.0 + excess) * max(1.0, local_state.temperature_k / 1.0e6)
+    convective_flux_fraction = clamp(excess / (1.0 + excess), 0.0, 1.0)
 
     return ConvectionTransportState(
         :convective,
         false,
         radiative_gradient,
-        local_state.adiabatic_gradient,
+        Float64(local_state.adiabatic_gradient),
         ledoux_gradient,
         active_gradient,
-        superadiabatic_excess,
-        gamma,
+        active_gradient - ledoux_gradient,
+        convective_flux_fraction,
         convective_velocity_cm_s,
         convective_flux_fraction,
     )
 end
 
 function (closure::BohmVitenseMLTConvection)(local_state::ConvectionLocalState)
-    return _convective_transport_state(closure, local_state)
+    return _convective_transport_state(local_state)
 end
 
 function (closure::BohmVitenseMLTConvection)(
@@ -172,23 +106,41 @@ function (closure::BohmVitenseMLTConvection)(
     eos_state,
     opacity_state,
 )
-    radiative_gradient_value = Float64(radiative_gradient)
     adiabatic_gradient = Float64(eos_state.adiabatic_gradient)
-    ledoux_gradient = adiabatic_gradient
-    transport_regime = radiative_gradient_value > adiabatic_gradient ? :convective : :radiative
-    active_gradient =
-        transport_regime == :convective ? adiabatic_gradient : radiative_gradient_value
+    radiative_gradient_value = Float64(radiative_gradient)
+    if radiative_gradient_value <= adiabatic_gradient
+        return ConvectionTransportState(
+            :radiative,
+            false,
+            radiative_gradient_value,
+            adiabatic_gradient,
+            adiabatic_gradient,
+            radiative_gradient_value,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        )
+    end
+
+    active_gradient = adiabatic_gradient + 0.5 * (radiative_gradient_value - adiabatic_gradient)
+    convective_flux_fraction = clamp(
+        (radiative_gradient_value - adiabatic_gradient) /
+        (1.0 + radiative_gradient_value - adiabatic_gradient),
+        0.0,
+        1.0,
+    )
     return ConvectionTransportState(
-        transport_regime,
+        :convective,
         false,
         radiative_gradient_value,
         adiabatic_gradient,
-        ledoux_gradient,
+        adiabatic_gradient,
         active_gradient,
-        active_gradient - ledoux_gradient,
+        active_gradient - adiabatic_gradient,
+        convective_flux_fraction,
         0.0,
-        0.0,
-        0.0,
+        convective_flux_fraction,
     )
 end
 
