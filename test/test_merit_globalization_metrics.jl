@@ -19,6 +19,11 @@
     @test summary.total ≈ merit rtol = 1e-12
     @test summary.center + summary.geometry + summary.hydrostatic + summary.luminosity +
           summary.transport + summary.surface ≈ summary.total rtol = 1e-12
+    @test summary.surface ≈
+          summary.surface_radius +
+          summary.surface_luminosity +
+          summary.surface_temperature +
+          summary.surface_pressure rtol = 1e-12
     @test summary.center >= 0.0
     @test summary.geometry >= 0.0
     @test summary.hydrostatic >= 0.0
@@ -35,5 +40,11 @@
         :interior_transport,
         :outer_transport,
         :surface,
+    )
+    @test summary.dominant_surface_family in (
+        :surface_radius,
+        :surface_luminosity,
+        :surface_temperature,
+        :surface_pressure,
     )
 end

@@ -221,6 +221,10 @@ function row_family_merit_summary(
     interior_transport = 0.0
     outer_transport = 0.0
     transport = 0.0
+    surface_radius = 0.0
+    surface_luminosity = 0.0
+    surface_temperature = 0.0
+    surface_pressure = 0.0
 
     for k in 1:(n - 1)
         row_range = interior_structure_row_range(k)
@@ -236,7 +240,12 @@ function row_family_merit_summary(
     end
 
     transport = interior_transport + outer_transport
-    surface = _family_merit(weighted_residual, structure_surface_row_range(n))
+    surface_rows = structure_surface_row_range(n)
+    surface_radius = _family_merit(weighted_residual, surface_rows[1]:surface_rows[1])
+    surface_luminosity = _family_merit(weighted_residual, surface_rows[2]:surface_rows[2])
+    surface_temperature = _family_merit(weighted_residual, surface_rows[3]:surface_rows[3])
+    surface_pressure = _family_merit(weighted_residual, surface_rows[4]:surface_rows[4])
+    surface = surface_radius + surface_luminosity + surface_temperature + surface_pressure
     total = center + geometry + hydrostatic + luminosity + transport + surface
     family_values = (
         center,
@@ -257,6 +266,19 @@ function row_family_merit_summary(
         :surface,
     )
     dominant_family = family_names[argmax(family_values)]
+    surface_family_values = (
+        surface_radius,
+        surface_luminosity,
+        surface_temperature,
+        surface_pressure,
+    )
+    surface_family_names = (
+        :surface_radius,
+        :surface_luminosity,
+        :surface_temperature,
+        :surface_pressure,
+    )
+    dominant_surface_family = surface_family_names[argmax(surface_family_values)]
 
     return _ASTRA_MODULE.RowFamilyMeritSummary(
         center,
@@ -266,9 +288,14 @@ function row_family_merit_summary(
         interior_transport,
         outer_transport,
         transport,
+        surface_radius,
+        surface_luminosity,
+        surface_temperature,
+        surface_pressure,
         surface,
         total,
         dominant_family,
+        dominant_surface_family,
     )
 end
 
