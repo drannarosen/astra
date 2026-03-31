@@ -187,3 +187,43 @@ function outer_boundary_fitting_point_terms(problem::StructureProblem, model::St
         positive_log(current_match_pressure_dyn_cm2) - positive_log(fitting_point_pressure_dyn_cm2),
     )
 end
+
+"""
+    surface_temperature_semantics(problem, model)
+
+Return the diagnostic decomposition of the live surface-temperature row into
+the photospheric reference, the match point, and the derived log gaps.
+"""
+function surface_temperature_semantics(problem::StructureProblem, model::StellarModel)
+    n = problem.grid.n_cells
+    state = model.structure
+    surface_temperature_k = exp(state.log_temperature_cell_k[n])
+    radius_surface_cm = exp(state.log_radius_face_cm[end])
+    luminosity_surface_erg_s = state.luminosity_face_erg_s[end]
+    photospheric_face_temperature_k = surface_effective_temperature_k(
+        radius_surface_cm,
+        luminosity_surface_erg_s,
+    )
+    fitting_point_terms = outer_boundary_fitting_point_terms(problem, model)
+    match_temperature_k = fitting_point_terms.current_match_temperature_k
+    transport_temperature_offset_k = fitting_point_terms.transport_temperature_offset_k
+    surface_to_photosphere_log_gap =
+        positive_log(surface_temperature_k) - positive_log(photospheric_face_temperature_k)
+    match_to_photosphere_log_gap =
+        positive_log(match_temperature_k) - positive_log(photospheric_face_temperature_k)
+    surface_to_match_log_gap =
+        positive_log(surface_temperature_k) - positive_log(match_temperature_k)
+    transport_temperature_offset_fraction =
+        transport_temperature_offset_k / photospheric_face_temperature_k
+
+    return SurfaceTemperatureSemantics(
+        surface_temperature_k,
+        photospheric_face_temperature_k,
+        match_temperature_k,
+        transport_temperature_offset_k,
+        surface_to_photosphere_log_gap,
+        match_to_photosphere_log_gap,
+        surface_to_match_log_gap,
+        transport_temperature_offset_fraction,
+    )
+end

@@ -316,6 +316,23 @@ struct OuterBoundaryFittingPointTerms
 end
 
 """
+    SurfaceTemperatureSemantics(...)
+
+Diagnostic-only decomposition of the live surface-temperature row into the
+photospheric reference, the match point, and their log gaps.
+"""
+struct SurfaceTemperatureSemantics
+    surface_temperature_k::Float64
+    photospheric_face_temperature_k::Float64
+    match_temperature_k::Float64
+    transport_temperature_offset_k::Float64
+    surface_to_photosphere_log_gap::Float64
+    match_to_photosphere_log_gap::Float64
+    surface_to_match_log_gap::Float64
+    transport_temperature_offset_fraction::Float64
+end
+
+"""
     OuterBoundaryRowSummary(...)
 
 Diagnostic-only summary for the one-sided outer transport row and the paired
@@ -334,8 +351,14 @@ struct OuterBoundaryRowSummary
     outer_transport_weighted::Float64
     surface_temperature_weighted::Float64
     surface_pressure_weighted::Float64
+    surface_temperature_k::Float64
     photospheric_face_temperature_k::Float64
     match_temperature_k::Float64
+    transport_temperature_offset_k::Float64
+    surface_to_photosphere_log_gap::Float64
+    match_to_photosphere_log_gap::Float64
+    surface_to_match_log_gap::Float64
+    transport_temperature_offset_fraction::Float64
     photospheric_face_pressure_dyn_cm2::Float64
     match_pressure_dyn_cm2::Float64
     current_match_temperature_k::Float64

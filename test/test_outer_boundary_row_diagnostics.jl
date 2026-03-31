@@ -38,7 +38,15 @@
     @test summary.match_temperature_k > 0.0
     @test summary.photospheric_face_pressure_dyn_cm2 > 0.0
     @test summary.match_pressure_dyn_cm2 > 0.0
+    semantics = ASTRA.surface_temperature_semantics(problem, model)
     terms = ASTRA.outer_boundary_fitting_point_terms(problem, model)
+    @test summary.surface_temperature_k ≈ semantics.surface_temperature_k
+    @test summary.transport_temperature_offset_k ≈ semantics.transport_temperature_offset_k
+    @test summary.surface_to_photosphere_log_gap ≈ semantics.surface_to_photosphere_log_gap
+    @test summary.match_to_photosphere_log_gap ≈ semantics.match_to_photosphere_log_gap
+    @test summary.surface_to_match_log_gap ≈ semantics.surface_to_match_log_gap
+    @test summary.transport_temperature_offset_fraction ≈
+          semantics.transport_temperature_offset_fraction
     @test summary.current_match_temperature_k ≈ terms.current_match_temperature_k
     @test summary.fitting_point_temperature_k ≈ terms.fitting_point_temperature_k
     @test summary.temperature_contract_log_gap ≈ terms.temperature_contract_log_gap
