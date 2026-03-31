@@ -10,7 +10,7 @@ That is the physical reason boundary conditions matter. The numerical reason is 
 
 Near the center, symmetry requires the solution to stay regular rather than diverge. In practice that means the innermost radius and luminosity must behave like leading-order series quantities, not like generic interior unknowns. The center is therefore a special asymptotic limit, not merely "the first cell."
 
-At the surface, the continuous stellar-structure equations need a matching condition to some outer-layer or atmosphere model. Production stellar codes often use atmosphere integrations, optical-depth conditions, or tabulated surface relations. ASTRA now owns a staged outer atmosphere closure, and the current implementation uses a one-sided Phase 2 `T(\tau)` match-point reconstruction rather than a guessed boundary.
+At the surface, the continuous stellar-structure equations need a matching condition to some outer-layer or atmosphere model. Production stellar codes often use atmosphere integrations, optical-depth conditions, or tabulated surface relations. ASTRA now owns a staged outer atmosphere closure, and the current implementation uses a one-sided Phase 2 `T(\tau)` match-point reconstruction at the Eddington photosphere, with the outer-cell temperature bridged inward by the local half-cell transport offset rather than by a direct deeper-atmosphere continuation.
 
 ## Current ASTRA implementation
 

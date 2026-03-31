@@ -8,7 +8,7 @@ $$
 
 That choice is not arbitrary. It is the standard Eddington-grey reference point where the atmosphere is thin enough that a single surface match is a useful first approximation, but still deep enough that the outer layer is not yet free space.
 
-This page is ASTRA's canonical atmosphere reference for the classical lane. It explains what the photosphere means, what the current one-sided Eddington `T(\tau)` closure does, and which atmosphere phases are staged for later work.
+This page is ASTRA's canonical atmosphere reference for the classical lane. It explains what the photosphere means, what the current one-sided Eddington `T(\tau)` closure does at the photosphere, and how the outer-cell temperature is bridged inward by the local half-cell transport offset.
 
 ## Why atmospheres matter
 
@@ -42,12 +42,12 @@ Here `\kappa_\mathrm{surf}` is the local Rosseland-mean opacity at the outer cel
 
 ASTRA's current Phase 2 atmosphere implementation keeps the existing outer radius and luminosity target rows; the surface thermodynamic rows use the shared outer match-point helper layer, and the outer transport row remains one-sided to the photospheric face:
 
-- the outer cell temperature is matched in log form to `outer_match_temperature_k(...)`,
+- the outer cell temperature is matched in log form to `outer_match_temperature_k(...)`, which now equals the photospheric face temperature plus the local half-cell transport offset,
 - the outer cell pressure is matched in log form to `outer_match_pressure_dyn_cm2(...)`,
 - the surface pressure row uses the shared outer match-point pressure contract in log form,
 - the outer transport row remains one-sided to the photospheric face and uses `surface_effective_temperature_k(...)` plus `eddington_photospheric_pressure_dyn_cm2(...)`.
 
-This is a one-sided `T(\tau)` reconstruction. It keeps the outer face as the photospheric reference while treating the outermost cell as a deeper match point instead of the photosphere itself.
+This is still a one-sided `T(\tau)` reconstruction at the photosphere. The difference is that the live outer-cell temperature owner now uses the local fitting-point bridge, so the outermost cell is attached to the photospheric reference by the same half-cell transport semantics used in the diagnostic comparison.
 
 The focused bundle is still `converged = false` and `used_regularized_fallback = true`.
 

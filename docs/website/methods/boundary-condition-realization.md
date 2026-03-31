@@ -38,7 +38,7 @@ The row ownership is deliberately simple. The center radius row is owned by geom
 
 ## Surface closure
 
-The surface rows now use a one-sided Phase 2 `T(\tau)` atmosphere closure rather than hard guesses. They keep the problem square and numerically stable while giving the outer boundary a physically interpretable temperature and pressure scale.
+The surface rows now use a one-sided Phase 2 `T(\tau)` atmosphere closure rather than hard guesses. They keep the problem square and numerically stable while giving the outer boundary a physically interpretable temperature and pressure scale. The temperature row is anchored at the Eddington photosphere and then bridged inward by the local half-cell transport offset, so it is no longer a direct deeper-atmosphere continuation.
 
 The focused bundle is still `converged = false` and `used_regularized_fallback = true`.
 
@@ -50,7 +50,7 @@ For the current classical lane, the outer boundary is closed by four explicit re
 
 1. outer radius,
 2. outer luminosity,
-3. surface temperature matched to the shared outer match-point temperature,
+3. surface temperature matched to the shared outer match-point temperature, which is the Eddington photosphere plus the local half-cell transport bridge,
 4. surface pressure matched in log form to the shared outer match-point pressure contract.
 
 Those rows are intentionally staged. They are part of the canonical current solve, but they are still a one-sided `T(\tau)` atmosphere approximation rather than a production atmosphere or photosphere specification.

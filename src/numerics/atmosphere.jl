@@ -79,14 +79,32 @@ end
 """
     outer_match_temperature_k(problem, model)
 
-Return the Eddington `T(τ)` temperature at ASTRA's one-sided outer-cell match
-point.
+Return the outer-cell temperature bridged from ASTRA's Eddington photosphere
+by the same local half-cell transport offset used in the fitting-point
+diagnostic.
 """
 function outer_match_temperature_k(problem::StructureProblem, model::StellarModel)
     radius_surface_cm = exp(model.structure.log_radius_face_cm[end])
-    luminosity_surface_erg_s = model.structure.luminosity_face_erg_s[end]
-    teff_k = surface_effective_temperature_k(radius_surface_cm, luminosity_surface_erg_s)
-    return eddington_t_tau_temperature_k(teff_k, outer_match_optical_depth(problem, model))
+    teff_k = surface_effective_temperature_k(
+        radius_surface_cm,
+        model.structure.luminosity_face_erg_s[end],
+    )
+    n = problem.grid.n_cells
+    temperature_surface_k = exp(model.structure.log_temperature_cell_k[n])
+    pressure_surface_dyn_cm2 = cell_eos_state(problem, model, n).pressure_dyn_cm2
+    transport_nabla_outer = transport_row_terms(problem, model, n - 1).nabla_transport
+    g_surface_cgs = surface_gravity_cgs(problem.parameters.mass_g, radius_surface_cm)
+    hydrostatic_pressure_offset_dyn_cm2 =
+        g_surface_cgs * outer_half_cell_column_density_g_cm2(
+            problem.grid.dm_cell_g[end],
+            radius_surface_cm,
+        )
+    transport_temperature_offset_k =
+        hydrostatic_pressure_offset_dyn_cm2 *
+        transport_nabla_outer *
+        temperature_surface_k /
+        pressure_surface_dyn_cm2
+    return teff_k + transport_temperature_offset_k
 end
 
 """

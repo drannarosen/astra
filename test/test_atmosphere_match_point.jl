@@ -16,8 +16,10 @@ using ASTRA
     t_match = ASTRA.outer_match_temperature_k(problem, model)
     p_match = ASTRA.outer_match_pressure_dyn_cm2(problem, model)
     p_ph = ASTRA.eddington_photospheric_pressure_dyn_cm2(g_surface, opacity_outer)
+    terms = ASTRA.outer_boundary_fitting_point_terms(problem, model)
 
     @test tau_match > 2.0 / 3.0
     @test t_match > teff_k
+    @test t_match ≈ terms.fitting_point_temperature_k
     @test p_match > p_ph
 end
