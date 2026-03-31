@@ -53,6 +53,7 @@ project:
         - file: physics/convection.md
           children:
             - file: physics/convection/radiative-gradient-and-criterion-hook.md
+            - file: physics/convection/mixing-length-theory.md
         - file: physics/boundary-conditions.md
         - file: physics/atmosphere-and-photosphere.md
     - title: Methods

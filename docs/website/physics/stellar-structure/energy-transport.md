@@ -1,8 +1,8 @@
 # Energy Transport
 
-Energy transport tells the star how temperature must fall outward so the generated luminosity can escape. In plain language, the temperature must drop outward fast enough for the local luminosity to be carried through each shell. ASTRA currently uses the radiative-gradient form of the transport equation, expressed in logarithmic state variables for numerical robustness.
+Energy transport tells the star how temperature must fall outward so the generated luminosity can escape. In plain language, the temperature must drop outward fast enough for the local luminosity to be carried through each shell.
 
-The shorthand form is `dT/dm`, and the current closure is a radiative gradient, not a full MLT transport model.
+The shorthand form is `dT/dm`. The important physical caution is that the transport equation needs an **active** temperature gradient, not automatically a radiative one. ASTRA currently uses a radiative-gradient closure in the residual as a bootstrap limitation, not as the intended long-term transport law.
 
 ## Continuous equation
 
@@ -16,7 +16,14 @@ $$
 \nabla \equiv \frac{d \log T}{d \log P}
 $$
 
-for the dimensionless temperature gradient. Physically, $\nabla$ measures how quickly temperature changes compared to pressure through the star. The logarithms are not cosmetic notation here; they are built into the definition of the transport gradient itself. In the bootstrap lane, ASTRA assumes radiation alone is setting the temperature gradient. The exact notation matters here: the ASTRA row is built from `log(T)` and `log(P)`, not from raw temperatures and pressures.
+for the dimensionless temperature gradient. Physically, $\nabla$ measures how quickly temperature changes compared to pressure through the star. The logarithms are not cosmetic notation here; they are built into the definition of the transport gradient itself.
+
+The symbol $\nabla$ is branch-owned:
+
+- in a radiatively stable zone, $\nabla = \nabla_\mathrm{rad}$,
+- in a convectively unstable zone, $\nabla$ should come from the convective closure.
+
+That distinction is central to ASTRA's current scientific hardening. The exact notation matters here: the ASTRA row is built from `log(T)` and `log(P)`, not from raw temperatures and pressures.
 
 ## Log-form view
 
@@ -44,11 +51,20 @@ $$
 
 Here, $\log T_k$ and $\log P_k$ are neighboring cell values, while $\nabla_k$ is the local transport gradient evaluated for cell $k$. This subtracts the `\nabla_k` pressure-difference term. The earlier additive form was inconsistent with the documented `nabla = d log(T) / d log(P)` meaning.
 
-This is the `transport` row in `src/numerics/residuals.jl`. The gradient `nabla_k` comes from the helper in `src/numerics/structure_equations.jl`, which combines the staged analytical opacity closure, the staged gas-plus-radiation EOS pressure, the luminosity, and the local enclosed mass.
+This is the `transport` row in `src/numerics/residuals.jl`. The current `\nabla_k` comes from the radiative helper in `src/numerics/structure_equations.jl`, which combines the staged analytical opacity closure, the staged gas-plus-radiation EOS pressure, the luminosity, and the local enclosed mass.
+
+That is a code-backed fact about the present solver, not the intended long-term physics. The intended physics is branch-owned:
+
+- radiative zones should use the radiative branch,
+- convective zones should use a convective closure.
+
+So the present row should be read as "the current bootstrap transport law" rather than "ASTRA's final statement of stellar transport physics."
 
 ## Numerical realization in ASTRA
 
 The transport row is assembled in [Residual Assembly](../../methods/residual-assembly.md), and its current derivative handling is described in [Jacobian Construction](../../methods/jacobian-construction.md). The $\log(T)$ and $\log(P)$ form is deliberate: it keeps the row numerically stable while luminosity, pressure, and temperature span many orders of magnitude.
+
+The convection-specific ownership story lives in [Convection](../convection.md), [Radiative Gradient, Schwarzschild, and Ledoux Readiness](../convection/radiative-gradient-and-criterion-hook.md), and [Mixing-Length Theory Target](../convection/mixing-length-theory.md).
 
 ## Current validation status
 
@@ -56,6 +72,27 @@ The current dated Armijo validation bundle makes one point sharply: the dominant
 
 That is a measured solver diagnostics result, not yet a proof that the radiative-gradient law itself is wrong. The sharper current hypothesis is narrower: the present transport bottleneck is mixed between interior transport and the one-sided outer transport interface, so ASTRA should harden that evidence surface before claiming a purely boundary-local cause.
 
+## Current status vs target model
+
+Current code:
+
+- the transport residual uses the radiative gradient helper,
+- the convection hook can classify stability,
+- but the active transport row does not yet switch branches.
+
+Near-term canonical target:
+
+- the active $\nabla$ becomes branch-owned,
+- stable cells use the radiative branch,
+- unstable cells use Bohm-Vitense local MLT,
+- the first implementation is Schwarzschild-active and Ledoux-ready.
+
+Later target:
+
+- Ledoux-active transport where composition gradients matter,
+- convective composition mixing,
+- richer surface-convection and nonlocal refinements.
+
 ## What is deferred
 
-Real mixing-length theory, convective overshoot, semiconvection, thermohaline transport, and composition transport are deferred. The present transport row is radiative-gradient-only and should be read as a bootstrap closure, not a finished convective model.
+Real mixing-length theory, convective overshoot, semiconvection, thermohaline transport, and composition transport are deferred from the active residual today. The present transport row is radiative-gradient-only and should be read as a bootstrap closure, not a finished convective model.

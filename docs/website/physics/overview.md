@@ -33,7 +33,7 @@ The structure equations are not closed until we choose an equation of state, an 
 - [Equation of State](eos.md): staged analytical gas plus radiation, with flag-gated degeneracy and Coulomb enrichments
 - [Opacity](opacity.md): analytical Kramers + H-minus + electron scattering
 - [Nuclear Energy Generation](nuclear.md): analytical PP + CNO heating, with flag-gated weak screening and triple-alpha
-- [Convection](convection.md): Schwarzschild criterion hook on top of radiative transport
+- [Convection](convection.md): radiative-only residual plus instability criteria today, with Bohm-Vitense local MLT as the canonical target
 
 These pages explain the physics and state plainly what ASTRA actually computes today.
 
@@ -79,7 +79,7 @@ The methods pages describe how this physics becomes code:
 
 ## What is deferred
 
-Real EOS tables, opacity tables, real MLT, composition transport, and production evolution algorithms are all deferred. ASTRA's active analytical path now includes `eps_grav` and `eps_nu` in the luminosity equation, while weak screening, triple-alpha, degeneracy, and Coulomb terms remain implemented but default-off. This page is a map of the classical baseline only, so future contributors can tell the difference between an implemented closure, a flag-gated staged option, and a planned capability.
+Real EOS tables, opacity tables, real MLT, composition transport, and production evolution algorithms are all deferred from the active solver today. ASTRA's active analytical path now includes `eps_grav` and `eps_nu` in the luminosity equation, while weak screening, triple-alpha, degeneracy, and Coulomb terms remain implemented but default-off. The convection docs now also distinguish clearly between the code-backed criterion hook, the canonical Bohm-Vitense local MLT target, and the later Ledoux-ready / mixing-ready growth path. This page is a map of the classical baseline only, so future contributors can tell the difference between an implemented closure, a flag-gated staged option, and a planned capability.
 
 ## Physics handbook checklist
 
