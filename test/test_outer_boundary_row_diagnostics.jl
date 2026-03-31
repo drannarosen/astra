@@ -38,4 +38,12 @@
     @test summary.match_temperature_k > 0.0
     @test summary.photospheric_face_pressure_dyn_cm2 > 0.0
     @test summary.match_pressure_dyn_cm2 > 0.0
+    terms = ASTRA.outer_boundary_fitting_point_terms(problem, model)
+    @test summary.current_match_temperature_k ≈ terms.current_match_temperature_k
+    @test summary.fitting_point_temperature_k ≈ terms.fitting_point_temperature_k
+    @test summary.temperature_contract_log_gap ≈ terms.temperature_contract_log_gap
+    @test summary.current_match_pressure_k ≈ terms.current_match_pressure_dyn_cm2
+    @test summary.fitting_point_pressure_k ≈ terms.fitting_point_pressure_dyn_cm2
+    @test summary.pressure_contract_log_gap ≈ terms.pressure_contract_log_gap
+    @test summary.pressure_contract_log_gap ≈ 0.0 atol = 1.0e-12
 end

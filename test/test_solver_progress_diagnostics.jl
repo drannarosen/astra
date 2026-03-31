@@ -150,6 +150,9 @@ end
               (:center, :geometry, :hydrostatic, :luminosity, :interior_transport, :outer_transport, :surface)
         @test accepted_trial.transport_hotspot.present
         @test accepted_trial.outer_boundary.present
+        @test accepted_trial.outer_boundary.temperature_contract_log_gap ==
+              accepted_trial.outer_boundary.temperature_contract_log_gap
+        @test accepted_trial.outer_boundary.pressure_contract_log_gap ≈ 0.0 atol = 1.0e-12
         @test accepted_trial.transport_hotspot.cell_index in 1:(problem.grid.n_cells - 1)
         @test accepted_trial.transport_hotspot.location in (:interior, :outer)
         @test accepted_trial.transport_hotspot.weighted_contribution ≈

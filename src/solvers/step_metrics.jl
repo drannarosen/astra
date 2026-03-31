@@ -313,6 +313,12 @@ function outer_boundary_row_summary(
             0.0,
             0.0,
             0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
         )
     end
 
@@ -345,6 +351,7 @@ function outer_boundary_row_summary(
         surface_pressure_dyn_cm2,
         match_pressure_dyn_cm2,
     )
+    fitting_point_terms = _ASTRA_MODULE.outer_boundary_fitting_point_terms(problem, model)
 
     outer_transport_raw = residual_f64[outer_transport_row_index]
     surface_temperature_raw = residual_f64[surface_temperature_row_index]
@@ -367,6 +374,12 @@ function outer_boundary_row_summary(
         match_temperature_k,
         photospheric_face_pressure_dyn_cm2,
         match_pressure_dyn_cm2,
+        fitting_point_terms.current_match_temperature_k,
+        fitting_point_terms.fitting_point_temperature_k,
+        fitting_point_terms.temperature_contract_log_gap,
+        fitting_point_terms.current_match_pressure_dyn_cm2,
+        fitting_point_terms.fitting_point_pressure_dyn_cm2,
+        fitting_point_terms.pressure_contract_log_gap,
     )
 end
 
