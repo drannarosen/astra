@@ -73,6 +73,7 @@
         "docs/website/development/checklists.md",
         "docs/website/development/checklists/solar-first-lane.md",
         "docs/website/development/progress-summary.md",
+        "docs/website/development/surface-pressure-log-contract-2026-03-30.md",
         "docs/website/development/armijo-merit-validation-2026-03-30.md",
         "docs/website/development/transport-outer-boundary-hardening-2026-03-30.md",
         "docs/website/development/changelog.md",
@@ -147,6 +148,12 @@
             "surface_temperature",
             "surface_pressure",
             "outer_transport",
+            "2026-03-30-surface-pressure-log-contract",
+            "log-pressure",
+            "surface_pressure_ratio",
+            "surface_pressure_log_mismatch",
+            "default-12",
+            "what this does not prove",
         ],
         "docs/website/development/transport-outer-boundary-hardening-2026-03-30.md" => [
             "boundary ownership",
@@ -165,6 +172,14 @@
             "surface_temperature",
             "surface_pressure",
             "outer_transport",
+        ],
+        "docs/website/development/surface-pressure-log-contract-2026-03-30.md" => [
+            "2026-03-30-surface-pressure-log-contract",
+            "log-pressure",
+            "surface_pressure_ratio",
+            "surface_pressure_log_mismatch",
+            "default-12",
+            "what this does not prove",
         ],
         "docs/website/development/armijo-merit-validation-2026-03-30.md" => [
             "accepted step count",
@@ -304,6 +319,7 @@
             "Phase 3",
             "surface thermodynamic rows use the shared outer match-point helper layer",
             "outer transport row remains one-sided to the photospheric face",
+            "surface pressure row uses the shared outer match-point pressure contract in log form",
         ],
         "docs/website/physics/stellar-structure/mass-conservation.md" => [
             "dr/dm",
@@ -427,7 +443,8 @@
             "mesa-reference/boundary-conditions.md",
             "Normative center-boundary contract",
             "shared outer match-point temperature",
-            "shared outer match-point pressure scale",
+            "shared outer match-point pressure contract",
+            "log form",
             "outer transport row remains one-sided to the photospheric face",
         ],
         "docs/website/methods/verification-and-jacobian-audits.md" => [

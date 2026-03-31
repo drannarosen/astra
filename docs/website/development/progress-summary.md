@@ -14,6 +14,34 @@ For each update, record:
 
 ## 2026-03-30
 
+### Surface pressure log contract evidence
+
+ASTRA's refreshed `2026-03-30-surface-pressure-log-contract` bundle shows that the new log-pressure surface contract changed the solver state, but not enough to call the classical lane healthy. In `default-12`, the accepted dominant family moved to `outer_transport`, the accepted dominant surface family stayed `surface_pressure`, the accepted outer-boundary summary reports `surface_pressure_ratio = 2.3390261279875415`, `surface_pressure_log_mismatch = 0.8497346581200489`, `outer_transport_weighted = 0.9647073026988532`, and `final_weighted_residual_norm = 0.24783903118721756`, `final_merit = 1.5356046344954652`.
+
+Why this mattered:
+
+- it makes the pressure row meaning explicit instead of leaving it as a raw cgs-pressure difference,
+- it shows the default fixture improved modestly in weighted norm and merit,
+- and it also shows the bundle is still mixed and unconverged, because rejected trials increased and the perturbation cases still split between `surface_pressure` and `surface_temperature`.
+
+Verification run:
+
+- `~/.juliaup/bin/julia --project=. scripts/run_armijo_merit_validation.jl artifacts/validation/2026-03-30-surface-pressure-log-contract`
+- `~/.juliaup/bin/julia --project=. -e 'using Test, ASTRA; include("test/test_docs_structure.jl")'`
+
+What this still does not prove:
+
+what this does not prove:
+
+- every payload is still `converged = false`,
+- `used_regularized_fallback = true` remains present everywhere,
+- rejected trials worsened from the earlier outer-surface audit,
+- and the bundle still does not establish whether the next narrow owner is shared pressure-match semantics, temperature attachment semantics, or the outer transport row itself.
+
+Next step:
+
+- treat the log-pressure surface contract as a real but mixed improvement, and keep the next slice surgical around shared pressure-match semantics rather than broad conditioning.
+
 ### Outer surface coupling audit evidence
 
 ASTRA's refreshed `2026-03-30-outer-surface-coupling-audit` bundle sharpens the remaining near-surface diagnosis after the transport sign contract correction. In `default-12`, the accepted and best-rejected dominant surface family is `surface_pressure`, the accepted transport hotspot still sits on the outer row at cell index `11`, and the accepted outer-boundary summary reports `outer_transport_weighted = 0.8444699228014957`, `surface_temperature_weighted = 0.6854069474453723`, `surface_pressure_weighted = -0.7960701554689767`, `match_temperature_k = 1.1733423492649216e6`, and `match_pressure_dyn_cm2 = 3.9370078676338625e13`.

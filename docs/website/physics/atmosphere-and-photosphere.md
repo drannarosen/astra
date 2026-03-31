@@ -43,8 +43,8 @@ Here `\kappa_\mathrm{surf}` is the local Rosseland-mean opacity at the outer cel
 ASTRA's current Phase 2 atmosphere implementation keeps the existing outer radius and luminosity target rows; the surface thermodynamic rows use the shared outer match-point helper layer, and the outer transport row remains one-sided to the photospheric face:
 
 - the outer cell temperature is matched in log form to `outer_match_temperature_k(...)`,
-- the outer cell pressure is matched against `outer_match_pressure_dyn_cm2(...)`,
-- the surface pressure weighting uses the shared outer match-point pressure scale,
+- the outer cell pressure is matched in log form to `outer_match_pressure_dyn_cm2(...)`,
+- the surface pressure row uses the shared outer match-point pressure contract in log form,
 - the outer transport row remains one-sided to the photospheric face and uses `surface_effective_temperature_k(...)` plus `eddington_photospheric_pressure_dyn_cm2(...)`.
 
 This is a one-sided `T(\tau)` reconstruction. It keeps the outer face as the photospheric reference while treating the outermost cell as a deeper match point instead of the photosphere itself.
@@ -67,7 +67,7 @@ Status: implemented.
 - treat the outer face as the photosphere at `tau = 2/3`,
 - reconstruct the outermost thermodynamic cell from a half-cell optical-depth estimate and hydrostatic column estimate.
 - the surface thermodynamic rows use the shared outer match-point helper layer,
-- route the surface pressure scaling through the shared outer match-point pressure scale,
+- route the surface pressure row through the shared outer match-point pressure contract in log form,
 - keep the outer transport row one-sided to the photospheric face.
 
 This design choice is deliberate. Phase 2 hardens atmosphere physics without simultaneously redesigning ASTRA's larger global model-family ownership. ASTRA may later revisit whether luminosity or radius should become emergent rather than targeted, but that is a separate project from the current atmosphere implementation.
@@ -112,6 +112,6 @@ The reasoning is simple. ASTRA's current outer `R` and `L` rows still define the
 - [x] The page distinguishes current implementation from planned atmosphere work.
 - [x] The approved Phase 2 choice to preserve outer `R` and `L` in that slice is recorded explicitly.
 - [x] The shared outer match-point helper layer for the surface thermodynamic rows is recorded explicitly.
-- [x] The solver-side surface-pressure weighting is tied to the same match-point helper layer.
+- [x] The solver-side surface-pressure row is matched in log form to the same match-point helper layer.
 - [ ] Add a source-backed `T(\tau)` comparison note for the implemented Phase 2 closure.
 - [ ] Add a benchmark artifact showing how the atmosphere closure changes the classical convergence basin.
