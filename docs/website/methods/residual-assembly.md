@@ -46,12 +46,12 @@ $$
 
 $$
 R_{T,k} =
-\log T_{k+1} - \log T_k + \nabla_k \left(\log P_{k+1} - \log P_k\right).
+\log T_{k+1} - \log T_k - \nabla_k \left(\log P_{k+1} - \log P_k\right).
 $$
 
 Those equations are the current ASTRA implementation contract. If the code changes any sign, indexing convention, or owner in those rows, the methods docs should change in the same slice.
 
-The most important interpretation detail is that these are residual equations, not copied textbook ODEs. The geometry row compares a shell-volume expression to $dm/\rho$. The transport row is already written in log form because ASTRA solves $\log T$, not $T$, and because the radiative-gradient helper is currently expressed through logarithmic pressure differences.
+The most important interpretation detail is that these are residual equations, not copied textbook ODEs. The geometry row compares a shell-volume expression to $dm/\rho$. The transport row is already written in log form because ASTRA solves $\log T$, not $T$, and because the radiative-gradient helper is currently expressed through logarithmic pressure differences. This subtracts the `\nabla_k` pressure-difference term, and the earlier additive form was inconsistent with the documented nabla meaning (`nabla = d log(T) / d log(P)`).
 
 ## What each interior block means
 

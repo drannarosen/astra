@@ -39,10 +39,10 @@ That form makes the solver logic clearer: the row really couples logarithmic tem
 ASTRA currently writes the transport row in log form:
 
 $$
-\log T_{k+1} - \log T_k + \nabla_k \left(\log P_{k+1} - \log P_k\right) = 0
+\log T_{k+1} - \log T_k - \nabla_k \left(\log P_{k+1} - \log P_k\right) = 0
 $$
 
-Here, $\log T_k$ and $\log P_k$ are neighboring cell values, while $\nabla_k$ is the local transport gradient evaluated for cell $k$.
+Here, $\log T_k$ and $\log P_k$ are neighboring cell values, while $\nabla_k$ is the local transport gradient evaluated for cell $k$. This subtracts the `\nabla_k` pressure-difference term. The earlier additive form was inconsistent with the documented `nabla = d log(T) / d log(P)` meaning.
 
 This is the `transport` row in `src/numerics/residuals.jl`. The gradient `nabla_k` comes from the helper in `src/numerics/structure_equations.jl`, which combines the staged analytical opacity closure, the staged gas-plus-radiation EOS pressure, the luminosity, and the local enclosed mass.
 

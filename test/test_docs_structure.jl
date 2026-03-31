@@ -311,6 +311,7 @@
             "radiative gradient",
             "log(T",
             "d \\log T",
+            "subtracts the `\\nabla_k` pressure-difference term",
         ],
         "docs/website/physics/stellar-structure/coupled-problem.md" => [
             "boundary-value problem",
@@ -352,6 +353,8 @@
             "../physics/stellar-structure/energy-transport.md",
             "Normative interior residual contract",
             "R_{\\mathrm{geom},k}",
+            "subtracts the `\\nabla_k` pressure-difference term",
+            "inconsistent with the documented nabla meaning",
         ],
         "docs/website/methods/jacobian-construction.md" => [
             "analytic rows",
